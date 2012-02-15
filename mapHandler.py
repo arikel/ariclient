@@ -157,7 +157,7 @@ class TmxMapData(object):
 
 
 #-------------------------------------------------------------------------------	
-class Map:
+class GraphicMap:
 	def __init__(self, screen, filename):
 		self.screen = screen
 		self.screenWidth = self.screen.get_width()

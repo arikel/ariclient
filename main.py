@@ -22,7 +22,7 @@ class Game(Client):
 		
 		self.screen = pygame.display.set_mode((640,480))
 		
-		self.map = Map(self.screen, "maps/001-1.tmx")
+		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
 		self.sprite = BaseSprite(self.name)
 		self.sprite.addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
 		self.sprite.setAnim("walk")
@@ -107,17 +107,10 @@ class Game(Client):
 			self.sendPosCooldown = t+25
 			self.SendPosition()
 			
-		self.map.offsetX = self.sprite.mapRect.x-320
-		self.map.offsetY = self.sprite.mapRect.y-240
+		self.displayMap.offsetX = self.sprite.mapRect.x-320
+		self.displayMap.offsetY = self.sprite.mapRect.y-240
 		
-		self.map.caleOffsets()
-		
-		'''
-		self.sprite.rect.x = self.sprite.mapRect.x - self.map.offsetX - self.sprite.anim[self.sprite.currentAnim].w/2
-		self.sprite.rect.y = self.sprite.mapRect.y - self.map.offsetY - self.sprite.anim[self.sprite.currentAnim].h
-		self.sprite.tileMapPosX = self.sprite.mapRect.x / self.map.tileWidth
-		self.sprite.tileMapPosY = self.sprite.mapRect.y / self.map.tileHeight
-		'''
+		self.displayMap.caleOffsets()
 		
 		# graphics 
 		#self.screen.fill((100,100,140))
@@ -126,10 +119,10 @@ class Game(Client):
 			sprite.update(t)
 			sprite.setMapOffset(self.map.offsetX, self.map.offsetY)
 			
-		self.map.blitLayer("ground")
-		self.map.blitSpritesAndFringe(spriteList)
-		self.map.blitLayer("over")
-		self.map.blitLayer("collision")
+		self.displayMap.blitLayer("ground")
+		self.displayMap.blitSpritesAndFringe(spriteList)
+		self.displayMap.blitLayer("over")
+		self.displayMap.blitLayer("collision")
 		
 		# gui
 		self.chatWindow.updateSurface(x,y)
