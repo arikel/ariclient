@@ -9,7 +9,7 @@ except:
 
 import pygame
 from sprite import BaseSprite
-from mapHandler import Map
+from mapHandler import GraphicMap
 from gui import *
 from utils import KeyHandler
 from gameClient import Client
@@ -57,7 +57,7 @@ class Game(Client):
 		x, y = pygame.mouse.get_pos()
 		dt = t - self.prevTime
 		self.prevTime = t
-		self.prevMove = (self.dx, self.dy)
+		#self.prevMove = (self.dx, self.dy)
 		
 		#print "dt = %s , mouv = %s" % (dt, self.speed*dt)
 		events = self.kh.getEvents()
@@ -117,7 +117,7 @@ class Game(Client):
 		spriteList = [self.sprite] + self.players.values()
 		for sprite in spriteList:
 			sprite.update(t)
-			sprite.setMapOffset(self.map.offsetX, self.map.offsetY)
+			sprite.setMapOffset(self.displayMap.offsetX, self.displayMap.offsetY)
 			
 		self.displayMap.blitLayer("ground")
 		self.displayMap.blitSpritesAndFringe(spriteList)
