@@ -9,14 +9,16 @@ except:
 
 import pygame
 from sprite import BaseSprite
-from mapHandler import GraphicMap
+from mapDisplay import GraphicMap
 from gui import *
 from utils import KeyHandler
-from gameClient import Client
+from gameEngine import *
+from gameClient import GameClient
 
-class Game(Client):
+
+class Game(GameClient):
 	def __init__(self, host, port):
-		Client.__init__(self, host, port)
+		GameClient.__init__(self, host, port)
 		
 		self.players = {} # name : sprite
 		

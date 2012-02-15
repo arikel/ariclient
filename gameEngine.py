@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
+from tmxHandler import *
 
 class Item:
 	weight = 0.1
@@ -41,8 +42,11 @@ class Inventory:
 				self.addItem(item[0].strip(), item[1].strip())
 
 class MapObject:
-	def __init__(self, id):
+	_map = None
+	def __init__(self, id, _map = None):
 		self.id = id
+		self._map = _map
+		
 		# float pixel position on map
 		self.category = None
 		self.currentMapName = None
@@ -81,7 +85,13 @@ class MapObject:
 	def update(dt=0.0):
 		if self.mobile:
 			self.move(self.dx*dt, self.dy*dt)
-
+	
+	def nextMovePossible(dt=0.0):
+		if not self._map:
+			return False
+		if self._map.collidePos(self.x + self.dx*dt, self.y + self.dy*dt):
+			return False
+		return True
 
 class Being(object):
 	def __init__(self, id):
@@ -113,12 +123,15 @@ class Being(object):
 		
 	
 class Mob(Being, MapObject):
-	def __init__(self, id, mobId, x, y):
+	def __init__(self, id, mobId, _map, x, y):
 		Being.__init__(self, id)
-		MapObject.__init__(self, id)
+		MapObject.__init__(self, id, _map)
+		self.mobile = True
+		
 		self.mobId = mobId
 		
 		self.setPos(x, y)
+		
 		
 class Player(Being, MapObject):
 	def __init__(self, id, _map, x, y):
@@ -127,3 +140,66 @@ class Player(Being, MapObject):
 		self.mobile = True
 		
 		self.setPos(x, y)
+		
+		
+class MapBase:
+	def __init__(self, filename=None):
+		self.filename = filename
+		if self.filename:
+			self.load(self.filename)
+		
+		self.mapObjects = []
+		self.mobs = []
+		self.players = []
+		self.npcs = []
+		
+	def load(self, filename):	
+		self.mapData = TmxMapData()
+		self.mapData.load(self.filename)
+		
+		self.width = self.mapData.width
+		self.height = self.mapData.height
+		
+		self.tileWidth = self.mapData.tileWidth
+		self.tileHeight = self.mapData.tileHeight
+		
+		self.collisionLayer = TileLayer("collisionLayer",
+			self.width,
+			self.height,
+			decode(self.mapData.getLayerData("collision"))
+		)
+		
+		self.collisionGrid = TileLayer("collisionGrid",
+			self.width,
+			self.height,
+			decode(self.mapData.getLayerData("collision"))
+		)
+		
+	def tileCollide(self, x, y): # tile position collide test
+		if self.collisionLayer.tiles[x][y]>0:
+			return True
+		return False
+		
+	def posCollide(self, x, y): # pixel position collide test
+		return self.tileCollide(int(x)/self.tileWidth, int(y)/self.tileHeight)
+		
+	def blockTile(self, x, y):
+		self.collisionGrid.tiles[x][y] = 1
+		
+	def freeTile(self, x, y):
+		self.collisionGrid.tiles[x][y] = 0
+	
+	def revertTile(self, x, y):
+		self.collisionGrid.tiles[x][y] = self.collisionLayer.tiles[x][y]
+		
+	def addPlayer(self, player, x=None, y=None):
+		if x == None:
+			x = player.x
+			y = player.y
+		if player not in self.players:
+			self.players.append(player)
+			
+	def delPlayer(self, player):
+		self.players.remove(player)
+		
+		

@@ -9,7 +9,7 @@ from PodSixNet.Connection import connection, ConnectionListener
 from guiFunctions import ustr
 from gameEngine import *
 
-class Client(ConnectionListener):
+class GameClient(ConnectionListener):
 	def __init__(self, host, port):
 		self.Connect((host, port))
 		print "Chat client started"
@@ -17,8 +17,8 @@ class Client(ConnectionListener):
 		# get a nickname from the user before starting
 		print "Enter your nickname: ",
 		self.name = stdin.readline().rstrip("\n")
-		
-		connection.Send({"action": "nickname", "nickname": self.name})
+		self.id = self.name
+		connection.Send({"action": "nickname", "nickname": self.id})
 	
 	def Loop(self):
 		connection.Pump()
@@ -86,8 +86,13 @@ class Client(ConnectionListener):
 			self.addPlayer(name)
 			self.players[name].setPos(x, y)
 		
-	
-			
+	def Network_update_move(self, data):
+		name = data['who']
+		x = data['x']
+		y = data['y']
+		dx = data['dx']
+		dy = data['dy']
+		
 	# built in stuff
 
 	def Network_connected(self, data):
