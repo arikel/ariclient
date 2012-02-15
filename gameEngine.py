@@ -120,4 +120,10 @@ class Mob(Being, MapObject):
 		
 		self.setPos(x, y)
 		
+class Player(Being, MapObject):
+	def __init__(self, id, _map, x, y):
+		Being.__init__(self, id)
+		MapObject.__init__(self, id, _map)
+		self.mobile = True
 		
+		self.setPos(x, y)
