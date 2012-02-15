@@ -20,15 +20,16 @@ class Game(GameClient):
 	def __init__(self, host, port):
 		GameClient.__init__(self, host, port)
 		
-		self.players = {} # name : sprite
+		self.sprites = {}
 		
 		self.screen = pygame.display.set_mode((640,480))
 		
 		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
-		self.sprite = BaseSprite(self.name)
-		self.sprite.addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
-		self.sprite.setAnim("walk")
-		self.sprite.setPos(320,240)
+		
+		#self.sprite = BaseSprite(self.name)
+		#self.sprite.addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
+		#self.sprite.setAnim("walk")
+		#self.sprite.setPos(320,240)
 		
 		
 		# GUI
@@ -37,6 +38,9 @@ class Game(GameClient):
 		self.entry.setPos(5,460)
 		
 		self.kh = KeyHandler()
+		self.dx = 0
+		self.dy = 0
+		self.prevMove = (0,0)
 		
 		self.running = True
 		
@@ -47,19 +51,36 @@ class Game(GameClient):
 		
 		pygame.init()
 		
-	def addPlayer(self, name):
-		if name not in self.players and name != self.name:
-			self.players[name] = BaseSprite(name)
-			self.players[name].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
-			self.players[name].setAnim("walk")
-			self.players[name].setPos(320,240)
+	def addPlayer(self, id, x=5, y=5):
+		if id == "anonymous":
+			return
+		self.displayMap.addPlayer(Player(id, self.displayMap, x, y))
+		self.sprites[id] = BaseSprite(id)
+		self.sprites[id].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
+		self.sprites[id].setAnim("walk")
+		
+		#if name not in self.players and name != self.name:
+		#	self.players[name] = BaseSprite(name)
+		#	self.players[name].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
+		#	self.players[name].setAnim("walk")
+		#	self.players[name].setPos(320,240)
+		
+	def delPlayer(self, id):
+		del self.sprites[id]
+		self.displayMap.delPlayer(id)
 		
 	def update(self):
+		
 		t = pygame.time.get_ticks()
 		x, y = pygame.mouse.get_pos()
 		dt = t - self.prevTime
 		self.prevTime = t
-		#self.prevMove = (self.dx, self.dy)
+		self.prevMove = (self.dx, self.dy)
+		
+		if self.id not in self.displayMap.players:
+			# network
+			self.Loop()
+			return
 		
 		#print "dt = %s , mouv = %s" % (dt, self.speed*dt)
 		events = self.kh.getEvents()
@@ -68,9 +89,10 @@ class Game(GameClient):
 		# keyboard handling
 		#if self.kh.keyDict[pygame.K_ESCAPE] == 1:
 		#	self.running = False
-			
+		
+		'''
 		if self.kh.keyDict[pygame.K_z] and not self.entry.has_focus:
-			self.sprite.mapRect.y -= dt*self.speed
+			#self.sprite.mapRect.y -= dt*self.speed
 			moved = True
 		if self.kh.keyDict[pygame.K_s] and not self.entry.has_focus:
 			self.sprite.mapRect.y += dt*self.speed
@@ -81,6 +103,18 @@ class Game(GameClient):
 		if self.kh.keyDict[pygame.K_d] and not self.entry.has_focus:
 			self.sprite.mapRect.x += dt*self.speed
 			moved = True
+		'''
+		self.dx = self.kh.keyDict[pygame.K_d] - self.kh.keyDict[pygame.K_q]
+		self.dy = self.kh.keyDict[pygame.K_s] - self.kh.keyDict[pygame.K_z]
+		
+		if self.id in self.displayMap.players:
+			if not self.entry.has_focus:
+				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
+		
+			self.displayMap.players[self.id].update(dt)
+			
+			self.displayMap.offsetX = self.displayMap.players[self.id].mapRect.x-320
+			self.displayMap.offsetY = self.displayMap.players[self.id].mapRect.y-240
 		
 		self.chatWindow.handleEvents(x,y,events)
 		
@@ -105,19 +139,24 @@ class Game(GameClient):
 			print "message sent, losing focus"
 		
 		# game data
-		if moved and t>self.sendPosCooldown:
+		if (self.prevMove != (self.dx, self.dy)) or (t>self.sendPosCooldown):
 			self.sendPosCooldown = t+25
-			self.SendPosition()
+			self.SendPosition(self.displayMap.players[self.id].x, self.displayMap.players[self.id].y)
 			
-		self.displayMap.offsetX = self.sprite.mapRect.x-320
-		self.displayMap.offsetY = self.sprite.mapRect.y-240
+		
 		
 		self.displayMap.caleOffsets()
 		
 		# graphics 
 		#self.screen.fill((100,100,140))
-		spriteList = [self.sprite] + self.players.values()
+		#spriteList = [self.sprite] + self.sprites.values()
+		spriteList = self.sprites.values()
+		
 		for sprite in spriteList:
+			if sprite.id not in self.displayMap.players:
+				continue
+			posx, posy = self.displayMap.players[sprite.id].getPos()
+			sprite.setPos(posx, posy)
 			sprite.update(t)
 			sprite.setMapOffset(self.displayMap.offsetX, self.displayMap.offsetY)
 			

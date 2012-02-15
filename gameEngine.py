@@ -82,7 +82,7 @@ class MapObject:
 		self.dx = x # -1, 0, 1
 		self.dy = y
 
-	def update(dt=0.0):
+	def update(self, dt=0.0):
 		if self.mobile:
 			self.move(self.dx*dt, self.dy*dt)
 	
@@ -191,15 +191,19 @@ class MapBase:
 	
 	def revertTile(self, x, y):
 		self.collisionGrid.tiles[x][y] = self.collisionLayer.tiles[x][y]
+	
 		
 	def addPlayer(self, player, x=None, y=None):
 		if x == None:
 			x = player.x
 			y = player.y
-		if player not in self.players:
-			self.players.append(player)
-			
-	def delPlayer(self, player):
-		self.players.remove(player)
+		if player.id not in self.players:
+			self.players[player.id]=player
+			player._map = self
 		
+	def delPlayer(self, playerName):
+		del self.players[playerName]
 		
+	def update(self, dt):
+		for player in self.players:
+			player.update(dt)

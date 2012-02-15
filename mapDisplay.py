@@ -71,6 +71,8 @@ class GraphicMap(MapBase):
 		self.dragOriginOffset = (self.offsetX, self.offsetY)
 		self.dragging = False
 		
+		self.players = {}
+		
 	def blitTile(self, layerName, x, y):
 		gid = self.layers[layerName].tiles[x][y]
 		if gid>0:

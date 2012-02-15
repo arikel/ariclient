@@ -35,14 +35,14 @@ class GameClient(ConnectionListener):
 		connection.Send({"action": "private_message", "target" : target, "message": msg})
 		
 		
-	def SendPosition(self):
-		connection.Send({"action": "position", "message":"ok :(", "x":self.sprite.mapRect.x, "y":self.sprite.mapRect.y, "who":self.name})
+	def SendPosition(self, x, y):
+		connection.Send({"action": "position", "message":"ok :(", "x":x, "y":y, "who":self.id})
 		
-	def SendUpdateMove(self):
-		connection.Send({"action": "update_move", "message":" ", "x":self.sprite.mapRect.x, "y":self.sprite.mapRect.y, "who":self.name})
+	def SendUpdateMove(self, x, y, dx, dy):
+		connection.Send({"action": "update_move", "message":" ", "x":x, "y":y, "dx":dx, "dy": dy, "who":self.id})
 		
 	def SendLogin(self, password):
-		connection.Send({"action": "login", "message": " ", "name":self.name, "password" : password})
+		connection.Send({"action": "login", "message": " ", "id":self.id, "password" : password})
 		
 	#######################################
 	### Network event/message callbacks ###
@@ -54,12 +54,13 @@ class GameClient(ConnectionListener):
 	
 	def Network_players(self, data):
 		print "*** players: " + ", ".join([p for p in data['players']])
-		for player in data['players']:
-			if player not in self.players:
-				self.addPlayer(player)
-		for player in self.players.keys():
-			if player not in data['players']:
-				del self.players[player]
+		for playerId in data['players']:
+			if playerId not in self.displayMap.players:
+				self.addPlayer(playerId)
+		for playerId in self.displayMap.players.keys():
+			if playerId not in data['players']:
+				#del self.players[player]
+				self.delPlayer(playerId)
 				
 	def Network_message(self, data):
 		print data['who'] + ": " + data['message']
@@ -75,16 +76,16 @@ class GameClient(ConnectionListener):
 	def Network_position(self, data):
 		#print "received position msg : " + data['who'] + ": " + data['message']
 		#print "received pos : data = %s" % (data)
-		name = data['who']
+		id = data['who']
 		x = data['x']
 		y = data['y']
 		
-		if name in self.players:
-			self.players[name].setPos(x, y)
+		if id in self.displayMap.players:
+			self.displayMap.players[id].setPos(x, y)
 			#print "updated other player pos : %s, %s/%s" % (name, x, y)
-		elif name != self.name:
-			self.addPlayer(name)
-			self.players[name].setPos(x, y)
+		else:
+			self.displayMap.addPlayer(Player(id, x, y))
+			
 		
 	def Network_update_move(self, data):
 		name = data['who']
@@ -92,7 +93,13 @@ class GameClient(ConnectionListener):
 		y = data['y']
 		dx = data['dx']
 		dy = data['dy']
-		
+		if id in self.displayMap.players:
+			self.displayMap.players[id].setPos(x, y)
+			self.displayMap.players[id].setMovement(dx, dy)
+			#print "updated other player pos : %s, %s/%s" % (name, x, y)
+		else:
+			self.displayMap.addPlayer(Player(id, x, y))
+			self.displayMap.players[id].setMovement(dx, dy)
 	# built in stuff
 
 	def Network_connected(self, data):
