@@ -83,13 +83,14 @@ class MapObject:
 		self.dy = y
 
 	def update(self, dt=0.0):
-		if self.mobile:
+		if self.mobile and self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 	
-	def nextMovePossible(dt=0.0):
+	def nextMovePossible(self, dt=0.0):
 		if not self._map:
+			print "player has no map"
 			return False
-		if self._map.collidePos(self.x + self.dx*dt, self.y + self.dy*dt):
+		if self._map.posCollide(self.x + self.dx*self.speed*dt, self.y + self.dy*self.speed*dt):
 			return False
 		return True
 
@@ -176,7 +177,8 @@ class MapBase:
 		)
 		
 	def tileCollide(self, x, y): # tile position collide test
-		if self.collisionLayer.tiles[x][y]>0:
+		if self.collisionGrid.tiles[x][y]>0:
+			#print "%s / %s collides" % (x,y)
 			return True
 		return False
 		
@@ -200,7 +202,8 @@ class MapBase:
 		if player.id not in self.players:
 			self.players[player.id]=player
 			player._map = self
-		
+			self.players[player.id].setPos(x, y)
+			
 	def delPlayer(self, playerName):
 		del self.players[playerName]
 		

@@ -7,21 +7,22 @@ from gameEngine import *
 #-------------------------------------------------------------------------------
 class GraphicMap(MapBase):
 	def __init__(self, screen, filename):
+		MapBase.__init__(self, filename)
 		self.screen = screen
 		self.screenWidth = self.screen.get_width()
 		self.screenHeight = self.screen.get_height()
 		
-		self.filename = filename
-		self.mapData = TmxMapData()
-		self.mapData.load(self.filename)
+		#self.filename = filename
+		#self.mapData = TmxMapData()
+		#self.mapData.load(self.filename)
 		#print "Parsing Map done"
 		# map X Y
-		self.width = self.mapData.width
-		self.height = self.mapData.height
+		#self.width = self.mapData.width
+		#self.height = self.mapData.height
 		
 		# smallest tile dimensions
-		self.tileWidth = self.mapData.tileWidth
-		self.tileHeight = self.mapData.tileHeight
+		#self.tileWidth = self.mapData.tileWidth
+		#self.tileHeight = self.mapData.tileHeight
 		
 		
 		self.offsetX = 0

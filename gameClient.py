@@ -18,8 +18,9 @@ class GameClient(ConnectionListener):
 		print "Enter your nickname: ",
 		self.name = stdin.readline().rstrip("\n")
 		self.id = self.name
-		connection.Send({"action": "nickname", "nickname": self.id})
-	
+		connection.Send({"action": "nickname", "id": self.id})
+		print "asking connection with name = %s" % (self.id)
+		
 	def Loop(self):
 		connection.Pump()
 		self.Pump()
@@ -72,6 +73,8 @@ class GameClient(ConnectionListener):
 		
 	def Network_private_message(self, data):
 		print data['who'] + "(prv): " + data['message']
+		msg = "<" + data['who'] + " (prv)> " + data['message'].decode('utf-8')
+		self.chatWindow.addText(msg)
 		
 	def Network_position(self, data):
 		#print "received position msg : " + data['who'] + ": " + data['message']

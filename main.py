@@ -51,7 +51,7 @@ class Game(GameClient):
 		
 		pygame.init()
 		
-	def addPlayer(self, id, x=5, y=5):
+	def addPlayer(self, id, x=50.0, y=50.0):
 		if id == "anonymous":
 			return
 		self.displayMap.addPlayer(Player(id, self.displayMap, x, y))

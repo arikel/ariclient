@@ -28,9 +28,9 @@ class Animation(object):
 			self.frames.append(frame)
 			
 
-class BaseSprite(pygame.sprite.Sprite):
+class BaseSprite(object):
 	def __init__(self, id, tileWidth = 16, tileHeight = 16):
-		pygame.sprite.Sprite.__init__(self)
+		#pygame.sprite.Sprite.__init__(self)
 		self.id = id
 		self.name = self.id
 		
@@ -93,8 +93,12 @@ class BaseSprite(pygame.sprite.Sprite):
 			screen.blit(self.anim[self.currentAnim].frames[self.currentFrame], self.rect)
 			screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+66))
 			
+			screen.blit(
+				FONT.render("X", False, TEXTCOLOR),
+				(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
+			
 	def destroy(self):
-		self.kill()
+		pass
 			
 if __name__ == "__main__":
 	from utils import KeyHandler
