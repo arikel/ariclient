@@ -8,7 +8,7 @@ except:
 	print("module psyco NOT found.")
 
 import pygame
-from sprite import BaseSprite
+from sprite import BaseSprite, makePlayerSprite
 from mapDisplay import GraphicMap
 from gui import *
 from utils import KeyHandler
@@ -25,12 +25,6 @@ class Game(GameClient):
 		self.screen = pygame.display.set_mode((640,480))
 		
 		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
-		
-		#self.sprite = BaseSprite(self.name)
-		#self.sprite.addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
-		#self.sprite.setAnim("walk")
-		#self.sprite.setPos(320,240)
-		
 		
 		# GUI
 		self.chatWindow = ScrollTextWindow(0,360,640,100)
@@ -55,9 +49,10 @@ class Game(GameClient):
 		if id == "anonymous":
 			return
 		self.displayMap.addPlayer(Player(id, self.displayMap, x, y))
-		self.sprites[id] = BaseSprite(id)
-		self.sprites[id].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
-		self.sprites[id].setAnim("walk")
+		#self.sprites[id] = BaseSprite(id)
+		#self.sprites[id].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
+		#self.sprites[id].setAnim("walk")
+		self.sprites[id] = makePlayerSprite(id)
 		
 		#if name not in self.players and name != self.name:
 		#	self.players[name] = BaseSprite(name)
@@ -139,8 +134,35 @@ class Game(GameClient):
 		for sprite in spriteList:
 			#if sprite.id not in self.displayMap.players:
 			#	continue
-			posx, posy = self.displayMap.players[sprite.id].getPos()
+			player = self.displayMap.players[sprite.id]
+			posx, posy = player.getPos()
 			sprite.setPos(posx, posy)
+			
+			if player.dy == 1:
+				if player.dx == 1:
+					sprite.setAnim("walk-down-right")
+				elif player.dx == -1:
+					sprite.setAnim("walk-down-left")
+				else:
+					sprite.setAnim("walk-down")
+					
+			elif player.dy == -1:
+				if player.dx == 1:
+					sprite.setAnim("walk-up-right")
+				elif player.dx == -1:
+					sprite.setAnim("walk-up-left")
+				else:
+					sprite.setAnim("walk-up")
+			else:
+				if player.dx == -1:
+					sprite.setAnim("walk-left")
+				elif player.dx == 1:
+					sprite.setAnim("walk-right")
+				else:
+					if sprite.currentAnim:
+						if "walk" in sprite.currentAnim:
+							sprite.setAnim(sprite.currentAnim.replace("walk", "idle"))
+			
 			sprite.update(t)
 			sprite.setMapOffset(self.displayMap.offsetX, self.displayMap.offsetY)
 			

@@ -47,8 +47,8 @@ class BaseSprite(object):
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
 		
-	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20):
-		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime)
+	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
+		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
 		
 	def setAnim(self, animName):
 		if animName in self.anim:
@@ -56,7 +56,9 @@ class BaseSprite(object):
 			self.currentAnim = animName
 			self.rect.w = self.anim[self.currentAnim].w
 			self.rect.h = self.anim[self.currentAnim].h
-		
+			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
+				self.currentFrame = 0
+				
 	def setMapPos(self, x, y):
 		self.mapRect.x = x
 		self.mapRect.y = y
@@ -99,7 +101,29 @@ class BaseSprite(object):
 			
 	def destroy(self):
 		pass
-			
+
+def makePlayerSprite(name, tw=16, th=16):
+	sprite = BaseSprite(name, tw, th)
+	sprite.addAnim("walk-up", "graphics/sprites/male.png", 32, 128, 32,64,8,75)
+	sprite.addAnim("walk-down", "graphics/sprites/male.png", 32, 0, 32,64,8,75)
+	sprite.addAnim("walk-up-left", "graphics/sprites/male.png", 32, 128, 32,64,8,75)
+	sprite.addAnim("walk-up-right", "graphics/sprites/male.png", 32, 128, 32,64,8,75)
+	sprite.addAnim("walk-down-left", "graphics/sprites/male.png", 32, 0, 32,64,8,75)
+	sprite.addAnim("walk-down-right", "graphics/sprites/male.png", 32, 0, 32,64,8,75)
+	sprite.addAnim("walk-left", "graphics/sprites/male.png", 32, 64, 32,64,8,75)
+	sprite.addAnim("walk-right", "graphics/sprites/male.png", 32, 64, 32,64,8,75, True)
+	
+	sprite.addAnim("idle-up", "graphics/sprites/male.png", 0, 128, 32,64,1,75)
+	sprite.addAnim("idle-up-left", "graphics/sprites/male.png", 0, 128, 32,64,1,75)
+	sprite.addAnim("idle-up-right", "graphics/sprites/male.png", 0, 128, 32,64,1,75)
+	sprite.addAnim("idle-down", "graphics/sprites/male.png", 0, 0, 32,64,1,75)
+	sprite.addAnim("idle-down-left", "graphics/sprites/male.png", 0, 0, 32,64,1,75)
+	sprite.addAnim("idle-down-right", "graphics/sprites/male.png", 0, 0, 32,64,1,75)
+	sprite.addAnim("idle-left", "graphics/sprites/male.png", 0, 64, 32,64,1,75)
+	sprite.addAnim("idle-right", "graphics/sprites/male.png", 0, 64, 32,64,1,75, True)
+	
+	return sprite
+	
 if __name__ == "__main__":
 	from utils import KeyHandler
 	kh = KeyHandler()
