@@ -92,6 +92,8 @@ class GameClient(ConnectionListener):
 		
 	def Network_update_move(self, data):
 		id = data['who']
+		if id == self.id:
+			return
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
