@@ -51,13 +51,14 @@ class BaseSprite(object):
 		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
 		
 	def setAnim(self, animName):
-		if animName in self.anim:
+		if animName in self.anim and animName != self.currentAnim:
 			#self.currentAnim = self.anim[animName]
 			self.currentAnim = animName
 			self.rect.w = self.anim[self.currentAnim].w
 			self.rect.h = self.anim[self.currentAnim].h
 			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
 				self.currentFrame = 0
+			self.frameUpdateTime = 0
 				
 	def setMapPos(self, x, y):
 		self.mapRect.x = x
@@ -113,14 +114,14 @@ def makePlayerSprite(name, tw=16, th=16):
 	sprite.addAnim("walk-left", "graphics/sprites/male.png", 32, 64, 32,64,8,75)
 	sprite.addAnim("walk-right", "graphics/sprites/male.png", 32, 64, 32,64,8,75, True)
 	
-	sprite.addAnim("idle-up", "graphics/sprites/male.png", 0, 128, 32,64,1,75)
-	sprite.addAnim("idle-up-left", "graphics/sprites/male.png", 0, 128, 32,64,1,75)
-	sprite.addAnim("idle-up-right", "graphics/sprites/male.png", 0, 128, 32,64,1,75)
-	sprite.addAnim("idle-down", "graphics/sprites/male.png", 0, 0, 32,64,1,75)
-	sprite.addAnim("idle-down-left", "graphics/sprites/male.png", 0, 0, 32,64,1,75)
-	sprite.addAnim("idle-down-right", "graphics/sprites/male.png", 0, 0, 32,64,1,75)
-	sprite.addAnim("idle-left", "graphics/sprites/male.png", 0, 64, 32,64,1,75)
-	sprite.addAnim("idle-right", "graphics/sprites/male.png", 0, 64, 32,64,1,75, True)
+	sprite.addAnim("idle-up", "graphics/sprites/male.png", 0, 128, 32,64,1,7500)
+	sprite.addAnim("idle-up-left", "graphics/sprites/male.png", 0, 128, 32,64,1,7500)
+	sprite.addAnim("idle-up-right", "graphics/sprites/male.png", 0, 128, 32,64,1,7500)
+	sprite.addAnim("idle-down", "graphics/sprites/male.png", 0, 0, 32,64,1,7500)
+	sprite.addAnim("idle-down-left", "graphics/sprites/male.png", 0, 0, 32,64,1,7500)
+	sprite.addAnim("idle-down-right", "graphics/sprites/male.png", 0, 0, 32,64,1,7500)
+	sprite.addAnim("idle-left", "graphics/sprites/male.png", 0, 64, 32,64,1,7500)
+	sprite.addAnim("idle-right", "graphics/sprites/male.png", 0, 64, 32,64,1,7500, True)
 	
 	return sprite
 	
