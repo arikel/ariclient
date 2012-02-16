@@ -88,7 +88,7 @@ class GameClient(ConnectionListener):
 			
 		
 	def Network_update_move(self, data):
-		name = data['who']
+		id = data['who']
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
@@ -100,6 +100,8 @@ class GameClient(ConnectionListener):
 		else:
 			self.displayMap.addPlayer(Player(id, x, y))
 			self.displayMap.players[id].setMovement(dx, dy)
+			
+		print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 	# built in stuff
 
 	def Network_connected(self, data):

@@ -47,7 +47,7 @@ class Game(GameClient):
 		self.sendPosCooldown = 0.0
 		
 		self.prevTime = 0.0
-		self.speed = 0.2
+		self.speed = 0.01
 		
 		pygame.init()
 		
@@ -87,49 +87,35 @@ class Game(GameClient):
 		moved = False
 		
 		# keyboard handling
-		#if self.kh.keyDict[pygame.K_ESCAPE] == 1:
-		#	self.running = False
 		
-		'''
-		if self.kh.keyDict[pygame.K_z] and not self.entry.has_focus:
-			#self.sprite.mapRect.y -= dt*self.speed
-			moved = True
-		if self.kh.keyDict[pygame.K_s] and not self.entry.has_focus:
-			self.sprite.mapRect.y += dt*self.speed
-			moved = True
-		if self.kh.keyDict[pygame.K_q] and not self.entry.has_focus:
-			self.sprite.mapRect.x -= dt*self.speed
-			moved = True
-		if self.kh.keyDict[pygame.K_d] and not self.entry.has_focus:
-			self.sprite.mapRect.x += dt*self.speed
-			moved = True
-		'''
+		# player direction
 		self.dx = self.kh.keyDict[pygame.K_d] - self.kh.keyDict[pygame.K_q]
 		self.dy = self.kh.keyDict[pygame.K_s] - self.kh.keyDict[pygame.K_z]
 		
-		if self.id in self.displayMap.players:
-			if not self.entry.has_focus:
-				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
-		
-			self.displayMap.players[self.id].update(dt)
+		if not self.entry.has_focus:
 			
-			self.displayMap.offsetX = self.displayMap.players[self.id].mapRect.x-320
-			self.displayMap.offsetY = self.displayMap.players[self.id].mapRect.y-240
+			#self.displayMap.players[self.id].update(dt)
+			if (self.prevMove != (self.dx, self.dy)):# or (t>self.sendPosCooldown):
+				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
+				#self.sendPosCooldown = t+25
+				#print "Player direction changed from %s to %s/%s" % (self.prevMove, self.dx, self.dy)
+				self.SendUpdateMove(self.displayMap.players[self.id].x, self.displayMap.players[self.id].y, self.dx, self.dy)
+				
+		self.displayMap.offsetX = self.displayMap.players[self.id].mapRect.x-320
+		self.displayMap.offsetY = self.displayMap.players[self.id].mapRect.y-240
+		self.displayMap.update(dt)
 		
 		self.chatWindow.handleEvents(x,y,events)
 		
-			
 		for event in events:
 			if event.type == pygame.KEYDOWN:
 				key = event.key
 					
 				if key == pygame.K_ESCAPE and not self.entry.has_focus:
 					print "Escape and no typing : quit"
-					pygame.quit()
+					#pygame.quit()
+					self.running = False
 				
-				#if key == pygame.K_t and not self.entry.has_focus:
-				#	self.entry.has_focus = True
-		
 		res = self.entry.handleInput(events)
 		
 		if res:
@@ -139,9 +125,7 @@ class Game(GameClient):
 			print "message sent, losing focus"
 		
 		# game data
-		if (self.prevMove != (self.dx, self.dy)) or (t>self.sendPosCooldown):
-			self.sendPosCooldown = t+25
-			self.SendPosition(self.displayMap.players[self.id].x, self.displayMap.players[self.id].y)
+		
 			
 		
 		
@@ -153,8 +137,8 @@ class Game(GameClient):
 		spriteList = self.sprites.values()
 		
 		for sprite in spriteList:
-			if sprite.id not in self.displayMap.players:
-				continue
+			#if sprite.id not in self.displayMap.players:
+			#	continue
 			posx, posy = self.displayMap.players[sprite.id].getPos()
 			sprite.setPos(posx, posy)
 			sprite.update(t)
@@ -188,3 +172,4 @@ if __name__=="__main__":
 		
 		if not g.running:
 			running = False
+	pygame.quit()
