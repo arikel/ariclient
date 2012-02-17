@@ -104,7 +104,7 @@ class GameClient(ConnectionListener):
 			self.displayMap.players[id].setMovement(dx, dy)
 			#print "updated other player pos : %s, %s/%s" % (name, x, y)
 		else:
-			self.displayMap.addPlayer(Player(id, x, y))
+			self.addPlayer(Player(id, x, y))
 			self.displayMap.players[id].setMovement(dx, dy)
 			
 		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
