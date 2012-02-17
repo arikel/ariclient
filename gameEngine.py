@@ -133,19 +133,21 @@ class Mob(Being, MapObject):
 		self.mobId = mobId
 		self.setPos(x, y)
 		self.timer = 0
+		self.state = "idle"
+		self.speed = 0.05
 		
 	def update(self, dt=0.0):
 		self.timer += dt
 		#print "--- mob %s updating movement :"
-		if self.mobile and self.nextMovePossible(dt):
+		if self.mobile and self.nextMovePossible(dt) and (self.dx!=0 or self.dy!=0):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 			#print "we moved ok..."
 			return False
-		elif self.mobile and self.timer > 5000:
+		if self.mobile and self.timer > 2000:
 			self.timer = 0
 			self.dx = random.randint(1,3) -2
 			self.dy = random.randint(1,3) -2
-			#print "mob %s changing movement %s / %s" % (self.id, self.dx, self.dy)
+			print "mob %s changing movement %s / %s" % (self.id, self.dx, self.dy)
 			return True
 		return False
 		
@@ -234,7 +236,7 @@ class MapBase:
 			mob._map = self
 			self.mobs[mob.id].setPos(x, y)
 	
-	def delPlayer(self, mobId):
+	def delMob(self, mobId):
 		del self.mobs[mobId]
 		
 	def update(self, dt):

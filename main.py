@@ -171,7 +171,7 @@ class Game(GameClient):
 		self.displayMap.blitLayer("ground")
 		self.displayMap.blitSpritesAndFringe(spriteList)
 		self.displayMap.blitLayer("over")
-		self.displayMap.blitLayer("collision")
+		#self.displayMap.blitLayer("collision")
 		
 		# gui
 		self.chatWindow.updateSurface(x,y)
