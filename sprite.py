@@ -125,6 +125,29 @@ def makePlayerSprite(name, tw=16, th=16):
 	
 	return sprite
 	
+def makeMobSprite(name, tw=16, th=16):
+	print "created mob sprite : %s" % (name)
+	sprite = BaseSprite(name, tw, th)
+	sprite.addAnim("walk-up", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
+	sprite.addAnim("walk-down", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
+	sprite.addAnim("walk-up-left", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
+	sprite.addAnim("walk-up-right", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
+	sprite.addAnim("walk-down-left", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
+	sprite.addAnim("walk-down-right", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
+	sprite.addAnim("walk-left", "graphics/sprites/mob.png", 32, 64, 32,64,8,75)
+	sprite.addAnim("walk-right", "graphics/sprites/mob.png", 32, 64, 32,64,8,75, True)
+	
+	sprite.addAnim("idle-up", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
+	sprite.addAnim("idle-up-left", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
+	sprite.addAnim("idle-up-right", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
+	sprite.addAnim("idle-down", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
+	sprite.addAnim("idle-down-left", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
+	sprite.addAnim("idle-down-right", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
+	sprite.addAnim("idle-left", "graphics/sprites/mob.png", 0, 64, 32,64,1,7500)
+	sprite.addAnim("idle-right", "graphics/sprites/mob.png", 0, 64, 32,64,1,7500, True)
+	
+	return sprite
+	
 if __name__ == "__main__":
 	from utils import KeyHandler
 	kh = KeyHandler()

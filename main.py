@@ -8,7 +8,7 @@ except:
 	print("module psyco NOT found.")
 
 import pygame
-from sprite import BaseSprite, makePlayerSprite
+from sprite import BaseSprite, makePlayerSprite, makeMobSprite
 from mapDisplay import GraphicMap
 from gui import *
 from utils import KeyHandler
@@ -49,16 +49,12 @@ class Game(GameClient):
 		if id == "anonymous":
 			return
 		self.displayMap.addPlayer(Player(id, self.displayMap, x, y))
-		#self.sprites[id] = BaseSprite(id)
-		#self.sprites[id].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
-		#self.sprites[id].setAnim("walk")
 		self.sprites[id] = makePlayerSprite(id)
 		
-		#if name not in self.players and name != self.name:
-		#	self.players[name] = BaseSprite(name)
-		#	self.players[name].addAnim("walk", "graphics/sprites/male0.png", 0, 0, 32,64,8,75)
-		#	self.players[name].setAnim("walk")
-		#	self.players[name].setPos(320,240)
+	def addMob(self, id, x=50.0, y=50.0):
+		print "adding mob %s" % (id)
+		self.displayMap.addMob(Mob(id, 1, self.displayMap, x, y))
+		self.sprites[id] = makeMobSprite(id)
 		
 	def delPlayer(self, id):
 		del self.sprites[id]
@@ -114,8 +110,9 @@ class Game(GameClient):
 		res = self.entry.handleInput(events)
 		
 		if res:
-			msg = "<" + self.name + "> " + res
-			self.SendMessagePublic(msg)
+			#msg = "<" + self.name + "> " + res
+			#self.SendMessagePublic(msg)
+			self.SendMessagePublic(res)
 			self.entry.has_focus = False
 			print "message sent, losing focus"
 		
@@ -134,7 +131,12 @@ class Game(GameClient):
 		for sprite in spriteList:
 			#if sprite.id not in self.displayMap.players:
 			#	continue
-			player = self.displayMap.players[sprite.id]
+			if sprite.id in self.displayMap.players:
+				player = self.displayMap.players[sprite.id]
+			elif sprite.id in self.displayMap.mobs:
+				player = self.displayMap.mobs[sprite.id]
+			else:
+				continue
 			posx, posy = player.getPos()
 			sprite.setPos(posx, posy)
 			

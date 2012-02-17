@@ -69,7 +69,9 @@ class GameClient(ConnectionListener):
 		
 	def Network_public_message(self, data):
 		print data['who'] + ": " + data['message']
-		self.chatWindow.addText(data['message'].decode('utf-8'))
+		msg = "<" + data['who'] + "> " + data['message'].decode('utf-8')
+		self.chatWindow.addText(msg)
+		#self.chatWindow.addText(data['message'].decode('utf-8'))
 		
 	def Network_private_message(self, data):
 		print data['who'] + "(prv): " + data['message']
@@ -92,8 +94,7 @@ class GameClient(ConnectionListener):
 		
 	def Network_update_move(self, data):
 		id = data['who']
-		if id == self.id:
-			return
+		if id == self.id:return
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
@@ -106,7 +107,24 @@ class GameClient(ConnectionListener):
 			self.displayMap.addPlayer(Player(id, x, y))
 			self.displayMap.players[id].setMovement(dx, dy)
 			
-		print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+		
+	def Network_mob_update_move(self, data):
+		id = data['id']
+		if id == self.id:return
+		x = data['x']
+		y = data['y']
+		dx = data['dx']
+		dy = data['dy']
+		if id in self.displayMap.mobs:
+			self.displayMap.mobs[id].setPos(x, y)
+			self.displayMap.mobs[id].setMovement(dx, dy)
+			#print "known mob pos : %s, %s/%s, %s/%s" % (id, x, y, dx, dy)
+		else:
+			self.addMob(id, x, y)
+			self.displayMap.mobs[id].setMovement(dx, dy)
+			print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
+		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 	# built in stuff
 
 	def Network_connected(self, data):

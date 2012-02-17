@@ -12,19 +12,6 @@ class GraphicMap(MapBase):
 		self.screenWidth = self.screen.get_width()
 		self.screenHeight = self.screen.get_height()
 		
-		#self.filename = filename
-		#self.mapData = TmxMapData()
-		#self.mapData.load(self.filename)
-		#print "Parsing Map done"
-		# map X Y
-		#self.width = self.mapData.width
-		#self.height = self.mapData.height
-		
-		# smallest tile dimensions
-		#self.tileWidth = self.mapData.tileWidth
-		#self.tileHeight = self.mapData.tileHeight
-		
-		
 		self.offsetX = 0
 		self.offsetY = 0
 		
@@ -73,6 +60,7 @@ class GraphicMap(MapBase):
 		self.dragging = False
 		
 		self.players = {}
+		self.mobs = {}
 		
 	def blitTile(self, layerName, x, y):
 		gid = self.layers[layerName].tiles[x][y]
@@ -192,19 +180,7 @@ class GraphicMap(MapBase):
 				if (X, Y) in spriteTileCoordDic:
 					for sprite in spriteTileCoordDic[(X, Y)]:
 						sprite.blit(self.screen)
-						
-	
-	'''				
-	def collideTile(self, X, Y):
-		#if (X, Y) in self.layers["collision"].tiles:
-		if self.layers['collision'].tiles[X][Y]>0:
-			return True
-		return False
-	
-	def collideMap(self, x, y):
-		X, Y = x/self.tileWidth, y/self.tileHeight
-		return self.collideTile(X, Y)
-	'''
+
 	
 	def startDrag(self, x, y):
 		self.dragging = True
