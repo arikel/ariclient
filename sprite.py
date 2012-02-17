@@ -75,7 +75,8 @@ class BaseSprite(object):
 	
 	def setMapOffset(self, x, y):
 		self.rect.x = self.mapRect.x - x - self.rect.w/2
-		self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
+		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
+		self.rect.y = self.mapRect.y - y - self.rect.h
 	
 	def update(self, t=None):
 		if t == None:
