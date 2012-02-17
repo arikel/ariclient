@@ -137,12 +137,13 @@ class Mob(Being, MapObject):
 		self.speed = 0.05
 		
 	def update(self, dt=0.0):
-		self.timer += dt
+		#self.timer += dt
 		#print "--- mob %s updating movement :"
 		if self.mobile and self.nextMovePossible(dt) and (self.dx!=0 or self.dy!=0):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 			#print "we moved ok..."
 			return False
+		'''
 		if self.mobile and self.timer > 2000:
 			self.timer = 0
 			self.dx = random.randint(1,3) -2
@@ -150,7 +151,7 @@ class Mob(Being, MapObject):
 			print "mob %s changing movement %s / %s" % (self.id, self.dx, self.dy)
 			return True
 		return False
-		
+		'''
 class Player(Being, MapObject):
 	def __init__(self, id, _map, x, y):
 		Being.__init__(self, id)
