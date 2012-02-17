@@ -15,6 +15,7 @@ from utils import KeyHandler
 from gameEngine import *
 from gameClient import GameClient
 
+from config import *
 
 class Game(GameClient):
 	def __init__(self, host, port):
@@ -22,14 +23,14 @@ class Game(GameClient):
 		
 		self.sprites = {}
 		
-		self.screen = pygame.display.set_mode((640,480))
+		self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 		
 		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
 		
 		# GUI
-		self.chatWindow = ScrollTextWindow(0,360,640,100)
+		self.chatWindow = ScrollTextWindow(0,SCREEN_HEIGHT-120,SCREEN_WIDTH,100)
 		self.entry = TextEntry("")
-		self.entry.setPos(5,460)
+		self.entry.setPos(5,SCREEN_HEIGHT-20)
 		
 		self.kh = KeyHandler()
 		self.dx = 0
@@ -48,8 +49,11 @@ class Game(GameClient):
 	def addPlayer(self, id, x=50.0, y=50.0):
 		if id == "anonymous":
 			return
+		print "adding player to map : %s" % (id)
 		self.displayMap.addPlayer(Player(id, self.displayMap, x, y))
 		self.sprites[id] = makePlayerSprite(id)
+		self.displayMap.players[id].setMovement(1, 1)
+		self.displayMap.players[id].setMovement(0, 0)
 		
 	def addMob(self, id, x=50.0, y=50.0):
 		print "adding mob %s" % (id)
@@ -133,6 +137,7 @@ class Game(GameClient):
 			#	continue
 			if sprite.id in self.displayMap.players:
 				player = self.displayMap.players[sprite.id]
+				#print "blitting player : %s" % (sprite.id)
 			elif sprite.id in self.displayMap.mobs:
 				player = self.displayMap.mobs[sprite.id]
 			else:

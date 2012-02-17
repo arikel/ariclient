@@ -38,7 +38,7 @@ class BaseSprite(object):
 		self.mapRect = pygame.Rect(0,0,1,1) # map position
 		
 		self.anim = {}
-		self.currentAnim = None
+		self.currentAnim = "idle-down"
 		self.currentFrame = 0
 		self.frameUpdateTime = 0
 		
