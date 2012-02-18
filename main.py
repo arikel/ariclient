@@ -87,8 +87,8 @@ class Game(GameClient):
 		# keyboard handling
 		
 		# player direction
-		self.dx = self.kh.keyDict[pygame.K_d] - self.kh.keyDict[pygame.K_q]
-		self.dy = self.kh.keyDict[pygame.K_s] - self.kh.keyDict[pygame.K_z]
+		self.dx = self.kh.keyDict[KEY_RIGHT] - self.kh.keyDict[KEY_LEFT]
+		self.dy = self.kh.keyDict[KEY_DOWN] - self.kh.keyDict[KEY_UP]
 		
 		if not self.entry.has_focus:
 			
