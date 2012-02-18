@@ -8,6 +8,9 @@ except:
 	print("module psyco NOT found.")
 
 import pygame
+from config import *
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
 from mapDisplay import GraphicMap
 from gui import *
@@ -15,7 +18,7 @@ from utils import KeyHandler
 from gameEngine import *
 from gameClient import GameClient
 
-from config import *
+
 
 class Game(GameClient):
 	def __init__(self, host, port):
@@ -23,8 +26,8 @@ class Game(GameClient):
 		
 		self.sprites = {}
 		
-		self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-		
+		#self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+		self.screen = SCREEN
 		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
 		
 		# GUI
@@ -110,6 +113,11 @@ class Game(GameClient):
 					print "Escape and no typing : quit"
 					#pygame.quit()
 					self.running = False
+			
+			if event.type == pygame.QUIT:
+				print "Ah on appuie sur la croix?!"
+				#pygame.quit()
+				self.running = False
 				
 		res = self.entry.handleInput(events)
 		

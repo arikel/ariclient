@@ -2,7 +2,16 @@
 # -*- coding: utf8 -*-
 
 import pygame
-from gui import *
+from gui import FONT, TEXTCOLOR, BGCOLOR
+
+ImgDB = {}
+pathList = []
+pathList.append("graphics/sprites/male.png")
+pathList.append("graphics/sprites/mob.png")
+#pathList.append("graphics/sprites/female.png")
+
+for imgPath in pathList:
+	ImgDB[imgPath] = pygame.image.load(imgPath).convert_alpha()
 
 class Animation(object):
 	def __init__(self, id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored = False):
@@ -14,7 +23,10 @@ class Animation(object):
 		self.nbFrames = nbFrames
 		self.frameTime = frameTime
 		
-		img = pygame.image.load(imgPath).convert_alpha()
+		if imgPath in ImgDB:
+			img = ImgDB[imgPath]
+		else:
+			img = pygame.image.load(imgPath).convert_alpha()
 		#print "image loaded, rect = %s" % (img.get_rect())
 		self.frames = []
 		for i in range(self.nbFrames):
@@ -77,6 +89,7 @@ class BaseSprite(object):
 		self.rect.x = self.mapRect.x - x - self.rect.w/2
 		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
 		self.rect.y = self.mapRect.y - y - self.rect.h
+		
 	
 	def update(self, t=None):
 		if t == None:
@@ -106,24 +119,28 @@ class BaseSprite(object):
 
 def makePlayerSprite(name, tw=16, th=16):
 	sprite = BaseSprite(name, tw, th)
-	sprite.addAnim("walk-up", "graphics/sprites/male.png", 32, 128, 32,64,8,75)
-	sprite.addAnim("walk-down", "graphics/sprites/male.png", 32, 0, 32,64,8,75)
-	sprite.addAnim("walk-up-left", "graphics/sprites/male.png", 32, 128, 32,64,8,75)
-	sprite.addAnim("walk-up-right", "graphics/sprites/male.png", 32, 128, 32,64,8,75)
-	sprite.addAnim("walk-down-left", "graphics/sprites/male.png", 32, 0, 32,64,8,75)
-	sprite.addAnim("walk-down-right", "graphics/sprites/male.png", 32, 0, 32,64,8,75)
-	sprite.addAnim("walk-left", "graphics/sprites/male.png", 32, 64, 32,64,8,75)
-	sprite.addAnim("walk-right", "graphics/sprites/male.png", 32, 64, 32,64,8,75, True)
+	if name == "ptitnem":
+		imgPath = "graphics/sprites/female.png"
+	else:
+		imgPath = "graphics/sprites/male.png"
+		
+	sprite.addAnim("walk-up", imgPath, 0, 0, 24,32,4,150)
+	sprite.addAnim("walk-down", imgPath, 0, 64, 24,32,4,150)
+	sprite.addAnim("walk-left", imgPath, 0, 32, 24,32,4,150, True)
+	sprite.addAnim("walk-right", imgPath, 0, 32, 24,32,4,150)
+	sprite.anim["walk-up-left"]=sprite.anim["walk-up"]
+	sprite.anim["walk-up-right"]=sprite.anim["walk-up"]
+	sprite.anim["walk-down-left"]=sprite.anim["walk-down"]
+	sprite.anim["walk-down-right"]=sprite.anim["walk-down"]
 	
-	sprite.addAnim("idle-up", "graphics/sprites/male.png", 0, 128, 32,64,1,7500)
-	sprite.addAnim("idle-up-left", "graphics/sprites/male.png", 0, 128, 32,64,1,7500)
-	sprite.addAnim("idle-up-right", "graphics/sprites/male.png", 0, 128, 32,64,1,7500)
-	sprite.addAnim("idle-down", "graphics/sprites/male.png", 0, 0, 32,64,1,7500)
-	sprite.addAnim("idle-down-left", "graphics/sprites/male.png", 0, 0, 32,64,1,7500)
-	sprite.addAnim("idle-down-right", "graphics/sprites/male.png", 0, 0, 32,64,1,7500)
-	sprite.addAnim("idle-left", "graphics/sprites/male.png", 0, 64, 32,64,1,7500)
-	sprite.addAnim("idle-right", "graphics/sprites/male.png", 0, 64, 32,64,1,7500, True)
-	
+	sprite.addAnim("idle-up", imgPath, 24, 0, 24,32,1,7500)
+	sprite.addAnim("idle-down", imgPath, 24, 64, 24,32,1,7500)
+	sprite.addAnim("idle-left", imgPath, 24, 32, 24,32,1,7500, True)
+	sprite.addAnim("idle-right", imgPath, 24, 32, 24,32,1,7500)
+	sprite.anim["idle-up-left"]=sprite.anim["idle-up"]
+	sprite.anim["idle-up-right"]=sprite.anim["idle-up"]
+	sprite.anim["idle-down-left"]=sprite.anim["idle-down"]
+	sprite.anim["idle-down-right"]=sprite.anim["idle-down"]
 	return sprite
 	
 def makeMobSprite(name, tw=16, th=16):
@@ -131,21 +148,21 @@ def makeMobSprite(name, tw=16, th=16):
 	sprite = BaseSprite(name, tw, th)
 	sprite.addAnim("walk-up", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
 	sprite.addAnim("walk-down", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
-	sprite.addAnim("walk-up-left", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
-	sprite.addAnim("walk-up-right", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
-	sprite.addAnim("walk-down-left", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
-	sprite.addAnim("walk-down-right", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
 	sprite.addAnim("walk-left", "graphics/sprites/mob.png", 32, 64, 32,64,8,75)
 	sprite.addAnim("walk-right", "graphics/sprites/mob.png", 32, 64, 32,64,8,75, True)
+	sprite.anim["walk-up-left"]=sprite.anim["walk-up"]
+	sprite.anim["walk-up-right"]=sprite.anim["walk-up"]
+	sprite.anim["walk-down-left"]=sprite.anim["walk-down"]
+	sprite.anim["walk-down-right"]=sprite.anim["walk-down"]
 	
 	sprite.addAnim("idle-up", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
-	sprite.addAnim("idle-up-left", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
-	sprite.addAnim("idle-up-right", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
 	sprite.addAnim("idle-down", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
-	sprite.addAnim("idle-down-left", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
-	sprite.addAnim("idle-down-right", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
 	sprite.addAnim("idle-left", "graphics/sprites/mob.png", 0, 64, 32,64,1,7500)
 	sprite.addAnim("idle-right", "graphics/sprites/mob.png", 0, 64, 32,64,1,7500, True)
+	sprite.anim["idle-up-left"]=sprite.anim["idle-up"]
+	sprite.anim["idle-up-right"]=sprite.anim["idle-up"]
+	sprite.anim["idle-down-left"]=sprite.anim["idle-down"]
+	sprite.anim["idle-down-right"]=sprite.anim["idle-down"]
 	
 	return sprite
 	

@@ -15,7 +15,6 @@ TEXTCOLOR = (200,200,200)
 BORDERCOLOR = TEXTCOLOR
 TEXTCOLORHOVER = (255,255,255)
 
-GuiImgDB = {}
 GuiBaseImg = pygame.image.load("graphics/gui/guibase.png")
 
 MIN_CARRET_SIZE = 5
