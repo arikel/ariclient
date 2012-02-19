@@ -12,14 +12,14 @@ from gameEngine import *
 class GameClient(ConnectionListener):
 	def __init__(self, host, port):
 		self.Connect((host, port))
-		print "Chat client started"
-		print "Ctrl-C to exit"
+		print "ariclient started"
+		
 		# get a nickname from the user before starting
-		print "Enter your nickname: ",
-		self.name = stdin.readline().rstrip("\n")
-		self.id = self.name
-		connection.Send({"action": "nickname", "id": self.id})
-		print "asking connection with name = %s" % (self.id)
+		#print "Enter your nickname: ",
+		#self.name = stdin.readline().rstrip("\n")
+		#self.id = self.name
+		#connection.Send({"action": "nickname", "id": self.id})
+		#print "asking connection with name = %s" % (self.id)
 		
 	def Loop(self):
 		connection.Pump()

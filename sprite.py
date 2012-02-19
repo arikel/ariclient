@@ -108,11 +108,11 @@ class BaseSprite(object):
 	def blit(self, screen):
 		if self.currentAnim:
 			screen.blit(self.anim[self.currentAnim].frames[self.currentFrame], self.rect)
-			screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+66))
+			screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+self.rect.h+2))
 			
-			screen.blit(
-				FONT.render("X", False, TEXTCOLOR),
-				(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
+			#screen.blit(
+			#	FONT.render("o", False, TEXTCOLOR),
+			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
 			
 	def destroy(self):
 		pass
@@ -144,7 +144,7 @@ def makePlayerSprite(name, tw=16, th=16):
 	return sprite
 	
 def makeMobSprite(name, tw=16, th=16):
-	print "created mob sprite : %s" % (name)
+	#print "created mob sprite : %s" % (name)
 	sprite = BaseSprite(name, tw, th)
 	sprite.addAnim("walk-up", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
 	sprite.addAnim("walk-down", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)

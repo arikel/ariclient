@@ -9,6 +9,7 @@ except:
 
 import pygame
 from config import *
+
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
@@ -22,12 +23,20 @@ from gameClient import GameClient
 
 class Game(GameClient):
 	def __init__(self, host, port):
+		self.screen = SCREEN
+		pygame.init()
+		
+		self.loginScreen = LoginScreen()
+		self.id = self.loginScreen.launch(self.screen)
+		
 		GameClient.__init__(self, host, port)
+		
+		self.Send({"action": "nickname", "id": self.id})
 		
 		self.sprites = {}
 		
 		#self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-		self.screen = SCREEN
+		
 		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
 		
 		# GUI
@@ -47,7 +56,7 @@ class Game(GameClient):
 		self.prevTime = 0.0
 		self.speed = 0.01
 		
-		pygame.init()
+		
 		
 	def addPlayer(self, id, x=50.0, y=50.0):
 		if id == "anonymous":
@@ -76,6 +85,7 @@ class Game(GameClient):
 		self.prevMove = (self.dx, self.dy)
 		
 		if self.id not in self.displayMap.players:
+			#print "not connected to map"
 			# network
 			self.Loop()
 			return
@@ -110,12 +120,14 @@ class Game(GameClient):
 				key = event.key
 					
 				if key == pygame.K_ESCAPE and not self.entry.has_focus:
-					print "Escape and no typing : quit"
+					#print "Escape and no typing : quit"
 					#pygame.quit()
 					self.running = False
-			
+				if key == pygame.K_RETURN and not self.entry.has_focus:
+					#print "Starting to type text..."
+					self.entry.getFocus()
+				
 			if event.type == pygame.QUIT:
-				print "Ah on appuie sur la croix?!"
 				#pygame.quit()
 				self.running = False
 				
@@ -126,7 +138,7 @@ class Game(GameClient):
 			#self.SendMessagePublic(msg)
 			self.SendMessagePublic(res)
 			self.entry.has_focus = False
-			print "message sent, losing focus"
+			#print "message sent, losing focus"
 		
 		# game data
 		
@@ -186,7 +198,7 @@ class Game(GameClient):
 		self.displayMap.blitLayer("over")
 		#self.displayMap.blitLayer("collision")
 		
-		# gui
+		# gui display
 		self.chatWindow.updateSurface(x,y)
 		self.entry.updateSurface()
 		
@@ -202,7 +214,7 @@ class Game(GameClient):
 		
 if __name__=="__main__":
 	running = True
-	g = Game('88.173.217.230', 18647)
+	g = Game(SERVER_ADDRESS, SERVER_PORT)
 	
 	while running:
 		g.update()
