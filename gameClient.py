@@ -36,9 +36,6 @@ class GameClient(ConnectionListener):
 		connection.Send({"action": "private_message", "target" : target, "message": msg})
 		
 		
-	def SendPosition(self, x, y):
-		connection.Send({"action": "position", "message":"ok :(", "x":x, "y":y, "who":self.id})
-		
 	def SendUpdateMove(self, x, y, dx, dy):
 		connection.Send({"action": "update_move", "message":" ", "x":x, "y":y, "dx":dx, "dy": dy, "who":self.id})
 		
@@ -50,7 +47,7 @@ class GameClient(ConnectionListener):
 	#######################################
 	
 	#-------------------------------------------------------------------
-	# on client receive from server self.nickname :
+	# on client receive from server :
 	#-------------------------------------------------------------------
 	
 	def Network_players(self, data):
@@ -78,19 +75,6 @@ class GameClient(ConnectionListener):
 		msg = "<" + data['who'] + " (prv)> " + data['message'].decode('utf-8')
 		self.chatWindow.addText(msg)
 		
-	def Network_position(self, data):
-		#print "received position msg : " + data['who'] + ": " + data['message']
-		#print "received pos : data = %s" % (data)
-		id = data['who']
-		x = data['x']
-		y = data['y']
-		
-		if id in self.displayMap.players:
-			self.displayMap.players[id].setPos(x, y)
-			#print "updated other player pos : %s, %s/%s" % (name, x, y)
-		else:
-			self.displayMap.addPlayer(Player(id, x, y))
-			
 		
 	def Network_update_move(self, data):
 		id = data['who']
@@ -107,7 +91,7 @@ class GameClient(ConnectionListener):
 			self.addPlayer(id, x, y)
 			self.displayMap.players[id].setMovement(dx, dy)
 			
-		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+		print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 		
 	def Network_mob_update_move(self, data):
 		id = data['id']

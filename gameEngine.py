@@ -59,7 +59,7 @@ class MapObject:
 		# movement
 		self.dx = 0.0
 		self.dy = 0.0
-		self.speed = 0.2
+		self.speed = 0.1
 		self.mobile = False
 		
 		self.currentAnim = "idle"
@@ -249,7 +249,7 @@ class MapBase:
 			x = mob.x
 			y = mob.y
 		if mob.id not in self.mobs:
-			print "Engine : adding mob : %s -> %s" % (mob.id, mob)
+			#print "Engine : adding mob : %s -> %s" % (mob.id, mob)
 			self.mobs[mob.id]=mob
 			mob._map = self
 			self.mobs[mob.id].setPos(x, y)

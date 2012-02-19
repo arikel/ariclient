@@ -2,12 +2,13 @@
 # -*- coding: utf8 -*-
 
 import pygame
+import random
 from gui import FONT, TEXTCOLOR, BGCOLOR
 
 ImgDB = {}
 pathList = []
 pathList.append("graphics/sprites/male.png")
-pathList.append("graphics/sprites/mob.png")
+pathList.append("graphics/sprites/monsters01.png")
 #pathList.append("graphics/sprites/female.png")
 
 for imgPath in pathList:
@@ -146,19 +147,22 @@ def makePlayerSprite(name, tw=16, th=16):
 def makeMobSprite(name, tw=16, th=16):
 	#print "created mob sprite : %s" % (name)
 	sprite = BaseSprite(name, tw, th)
-	sprite.addAnim("walk-up", "graphics/sprites/mob.png", 32, 128, 32,64,8,75)
-	sprite.addAnim("walk-down", "graphics/sprites/mob.png", 32, 0, 32,64,8,75)
-	sprite.addAnim("walk-left", "graphics/sprites/mob.png", 32, 64, 32,64,8,75)
-	sprite.addAnim("walk-right", "graphics/sprites/mob.png", 32, 64, 32,64,8,75, True)
+	imgPath = "graphics/sprites/monsters01.png"
+	x = random.randint(0,3)*96
+	y = random.randint(0,1)*128
+	sprite.addAnim("walk-up", imgPath, x, y, 24,32,4,150)
+	sprite.addAnim("walk-down", imgPath, x, y+64, 24,32,4,150)
+	sprite.addAnim("walk-left", imgPath, x, y+32, 24,32,4,150, True)
+	sprite.addAnim("walk-right", imgPath, x, y+32, 24,32,4,150)
 	sprite.anim["walk-up-left"]=sprite.anim["walk-up"]
 	sprite.anim["walk-up-right"]=sprite.anim["walk-up"]
 	sprite.anim["walk-down-left"]=sprite.anim["walk-down"]
 	sprite.anim["walk-down-right"]=sprite.anim["walk-down"]
 	
-	sprite.addAnim("idle-up", "graphics/sprites/mob.png", 0, 128, 32,64,1,7500)
-	sprite.addAnim("idle-down", "graphics/sprites/mob.png", 0, 0, 32,64,1,7500)
-	sprite.addAnim("idle-left", "graphics/sprites/mob.png", 0, 64, 32,64,1,7500)
-	sprite.addAnim("idle-right", "graphics/sprites/mob.png", 0, 64, 32,64,1,7500, True)
+	sprite.addAnim("idle-up", imgPath, x+24, y, 24,32,1,7500)
+	sprite.addAnim("idle-down", imgPath, x+24, y+64, 24,32,1,7500)
+	sprite.addAnim("idle-left", imgPath, x+24, y+32, 24,32,1,7500)
+	sprite.addAnim("idle-right", imgPath, x+24, y+32, 24,32,1,7500, True)
 	sprite.anim["idle-up-left"]=sprite.anim["idle-up"]
 	sprite.anim["idle-up-right"]=sprite.anim["idle-up"]
 	sprite.anim["idle-down-left"]=sprite.anim["idle-down"]

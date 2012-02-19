@@ -54,7 +54,7 @@ class Game(GameClient):
 		self.sendPosCooldown = 0.0
 		
 		self.prevTime = 0.0
-		self.speed = 0.01
+		self.speed = 0.05
 		
 		
 		
