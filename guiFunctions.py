@@ -9,6 +9,7 @@ import string
 
 pygame.font.init()
 FONT =  pygame.font.Font("fonts/Verdana.ttf", 12)
+FONT2 =  pygame.font.Font("fonts/Verdana.ttf", 16)
 
 BGCOLOR = (0,0,0)
 TEXTCOLOR = (200,200,200)

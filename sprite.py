@@ -3,7 +3,7 @@
 
 import pygame
 import random
-from gui import FONT, TEXTCOLOR, BGCOLOR
+from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR
 
 ImgDB = {}
 pathList = []
@@ -60,6 +60,9 @@ class BaseSprite(object):
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
 		
+		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))#.convert_alpha()
+		self.idImg.set_alpha(120)
+		
 	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
 		
@@ -109,7 +112,8 @@ class BaseSprite(object):
 	def blit(self, screen):
 		if self.currentAnim:
 			screen.blit(self.anim[self.currentAnim].frames[self.currentFrame], self.rect)
-			screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+self.rect.h+2))
+			#screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+self.rect.h+2))
+			screen.blit(self.idImg, (self.rect.x, self.rect.y+self.rect.h+2))
 			
 			#screen.blit(
 			#	FONT.render("o", False, TEXTCOLOR),
