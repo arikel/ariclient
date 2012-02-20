@@ -95,7 +95,10 @@ class GameClient(ConnectionListener):
 		
 	def Network_mob_update_move(self, data):
 		id = data['id']
-		if id == self.id:return
+		if id == self.id:# why don't i feel confident this would never happen?
+			print("Something totally weird just happened, i think you're a mob.")
+			return
+			
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
