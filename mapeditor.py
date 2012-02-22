@@ -42,6 +42,10 @@ class MapTileset(object):
 		self.notFoundImg = pygame.surface.Surface((self.w, self.h))
 		self.notFoundImg.fill((180,40,40))
 		
+		self.emptyTile = pygame.surface.Surface((self.w, self.h))
+		self.emptyTile.fill((0,0,0))
+		self.emptyTile.set_alpha(0)
+		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath
 		self.img = pygame.image.load(self.imgPath)
@@ -53,6 +57,8 @@ class MapTileset(object):
 		
 	def getTile(self, code):
 		if not code in self.tiles:
+			if code == 0:
+				return self.emptyTile
 			print "couldn't find tile for code : %s" % (code)
 			return self.notFoundImg
 		nb = len(self.tiles[code])
@@ -207,7 +213,7 @@ if __name__ == "__main__":
 		if pygame.mouse.get_pressed()[0]==1:
 			x, y = pygame.mouse.get_pos()
 			x, y = x/m.tileWidth, y/m.tileHeight
-			m.setTile("ground", x, y, "dddd")
+			m.setTile("ground", x, y, "wwww")
 		
 		if pygame.mouse.get_pressed()[2]==1:
 			x, y = pygame.mouse.get_pos()
