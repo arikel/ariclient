@@ -101,6 +101,26 @@ class MapLayer(object):
 			for y in range(self.h):
 				self.setTile(x,y,code)
 	
+	def setSize(self, w, h):
+		print "Layer %s setting size : %s %s" % (self.name, w, h)
+		self.oldTiles = self.tiles
+		self.tiles = [] # [x][y] : code
+		self.w = w
+		self.h = h
+		
+		for x in range(self.w):
+			line = []
+			for y in range(self.h):
+				if len(self.oldTiles)>x and len(self.oldTiles[0])>y:
+					#print "copying tile %s %s (max = %s %s)" % (x, y, len(self.oldTiles), len(self.oldTiles[0]))
+					line.append(self.oldTiles[x][y])
+				else:
+					line.append("gggg")
+		
+			self.tiles.append(line)
+		
+		
+		
 	def setData(self, data):
 		tilecodes = data.split(",")
 		if len(tilecodes) != self.w * self.h:
@@ -156,6 +176,13 @@ class Map(object):
 			return True
 		return False
 		
+	def setSize(self, x, y):
+		for layerName in self.layers:
+			self.w = x
+			self.h = y
+			self.layers[layerName].setSize(x, y)
+			self.makeLayerImage(layerName)
+			
 	def getSaveData(self):
 		data = ""
 		data = data + "w = " + str(self.w) + "\n\n"
@@ -201,7 +228,9 @@ class Map(object):
 		self.makeLayerImage(name)
 		
 	def makeLayerImage(self, name):
+		
 		if name not in self.layers:return
+		print "map makes layer image for %s" % (name)
 		self.layerImages[name] = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
 		self.updateLayerImage(name)
 		
@@ -307,6 +336,20 @@ class MapEditor(object):
 		if not self.map:return
 		self.map.save(filename)
 		
+	def new(self, x, y):
+		self.map = Map()
+		self.map.setSize(x, y)
+		
+	def getMouseTilePos(self):
+		x, y = pygame.mouse.get_pos()
+		tx = (x-self.map.offsetX)/self.map.tileWidth
+		ty = (y-self.map.offsetY)/self.map.tileHeight
+		return tx, ty
+		
+	def setSize(self, x, y):
+		if not self.map:return
+		self.map.setSize(x, y)
+		
 	def update(self, events = []):
 		if not self.map:return
 		x, y = pygame.mouse.get_pos()
@@ -315,8 +358,8 @@ class MapEditor(object):
 			self.map.offsetX = x - self.dragOriginX
 			self.map.offsetY = y - self.dragOriginY
 			#print "setting map offset : %s %s" % (self.map.offsetX, self.map.offsetY)
-		tx = (x-self.map.offsetX)/self.map.tileWidth
-		ty = (y-self.map.offsetY)/self.map.tileHeight
+		tx, ty = self.getMouseTilePos()
+		
 		if pygame.mouse.get_pressed()[0]==1:
 			self.drawTile(self.currentLayer, tx, ty)
 		elif pygame.mouse.get_pressed()[2]==1:
@@ -338,7 +381,9 @@ class MapEditor(object):
 					self.save("testmap.txt")
 				elif event.key == pygame.K_o:
 					self.open("testmap.txt")
-							
+				elif event.key == pygame.K_r:
+					self.setSize(40,20)
+					
 		self.screen.fill((0,0,0))
 		self.map.blit(self.screen)
 		pygame.display.update()
@@ -378,7 +423,8 @@ if __name__ == "__main__":
 	screen = pygame.display.set_mode((640,480))
 	kh = KeyHandler()
 	m = MapEditor()
-	m.open("testmap.txt")
+	m.new(80,60)
+	#m.open("testmap.txt")
 	
 	while kh.keyDict[pygame.K_ESCAPE]==0:
 		events = kh.getEvents()
