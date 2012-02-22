@@ -62,15 +62,21 @@ class SimpleFrame(wx.Frame):
 		wx.AboutBox(about)
 
 		
+		
 class TestPanel(wx.Panel):
-	def __init__(self, parent):
+	def __init__(self, parent, refreshRate=500):
 		wx.Panel.__init__(self, parent, -1, size = wx.Size(640,480))
+		self.timer = wx.Timer(self, -1)
+		self.timer.Start(refreshRate)
+
+		pygame.init()
 		self.screen = pygame.Surface((640,480))
 		white = pygame.Color(255, 120, 140, 255)
 		rect = pygame.Rect(10, 10, 100, 100)
 		pygame.draw.rect(self.screen, white, rect)
 
 		self.Bind(wx.EVT_PAINT, self.OnPaint)
+		self.Bind(wx.EVT_TIMER, self.OnUpdate, self.timer)
 
 
 	def OnPaint(self, evt):
@@ -85,6 +91,9 @@ class TestPanel(wx.Panel):
 			del dc
 		except:
 			pass
+
+        def OnUpdate(self, evt):
+                self.Refresh()
 
 
 
