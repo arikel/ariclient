@@ -9,6 +9,7 @@ except:
 
 import pygame
 from config import *
+from optparse import OptionParser
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
@@ -213,12 +214,29 @@ class Game(GameClient):
 		
 		
 if __name__=="__main__":
+
+        #Efficient command-line options parser
+	parser = OptionParser(prog = "ariclient",
+                          usage = "usage: %prog [options] arg")
+
+        #Definition of the command-line options
+	parser.add_option("-s", "--server", dest = "SERVER_ADDRESS",
+                          help = "Override the server address.\nDefault: %s" % (SERVER_ADDRESS,))
+	parser.add_option("-p", "--port", dest = "SERVER_PORT",
+                          help = "Override the server port.\nDefault: %d" % (SERVER_PORT,))
+
+	(options, args) = parser.parse_args()
+
+	if(options.SERVER_ADDRESS):
+                SERVER_ADDRESS = options.SERVER_ADDRESS
+	if(options.SERVER_PORT):
+                SERVER_PORT = int(options.SERVER_PORT)
+
+	
 	running = True
 	g = Game(SERVER_ADDRESS, SERVER_PORT)
 	
-	while running:
+	while g.running:
 		g.update()
-		
-		if not g.running:
-			running = False
+
 	pygame.quit()
