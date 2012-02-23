@@ -80,9 +80,11 @@ class MapObject:
 		self.setPos(self.x + x, self.y + y)
 	
 	def setMovement(self, x, y):
+		if self.dx != 0 or self.dy != 0:
+			self.facing = (self.dx, self.dy)
 		self.dx = x # -1, 0, 1
 		self.dy = y
-	
+		
 	def update(self, dt=0.0):
 		if not self.mobile:
 			return
@@ -95,7 +97,7 @@ class MapObject:
 		self.setMovement(0, self.dy)
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
-			self.setMovement(oldDx, self.dy)
+			self.setMovement(oldDx, oldDy)
 			return
 		else:
 			self.setMovement(oldDx, 0)
@@ -265,3 +267,169 @@ class MapBase:
 			#print "updating mob %s : %s / %s, dt = %d" % (mob.id, mob.x, mob.y, dt)
 			#print "updated pos for player %s : %s / %s, direction : %s / %s" % (player.id, player.x, player.y, player.dx, player.dy)
 			
+
+class MapLayer(object):
+	def __init__(self, name, w, h, tileWidth=16, tileHeight=16):
+		self.name = name
+		self.w = w # width in tiles
+		self.h = h # height in tiles
+		self.tileWidth = tileWidth
+		self.tileHeight = tileHeight
+		
+		self.tiles = [] # [x][y] : code
+		for x in range(self.w):
+			line = []
+			for y in range(self.h):
+				line.append(0)
+			self.tiles.append(line)
+		
+	def isValidPos(self, x, y):
+		if (0<=x<self.w) and (0<=y<self.h):
+			return True
+		return False
+		
+	def getTile(self, x, y):
+		return self.tiles[x][y]
+		
+	def setTile(self, x, y, code):
+		self.tiles[x][y] = code
+		
+	def clearTile(self, x, y):
+		self.tiles[x][y] = 0
+		
+	def fill(self, code):
+		for x in range(self.w):
+			for y in range(self.h):
+				self.setTile(x,y,code)
+	
+	def setSize(self, w, h):
+		print "Layer %s setting size : %s %s" % (self.name, w, h)
+		self.oldTiles = self.tiles
+		self.tiles = [] # [x][y] : code
+		self.w = w
+		self.h = h
+		
+		for x in range(self.w):
+			line = []
+			for y in range(self.h):
+				if len(self.oldTiles)>x and len(self.oldTiles[0])>y:
+					#print "copying tile %s %s (max = %s %s)" % (x, y, len(self.oldTiles), len(self.oldTiles[0]))
+					line.append(self.oldTiles[x][y])
+				else:
+					line.append("gggg")
+		
+			self.tiles.append(line)
+			
+		
+	def setData(self, data):
+		tilecodes = data.split(",")
+		if len(tilecodes) != self.w * self.h:
+			print "data not matching width and height"
+			return False
+		n = 0
+		for x in range(self.w):
+			for y in range(self.h):
+				self.setTile(x, y, tilecodes[n])
+				n +=1
+	
+	def getSaveData(self):
+		data = []
+		for x in range(self.w):
+			for y in range(self.h):
+				data.append(self.getTile(x, y))
+		data = str(data)
+		data = data.replace("[", "")
+		data = data.replace("]", "")
+		data = data.replace("'", "")
+		data = data.replace('"', '')
+		data = data.replace(' ', '')
+		return data
+
+class GameMap:
+	def __init__(self, filename=None):
+		self.filename = filename
+		if self.filename:
+			self.load(self.filename)
+		
+		self.mobs = {}
+		self.players = {}
+		
+	def load(self, filename):	
+		self.filename = filename
+		content = open(filename).read()
+		for line in content.split("\n"):
+			line = line.strip()
+			if len(line)<2:
+				continue
+			if "=" in line:
+				if len(line.split("="))!=2: continue
+				key , value = line.split("=")
+				if key.strip() == "w":
+					self.w = int(value.strip())
+				elif key.strip() == "h":
+					self.h = int(value.strip())
+				else:
+					codes = value.split(',')
+					if len(codes) == self.w * self.h:
+						layerName = key.strip()
+						value = value.strip()
+						print "Loading layer %s" % (layerName)
+						self.addLayer(layerName)
+						self.layers[layerName].setData(value)
+						
+		
+	
+		
+	def tileCollide(self, x, y): # tile position collide test
+		if not (0<=x<len(self.collisionGrid.tiles)):
+			return True
+		if not (0<=y<len(self.collisionGrid.tiles[0])):
+			return True
+		if self.collisionGrid.tiles[x][y]>0:
+			#print "%s / %s collides" % (x,y)
+			return True
+		return False
+		
+	def posCollide(self, x, y): # pixel position collide test
+		return self.tileCollide(int(x)/self.tileWidth, int(y)/self.tileHeight)
+		
+	def blockTile(self, x, y):
+		self.collisionGrid.tiles[x][y] = 1
+		
+	def freeTile(self, x, y):
+		self.collisionGrid.tiles[x][y] = 0
+	
+	def revertTile(self, x, y):
+		self.collisionGrid.tiles[x][y] = self.collisionLayer.tiles[x][y]
+	
+		
+	def addPlayer(self, player, x=None, y=None):
+		if x == None:
+			x = player.x
+			y = player.y
+		if player.id not in self.players:
+			self.players[player.id]=player
+			player._map = self
+			self.players[player.id].setPos(x, y)
+			
+	def delPlayer(self, playerName):
+		del self.players[playerName]
+	
+	def addMob(self, mob, x=None, y=None):
+		if x == None:
+			x = mob.x
+			y = mob.y
+		if mob.id not in self.mobs:
+			#print "Engine : adding mob : %s -> %s" % (mob.id, mob)
+			self.mobs[mob.id]=mob
+			mob._map = self
+			self.mobs[mob.id].setPos(x, y)
+	
+	def delMob(self, mobId):
+		del self.mobs[mobId]
+		
+	def update(self, dt):
+		for player in self.players.values():
+			player.update(dt)
+		for mob in self.mobs.values():
+			mob.update(dt)
