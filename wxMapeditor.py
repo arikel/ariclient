@@ -6,9 +6,10 @@
 import wx
 import os
 import pygame
+import mapeditor
 # warning, in wx, a frame is a window, a window is a frame.
 
-class SimpleFrame(wx.Frame):
+class SimpleFrame(wx.Frame):	
 	def __init__(self):
 		wx.Frame.__init__(self, None, -1, "ariclient map editor", size=(800,600))
 		
@@ -64,19 +65,32 @@ class SimpleFrame(wx.Frame):
 		
 		
 class TestPanel(wx.Panel):
-	def __init__(self, parent, refreshRate=500):
+	
+	draw = False
+	dragOriginX = 0
+	dragOriginY = 0
+	
+	def __init__(self, parent, refreshRate=60):
 		wx.Panel.__init__(self, parent, -1, size = wx.Size(640,480))
 		self.timer = wx.Timer(self, -1)
-		self.timer.Start(refreshRate)
+		self.refreshRate = refreshRate
+		#self.timer.Start(refreshRate)
 
 		pygame.init()
 		self.screen = pygame.Surface((640,480))
-		white = pygame.Color(255, 120, 140, 255)
-		rect = pygame.Rect(10, 10, 100, 100)
-		pygame.draw.rect(self.screen, white, rect)
+
+		self.map = mapeditor.MapEditor(self.screen)
+		self.map.new(80,60)
 
 		self.Bind(wx.EVT_PAINT, self.OnPaint)
 		self.Bind(wx.EVT_TIMER, self.OnUpdate, self.timer)
+		self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
+		self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
+		self.Bind(wx.EVT_LEFT_DOWN, self.OnStartDraw)
+		self.Bind(wx.EVT_MOTION, self.OnMouseMove)
+		self.Bind(wx.EVT_LEFT_UP, self.OnStopDraw)
+		
+		self.Update()
 
 
 	def OnPaint(self, evt):
@@ -84,16 +98,44 @@ class TestPanel(wx.Panel):
 		try:
 			s = pygame.image.tostring(self.screen, 'RGB')  # Convert the surface to an RGB string
 			img = wx.ImageFromData(640, 480, s)  # Load this string into a wx image
-			#dc = wx.PaintDC(self)
 			bmp = wx.BitmapFromImage(img)  # Get the image in bitmap form
-			dc = wx.PaintDC(self)  # Device context for drawing the bitmap
+			dc = wx.BufferedPaintDC(self)  # Device context for drawing the bitmap
 			dc.DrawBitmap(bmp, 0, 0, False)  # Blit the bitmap image to the display
 			del dc
 		except:
 			pass
 
-        def OnUpdate(self, evt):
-                self.Refresh()
+	def Update(self):
+		self.screen.fill((0,0,0))
+		self.map.blit(self.screen)
+		
+	def OnUpdate(self, evt):
+		self.screen.fill((0,0,0))
+		self.map.blit(self.screen)
+		self.Refresh()
+
+	def OnMouseEnter(self, evt):
+		pass
+		
+	def OnMouseLeave(self, evt):
+		if self.draw:
+			self.draw = False
+			self.timer.Stop()
+		
+	def OnStartDraw(self, evt):
+		self.draw = True
+		self.timer.Start(self.refreshRate)
+		#self.map.startDrag()
+		
+	def OnMouseMove(self, evt):
+		if self.draw:
+			tx, ty = self.map.getMouseTilePos(evt.m_x, evt.m_y)
+			self.map.drawTile(self.map.currentLayer, tx, ty)
+		
+	def OnStopDraw(self, evt):
+		self.draw = False
+		self.timer.Stop()
+		#self.map.stopDrag()
 
 
 
