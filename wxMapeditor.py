@@ -77,8 +77,8 @@ class TestPanel(wx.Panel):
 		#self.timer.Start(refreshRate)
 
 		pygame.init()
-		self.screen = pygame.Surface((640,480))
-
+		#self.screen = pygame.Surface((640,480))
+		self.screen = pygame.display.set_mode((640,480))
 		self.map = mapeditor.MapEditor(self.screen)
 		self.map.new(80,60)
 

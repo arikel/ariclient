@@ -233,7 +233,7 @@ class MapTileset(object):
 		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath
-		self.img = pygame.image.load(self.imgPath).convert_alpha()
+		self.img = pygame.image.load(self.imgPath)#.convert_alpha()
 		
 	def addTile(self, x, y, code):
 		if not code in self.tiles:

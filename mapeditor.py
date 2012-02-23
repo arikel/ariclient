@@ -5,11 +5,11 @@
 
 import pygame
 import random
-<<<<<<< HEAD
+
 from gameEngine import *
 from mapDisplay import MapTileset, Map
-=======
-	
+
+'''
 
 class MapTile(object):
 	def __init__(self, id, code, w, h):
@@ -326,8 +326,8 @@ class Map(object):
 			newCode = code[0] + oldCode[1:4]
 			self.layers[layerName].setTile(x+1, y+1, newCode)
 			self.layerImages[layerName].blit(self.tileset.getTile(newCode), ((x+1)*self.tileWidth, (y+1)*self.tileHeight))
->>>>>>> c0d182a23126b3fd080662b143f8a12acf25a740
 
+'''
 class MapEditor(object):
 	def __init__(self, screen = None):
 		self.map = None
@@ -368,12 +368,12 @@ class MapEditor(object):
 		
 	def update(self, events = []):
 		if not self.map:return
-		x, y = self.getMouseTilePos(*pygame.mouse.get_pos())
+		x, y = pygame.mouse.get_pos()
 		
 		if self.dragging:
 			self.map.setOffset(x - self.dragOriginX, y - self.dragOriginY)
 			#print "setting map offset : %s %s" % (self.map.offsetX, self.map.offsetY)
-		tx, ty = self.getMouseTilePos(*pygame.mouse.get_pos())
+		tx, ty = self.getMouseTilePos(x, y)
 		
 		if pygame.mouse.get_pressed()[0]==1:
 			self.drawTile(self.currentLayer, tx, ty)
