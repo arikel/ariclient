@@ -40,17 +40,26 @@ class MapTileset(object):
 				y = int(xy[1])
 				code = items[1].strip()
 				self.addTile(x, y, code)
-		
-		self.notFoundImg = pygame.surface.Surface((self.w, self.h)).convert_alpha()
+		try:
+			self.notFoundImg = pygame.surface.Surface((self.w, self.h)).convert_alpha()
+		except:
+			self.notFoundImg = pygame.surface.Surface((self.w, self.h))
+			
 		self.notFoundImg.fill((180,40,40))
 		
-		self.emptyTile = pygame.surface.Surface((self.w, self.h)).convert_alpha()
+		try:
+			self.emptyTile = pygame.surface.Surface((self.w, self.h)).convert_alpha()
+		except:
+			self.emptyTile = pygame.surface.Surface((self.w, self.h))
 		self.emptyTile.fill((0,0,0))
 		self.emptyTile.set_alpha(0)
 		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath
-		self.img = pygame.image.load(self.imgPath).convert_alpha()
+		try:
+			self.img = pygame.image.load(self.imgPath).convert_alpha()
+		except:
+			self.img = pygame.image.load(self.imgPath)
 		
 	def addTile(self, x, y, code):
 		if not code in self.tiles:
@@ -146,7 +155,7 @@ class MapLayer(object):
 		return data
 		
 class Map(object):
-	def __init__(self, w=10, h=8, tileWidth=16, tileHeight=16):
+	def __init__(self, w=10, h=8, tileWidth=16, tileHeight=16, surface = None):
 		self.w = w
 		self.h = h
 		self.tileWidth = tileWidth
@@ -315,13 +324,16 @@ class Map(object):
 			self.layerImages[layerName].blit(self.tileset.getTile(newCode), ((x+1)*self.tileWidth, (y+1)*self.tileHeight))
 
 class MapEditor(object):
-	def __init__(self):
+	def __init__(self, screen = None):
 		self.map = None
 		self.currentTileCode = "wwww"
 		self.dragging = False
 		self.dragOriginX = 0
 		self.dragOriginY = 0
-		self.screen = pygame.display.set_mode((800,600))
+		if screen:
+			self.screen = screen
+		else:
+			self.screen = pygame.display.set_mode((800,600))
 		self.currentLayer = "ground"
 		
 	def open(self, filename):
@@ -340,8 +352,7 @@ class MapEditor(object):
 		self.map = Map()
 		self.map.setSize(x, y)
 		
-	def getMouseTilePos(self):
-		x, y = pygame.mouse.get_pos()
+	def getMouseTilePos(self, x, y):
 		tx = (x-self.map.offsetX)/self.map.tileWidth
 		ty = (y-self.map.offsetY)/self.map.tileHeight
 		return tx, ty
@@ -352,13 +363,13 @@ class MapEditor(object):
 		
 	def update(self, events = []):
 		if not self.map:return
-		x, y = pygame.mouse.get_pos()
+		x, y = self.getMouseTilePos(*pygame.mouse.get_pos())
 		
 		if self.dragging:
 			self.map.offsetX = x - self.dragOriginX
 			self.map.offsetY = y - self.dragOriginY
 			#print "setting map offset : %s %s" % (self.map.offsetX, self.map.offsetY)
-		tx, ty = self.getMouseTilePos()
+		tx, ty = self.getMouseTilePos(*pygame.mouse.get_pos())
 		
 		if pygame.mouse.get_pressed()[0]==1:
 			self.drawTile(self.currentLayer, tx, ty)
@@ -387,6 +398,9 @@ class MapEditor(object):
 		self.screen.fill((0,0,0))
 		self.map.blit(self.screen)
 		pygame.display.update()
+		
+	def blit(self, dest):
+		self.map.blit(dest)
 		
 	def drawTile(self, layerName, x, y):
 		if not self.map:return
