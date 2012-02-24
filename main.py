@@ -57,9 +57,7 @@ class Game(GameClient):
 		
 		self.prevTime = 0.0
 		self.speed = 0.05
-		
-		
-		
+
 	def addPlayer(self, id, x=50.0, y=50.0):
 		if id == "anonymous":
 			return
@@ -111,8 +109,8 @@ class Game(GameClient):
 				#print "Player direction changed from %s to %s/%s" % (self.prevMove, self.dx, self.dy)
 				self.SendUpdateMove(self.displayMap.players[self.id].x, self.displayMap.players[self.id].y, self.dx, self.dy)
 				
-		self.displayMap.offsetX = self.displayMap.players[self.id].mapRect.x-320
-		self.displayMap.offsetY = self.displayMap.players[self.id].mapRect.y-240
+		self.displayMap.offsetX = self.displayMap.players[self.id].mapRect.x-SCREEN_WIDTH/2
+		self.displayMap.offsetY = self.displayMap.players[self.id].mapRect.y-SCREEN_HEIGHT/2
 		self.displayMap.update(dt)
 		
 		self.chatWindow.handleEvents(x,y,events)
@@ -201,7 +199,7 @@ class Game(GameClient):
 		#self.displayMap.blitLayer("collision")
 		self.screen.fill((0,0,0))
 		self.displayMap.blit(self.screen)
-		for sprite in spriteList:
+		for sprite in sorted(spriteList, key=lambda k:k.mapRect.y):
 			sprite.blit(self.screen)
 		
 		# gui display
