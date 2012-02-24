@@ -42,6 +42,9 @@ class GameClient(ConnectionListener):
 	def SendLogin(self, password):
 		connection.Send({"action": "login", "message": " ", "id":self.id, "password" : password})
 		
+	def SendEmote(self, emote):
+		connection.Send({"action": "emote", "id":self.id, "emote" : emote})
+		
 	#######################################
 	### Network event/message callbacks ###
 	#######################################
@@ -75,7 +78,11 @@ class GameClient(ConnectionListener):
 		msg = "<" + data['who'] + " (prv)> " + data['message'].decode('utf-8')
 		self.chatWindow.addText(msg)
 		
-		
+	def Network_emote(self, data):
+		playerId = data['id']
+		emote = data['emote']
+		self.displayMap.players[playerId]._sprite.setEmote(emote)
+	
 	def Network_update_move(self, data):
 		id = data['who']
 		if id == self.id:return

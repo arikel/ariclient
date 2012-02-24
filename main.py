@@ -124,7 +124,10 @@ class Game(GameClient):
 				if key == pygame.K_RETURN and not self.entry.has_focus:
 					#print "Starting to type text..."
 					self.entry.getFocus()
-				
+				if key == pygame.K_SPACE and not self.entry.has_focus:
+					#print "Starting to type text..."
+					self.SendEmote("happy")
+					
 			if event.type == pygame.QUIT:
 				#pygame.quit()
 				self.running = False

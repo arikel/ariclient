@@ -9,6 +9,7 @@ ImgDB = {}
 pathList = []
 pathList.append("graphics/sprites/male.png")
 pathList.append("graphics/sprites/monsters01.png")
+pathList.append("graphics/gui/emotes.png")
 #pathList.append("graphics/sprites/female.png")
 
 for imgPath in pathList:
@@ -40,6 +41,9 @@ class Animation(object):
 			
 			self.frames.append(frame)
 			
+EmoteDic = {}
+EmoteDic["happy"] = ImgDB["graphics/gui/emotes.png"].subsurface((0,0,32,32))
+EmoteDic["sad"] = ImgDB["graphics/gui/emotes.png"].subsurface((32,0,32,32))
 
 class BaseSprite(object):
 	def __init__(self, id, tileWidth = 16, tileHeight = 16):
@@ -62,6 +66,14 @@ class BaseSprite(object):
 		
 		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))#.convert_alpha()
 		self.idImg.set_alpha(120)
+		
+		self.emoteCooldown = 0
+		self.emote = None
+		
+	def setEmote(self, emote):
+		if emote in EmoteDic:
+			self.emote = EmoteDic[emote]
+			self.emoteCooldown = pygame.time.get_ticks() + 2000
 		
 	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
@@ -109,13 +121,19 @@ class BaseSprite(object):
 			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
 				self.currentFrame = 0
 			self.frameUpdateTime = t + self.anim[self.currentAnim].frameTime
-	
+		
+		if self.emote:
+			if t>self.emoteCooldown:
+				self.emote = None
+			
+		
 	def blit(self, screen):
 		if self.currentAnim:
 			screen.blit(self.anim[self.currentAnim].frames[self.currentFrame], self.rect)
 			#screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+self.rect.h+2))
 			screen.blit(self.idImg, (self.rect.x, self.rect.y+self.rect.h+2))
-			
+			if self.emote:
+				screen.blit(self.emote, (self.rect.x, self.rect.y-self.rect.h-6))
 			#screen.blit(
 			#	FONT.render("o", False, TEXTCOLOR),
 			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
