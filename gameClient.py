@@ -98,7 +98,7 @@ class GameClient(ConnectionListener):
 			self.addPlayer(id, x, y)
 			self.displayMap.players[id].setMovement(dx, dy)
 			
-		print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 		
 	def Network_mob_update_move(self, data):
 		id = data['id']
@@ -117,7 +117,7 @@ class GameClient(ConnectionListener):
 		else:
 			self.addMob(id, x, y)
 			self.displayMap.mobs[id].setMovement(dx, dy)
-			print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
+			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 	# built in stuff
 
