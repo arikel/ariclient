@@ -41,6 +41,7 @@ class Game(GameClient):
 		self.chatWindow = ScrollTextWindow(0,SCREEN_HEIGHT-120,SCREEN_WIDTH,100)
 		self.entry = TextEntry("")
 		self.entry.setPos(5,SCREEN_HEIGHT-20)
+		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
 		
 		self.kh = KeyHandler()
 		self.dx = 0
@@ -126,7 +127,7 @@ class Game(GameClient):
 					self.entry.getFocus()
 				if key == pygame.K_SPACE and not self.entry.has_focus:
 					#print "Starting to type text..."
-					self.SendEmote("happy")
+					self.SendEmote(0)
 					
 			if event.type == pygame.QUIT:
 				#pygame.quit()
@@ -140,6 +141,10 @@ class Game(GameClient):
 			self.SendMessagePublic(res)
 			self.entry.has_focus = False
 			#print "message sent, losing focus"
+		
+		emote = self.emoteEngine.handleEvents(events)
+		if emote > -1:
+			self.SendEmote(emote)
 		
 		# game data
 		
@@ -158,6 +163,8 @@ class Game(GameClient):
 		
 		self.chatWindow.blit(self.screen)
 		self.entry.blit(self.screen)
+		
+		self.emoteEngine.blit(self.screen)
 		
 		pygame.display.flip()
 		

@@ -11,6 +11,7 @@ from guiFunctions import *
 from guiWidget import Widget
 from guiScroll import *
 from guiEntry import *
+from guiEmote import *
 
 if __name__=="__main__":
 	

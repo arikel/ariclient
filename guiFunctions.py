@@ -21,6 +21,16 @@ GuiBaseImg = pygame.image.load("graphics/gui/guibase.png")
 MIN_CARRET_SIZE = 5
 CARRET_WIDTH = 20
 
+ImgDB = {}
+pathList = []
+pathList.append("graphics/sprites/male.png")
+pathList.append("graphics/sprites/monsters01.png")
+pathList.append("graphics/gui/emotes.png")
+#pathList.append("graphics/sprites/female.png")
+
+for imgPath in pathList:
+	ImgDB[imgPath] = pygame.image.load(imgPath).convert_alpha()
+
 def coupeMsg(msg, longueur, font=FONT):
 	msg = msg.replace("\n", " ")
 	wordsToAdd = msg.strip().split(" ")

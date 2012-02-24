@@ -3,17 +3,9 @@
 
 import pygame
 import random
-from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR
+from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR, ImgDB, EmoteDic
 
-ImgDB = {}
-pathList = []
-pathList.append("graphics/sprites/male.png")
-pathList.append("graphics/sprites/monsters01.png")
-pathList.append("graphics/gui/emotes.png")
-#pathList.append("graphics/sprites/female.png")
 
-for imgPath in pathList:
-	ImgDB[imgPath] = pygame.image.load(imgPath).convert_alpha()
 
 class Animation(object):
 	def __init__(self, id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored = False):
@@ -41,9 +33,7 @@ class Animation(object):
 			
 			self.frames.append(frame)
 			
-EmoteDic = {}
-EmoteDic["happy"] = ImgDB["graphics/gui/emotes.png"].subsurface((0,0,32,32))
-EmoteDic["sad"] = ImgDB["graphics/gui/emotes.png"].subsurface((32,0,32,32))
+
 
 class BaseSprite(object):
 	def __init__(self, id, tileWidth = 16, tileHeight = 16):
@@ -133,7 +123,7 @@ class BaseSprite(object):
 			#screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+self.rect.h+2))
 			screen.blit(self.idImg, (self.rect.x, self.rect.y+self.rect.h+2))
 			if self.emote:
-				screen.blit(self.emote, (self.rect.x, self.rect.y-self.rect.h-6))
+				screen.blit(self.emote, (self.rect.x+3, self.rect.y-16))
 			#screen.blit(
 			#	FONT.render("o", False, TEXTCOLOR),
 			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
