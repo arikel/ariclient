@@ -233,7 +233,7 @@ class MapTileset(object):
 		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath
-		self.img = pygame.image.load(self.imgPath)#.convert_alpha()
+		self.img = pygame.image.load(self.imgPath).convert_alpha()
 		
 	def addTile(self, x, y, code):
 		if not code in self.tiles:
@@ -244,26 +244,32 @@ class MapTileset(object):
 		if not code in self.tiles:
 			if code == 0:
 				return self.emptyTile
-			print "couldn't find tile for code : %s, i only know %s" % (code, self.tiles.keys())
+			#print "couldn't find tile for code : %s, i only know %s" % (code, self.tiles.keys())
 			return self.notFoundImg
 		nb = len(self.tiles[code])
 		tile = random.randint(1, nb) - 1
 		return self.tiles[code][tile]
 
-class Map(object):
-	def __init__(self, w=10, h=8, tileWidth=16, tileHeight=16):
-		self.w = w
-		self.h = h
-		self.tileWidth = tileWidth
-		self.tileHeight = tileHeight
+class Map(GameMap):
+	def __init__(self, filename = None):
+		self.filename = filename
 		
+		self.tileWidth = 16
+		self.tileHeight = 16
 		self.tileset = MapTileset("tilesets.txt")
 		
 		self.layers = {} # name : MapLayer
 		self.layerImages = {} # name : (big) surface
 		
-		self.addLayer("ground")
-		self.layers["ground"].fill("gggg")
+		self.mobs = {}
+		self.players = {}
+		
+		if filename:
+			self.load(filename)
+		
+		
+		#self.addLayer("ground")
+		#self.layers["ground"].fill("gggg")
 		self.updateLayerImage("ground")
 		
 		self.offsetX = 0
@@ -287,22 +293,6 @@ class Map(object):
 			self.h = y
 			self.layers[layerName].setSize(x, y)
 			self.makeLayerImage(layerName)
-			
-	def getSaveData(self):
-		data = ""
-		data = data + "w = " + str(self.w) + "\n\n"
-		data = data + "h = " + str(self.h) + "\n\n"
-		
-		for layerName in self.layers:
-			data = data + layerName + " = " + str(self.layers[layerName].getSaveData()) + "\n\n"
-		return data
-		
-	def save(self, filename):
-		self.filename = filename
-		f = open(filename, "w")
-		f.write(self.getSaveData())
-		f.close()
-		print "Map saved in %s" % (filename)
 		
 	def load(self, filename):
 		self.filename = filename
@@ -327,13 +317,13 @@ class Map(object):
 						self.addLayer(layerName)
 						self.layers[layerName].setData(value)
 						self.updateLayerImage(layerName)
+		self.makeCollisionGrid()
 						
 	def addLayer(self, name):
 		self.layers[name] = MapLayer(name, self.w, self.h, self.tileWidth, self.tileHeight)
 		self.makeLayerImage(name)
 		
 	def makeLayerImage(self, name):
-		
 		if name not in self.layers:return
 		print "map makes layer image for %s" % (name)
 		self.layerImages[name] = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
@@ -347,7 +337,7 @@ class Map(object):
 				self.layerImages[name].blit(self.tileset.getTile(code), (x*self.tileWidth, y*self.tileHeight))
 	
 	def blit(self, screen):
-		screen.blit(self.layerImages["ground"], (self.offsetX,self.offsetY))
+		screen.blit(self.layerImages["ground"], (-self.offsetX,-self.offsetY))
 		
 	def clearTile(self, layerName, x, y):
 		self.layers[layerName].clearTile(x, y)

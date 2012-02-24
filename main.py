@@ -14,7 +14,7 @@ from optparse import OptionParser
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
-from mapDisplay import GraphicMap
+from mapDisplay import GraphicMap, Map
 from gui import *
 from utils import KeyHandler
 from gameEngine import *
@@ -38,7 +38,8 @@ class Game(GameClient):
 		
 		#self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 		
-		self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
+		#self.displayMap = GraphicMap(self.screen, "maps/001-1.tmx")
+		self.displayMap = Map("maps/testmap.txt")
 		
 		# GUI
 		self.chatWindow = ScrollTextWindow(0,SCREEN_HEIGHT-120,SCREEN_WIDTH,100)
@@ -146,7 +147,7 @@ class Game(GameClient):
 			
 		
 		
-		self.displayMap.caleOffsets()
+		#self.displayMap.caleOffsets()
 		
 		# graphics 
 		#self.screen.fill((100,100,140))
@@ -194,10 +195,14 @@ class Game(GameClient):
 			sprite.update(t)
 			sprite.setMapOffset(self.displayMap.offsetX, self.displayMap.offsetY)
 			
-		self.displayMap.blitLayer("ground")
-		self.displayMap.blitSpritesAndFringe(spriteList)
-		self.displayMap.blitLayer("over")
+		#self.displayMap.blitLayer("ground")
+		#self.displayMap.blitSpritesAndFringe(spriteList)
+		#self.displayMap.blitLayer("over")
 		#self.displayMap.blitLayer("collision")
+		self.screen.fill((0,0,0))
+		self.displayMap.blit(self.screen)
+		for sprite in spriteList:
+			sprite.blit(self.screen)
 		
 		# gui display
 		self.chatWindow.updateSurface(x,y)
@@ -215,25 +220,20 @@ class Game(GameClient):
 		
 if __name__=="__main__":
 
-        #Efficient command-line options parser
-	parser = OptionParser(prog = "ariclient",
-                          usage = "usage: %prog [options] arg")
+	#Efficient command-line options parser
+	parser = OptionParser(prog = "ariclient", usage = "usage: %prog [options] arg")
 
-        #Definition of the command-line options
-	parser.add_option("-s", "--server", dest = "SERVER_ADDRESS",
-                          help = "Override the server address.\nDefault: %s" % (SERVER_ADDRESS,))
-	parser.add_option("-p", "--port", dest = "SERVER_PORT",
-                          help = "Override the server port.\nDefault: %d" % (SERVER_PORT,))
+	#Definition of the command-line options
+	parser.add_option("-s", "--server", dest = "SERVER_ADDRESS", help = "Override the server address.\nDefault: %s" % (SERVER_ADDRESS,))
+	parser.add_option("-p", "--port", dest = "SERVER_PORT", help = "Override the server port.\nDefault: %d" % (SERVER_PORT,))
 
 	(options, args) = parser.parse_args()
 
 	if(options.SERVER_ADDRESS):
-                SERVER_ADDRESS = options.SERVER_ADDRESS
+		SERVER_ADDRESS = options.SERVER_ADDRESS
 	if(options.SERVER_PORT):
-                SERVER_PORT = int(options.SERVER_PORT)
+		SERVER_PORT = int(options.SERVER_PORT)
 
-	
-	running = True
 	g = Game(SERVER_ADDRESS, SERVER_PORT)
 	
 	while g.running:
