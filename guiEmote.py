@@ -41,7 +41,7 @@ class EmoteEngine(Widget):
 							if b.hover(x, y):
 								self.closeMenu()
 								return b.nb
-					if self.hover(x, y):
+					if self.topButton.hover(x, y):
 						if self.open:
 							self.closeMenu()
 						else:
