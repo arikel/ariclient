@@ -366,6 +366,7 @@ class Map(GameMap):
 	
 	def blit(self, screen):
 		screen.blit(self.layerImages["ground"], (-self.offsetX,-self.offsetY))
+		#print "Map offset : %s %s " % (self.offsetX, self.offsetY)
 		sprites = [p._sprite for p in self.players.values()]
 		sprites.extend([p._sprite for p in self.mobs.values()])
 		

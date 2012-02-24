@@ -90,10 +90,10 @@ class MapObject:
 		self.setPos(self.x + x, self.y + y)
 	
 	def setMovement(self, x, y):
-		if self.dx != 0 or self.dy != 0:
-			self.facing = (self.dx, self.dy)
 		self.dx = x # -1, 0, 1
 		self.dy = y
+		if self.dx != 0 or self.dy != 0:
+			self.facing = (self.dx, self.dy)
 		
 	def updateDirection(self):
 		
@@ -152,9 +152,7 @@ class MapObject:
 				self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 				self.setMovement(oldDx, oldDy)
 				self.updateDirection()
-		
-		
-				
+	
 	def nextMovePossible(self, dt=0.0):
 		if not self._map:
 			print "player has no map"
