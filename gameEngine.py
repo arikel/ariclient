@@ -44,14 +44,15 @@ class Inventory:
 
 class MapObject:
 	_map = None
+	_sprite = None
+	
 	def __init__(self, id, _map = None):
 		self.id = id
 		self._map = _map
-		
+		print "Creating MapObject, name = %s, map = %s" % (self.id, self._map)
 		# float pixel position on map
 		self.category = None
 		self.currentMapName = None
-		self._map = None
 		self.x = 0.0
 		self.y = 0.0
 		self.mapRect = pygame.Rect(0,0,1,1)
@@ -59,6 +60,7 @@ class MapObject:
 		# movement
 		self.dx = 0.0
 		self.dy = 0.0
+		self.facing = (0,1)
 		self.speed = 0.1
 		self.mobile = False
 		
@@ -68,11 +70,19 @@ class MapObject:
 		self.timer = 0.0
 		self.path = [] # [(x, y), (x2, y2)...]
 		
+	def setMap(self, map):
+		self._map = map
+		
+	def setSprite(self, sprite):
+		self._sprite = sprite
+		
 	def setPos(self, x, y):
 		self.x = x
 		self.y = y
 		self.mapRect.topleft = (x,y)
-	
+		if self._sprite:
+			self._sprite.setPos(x, y)
+		
 	def getPos(self):
 		return (self.x, self.y)
 	
@@ -85,11 +95,47 @@ class MapObject:
 		self.dx = x # -1, 0, 1
 		self.dy = y
 		
+	def updateDirection(self):
+		
+		if not self._sprite:return
+		
+		if self.dy == 1:
+			if self.dx == 1:
+				self._sprite.setAnim("walk-down-right")
+			elif self.dx == -1:
+				self._sprite.setAnim("walk-down-left")
+			else:
+				self._sprite.setAnim("walk-down")
+				
+		elif self.dy == -1:
+			if self.dx == 1:
+				self._sprite.setAnim("walk-up-right")
+			elif self.dx == -1:
+				self._sprite.setAnim("walk-up-left")
+			else:
+				self._sprite.setAnim("walk-up")
+		else:
+			if self.dx == -1:
+				self._sprite.setAnim("walk-left")
+			elif self.dx == 1:
+				self._sprite.setAnim("walk-right")
+			else:
+				if self._sprite.currentAnim:
+					if "walk" in self._sprite.currentAnim:
+						self._sprite.setAnim(self._sprite.currentAnim.replace("walk", "idle"))
+						
+							
 	def update(self, dt=0.0):
 		if not self.mobile:
 			return
+		if self._sprite:
+			#print "Map object has sprite (%s), blit in map : %s" % (self.id, self._map)
+			self._sprite.update()
+			self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
+			
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
+			self.updateDirection()
 			return
 		oldDx = self.dx
 		oldDy = self.dy
@@ -98,12 +144,16 @@ class MapObject:
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 			self.setMovement(oldDx, oldDy)
+			self.updateDirection()
 			return
 		else:
 			self.setMovement(oldDx, 0)
 			if self.nextMovePossible(dt):
 				self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 				self.setMovement(oldDx, oldDy)
+				self.updateDirection()
+		
+		
 				
 	def nextMovePossible(self, dt=0.0):
 		if not self._map:

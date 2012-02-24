@@ -3,6 +3,7 @@
 
 import pygame
 from gameEngine import *
+from sprite import BaseSprite, makePlayerSprite, makeMobSprite
 
 #-------------------------------------------------------------------------------
 class GraphicMap(MapBase):
@@ -261,8 +262,9 @@ class Map(GameMap):
 		self.layers = {} # name : MapLayer
 		self.layerImages = {} # name : (big) surface
 		
-		self.mobs = {}
-		self.players = {}
+		self.mobs = {} # id : Mob
+		self.players = {} # id : Player
+		self.sprites = {} # id : Sprite (for players and mobs)
 		
 		if filename:
 			self.load(filename)
@@ -278,6 +280,32 @@ class Map(GameMap):
 		self.offsetXmax = 0
 		self.offsetYmax = 0
 		
+	def addPlayer(self, id, x=50.0, y=50.0):
+		if id not in self.players:
+			self.players[id]=Player(id, self, x, y)
+			self.players[id].setSprite(makePlayerSprite(id))
+			print "Map added player : %s, his map is : %s" % (id, self.players[id]._map)
+			
+	def delPlayer(self, playerName):
+		del self.players[playerName]
+		
+		
+	def addMob(self, id, mobId, x=50.0, y=50.0):
+		if id not in self.mobs:
+			self.mobs[id]=Mob(id, mobId, self, x, y)
+			self.mobs[id].setSprite(makeMobSprite(id))
+	
+	def delMob(self, id):
+		del self.mobs[id]
+		
+		
+	def update(self, dt):
+		for playerName in self.players:
+			self.players[playerName].update(dt)
+			
+		for mobName in self.mobs:
+			self.mobs[mobName].update(dt)
+			
 	def setOffset(self, x, y):
 		self.offsetX = x
 		self.offsetY = y
@@ -338,6 +366,11 @@ class Map(GameMap):
 	
 	def blit(self, screen):
 		screen.blit(self.layerImages["ground"], (-self.offsetX,-self.offsetY))
+		sprites = [p._sprite for p in self.players.values()]
+		sprites.extend([p._sprite for p in self.mobs.values()])
+		
+		for sprite in sorted(sprites, key = lambda k:k.mapRect.y):
+			sprite.blit(screen)
 		
 	def clearTile(self, layerName, x, y):
 		self.layers[layerName].clearTile(x, y)

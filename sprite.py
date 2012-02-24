@@ -95,6 +95,7 @@ class BaseSprite(object):
 		self.rect.y = self.mapRect.y - y - self.rect.h
 		
 	
+	
 	def update(self, t=None):
 		if t == None:
 			t = pygame.time.get_ticks()

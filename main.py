@@ -20,8 +20,6 @@ from utils import KeyHandler
 from gameEngine import *
 from gameClient import GameClient
 
-
-
 class Game(GameClient):
 	def __init__(self, host, port):
 		self.screen = SCREEN
@@ -33,8 +31,6 @@ class Game(GameClient):
 		GameClient.__init__(self, host, port)
 		
 		self.Send({"action": "nickname", "id": self.id})
-		
-		self.sprites = {}
 		
 		#self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 		
@@ -62,19 +58,21 @@ class Game(GameClient):
 		if id == "anonymous":
 			return
 		print "adding player to map : %s" % (id)
-		self.displayMap.addPlayer(Player(id, self.displayMap, x, y))
-		self.sprites[id] = makePlayerSprite(id)
-		self.displayMap.players[id].setMovement(1, 1)
-		self.displayMap.players[id].setMovement(0, 0)
+		self.displayMap.addPlayer(id, x, y)
+		#self.displayMap.players[id].setMovement(1, 1)
+		#self.displayMap.players[id].setMovement(0, 0)
+		print "Player %s 's map = %s" % (self.displayMap.players[id].id, self.displayMap.players[id]._map)
 		
 	def addMob(self, id, x=50.0, y=50.0):
 		print "adding mob %s" % (id)
-		self.displayMap.addMob(Mob(id, 1, self.displayMap, x, y))
-		self.sprites[id] = makeMobSprite(id)
+		self.displayMap.addMob(id, 1, x, y)
+		
 		
 	def delPlayer(self, id):
-		del self.sprites[id]
 		self.displayMap.delPlayer(id)
+		
+	def delMob(self, id):
+		self.displayMap.delMob(id)
 		
 	def update(self):
 		
@@ -145,63 +143,12 @@ class Game(GameClient):
 			
 		
 		
-		#self.displayMap.caleOffsets()
 		
 		# graphics 
-		#self.screen.fill((100,100,140))
-		#spriteList = [self.sprite] + self.sprites.values()
-		spriteList = self.sprites.values()
 		
-		for sprite in spriteList:
-			#if sprite.id not in self.displayMap.players:
-			#	continue
-			if sprite.id in self.displayMap.players:
-				player = self.displayMap.players[sprite.id]
-				#print "blitting player : %s" % (sprite.id)
-			elif sprite.id in self.displayMap.mobs:
-				player = self.displayMap.mobs[sprite.id]
-			else:
-				continue
-			posx, posy = player.getPos()
-			sprite.setPos(posx, posy)
-			
-			if player.dy == 1:
-				if player.dx == 1:
-					sprite.setAnim("walk-down-right")
-				elif player.dx == -1:
-					sprite.setAnim("walk-down-left")
-				else:
-					sprite.setAnim("walk-down")
-					
-			elif player.dy == -1:
-				if player.dx == 1:
-					sprite.setAnim("walk-up-right")
-				elif player.dx == -1:
-					sprite.setAnim("walk-up-left")
-				else:
-					sprite.setAnim("walk-up")
-			else:
-				if player.dx == -1:
-					sprite.setAnim("walk-left")
-				elif player.dx == 1:
-					sprite.setAnim("walk-right")
-				else:
-					if sprite.currentAnim:
-						if "walk" in sprite.currentAnim:
-							sprite.setAnim(sprite.currentAnim.replace("walk", "idle"))
-			
-			sprite.update(t)
-			sprite.setMapOffset(self.displayMap.offsetX, self.displayMap.offsetY)
-			
-		#self.displayMap.blitLayer("ground")
-		#self.displayMap.blitSpritesAndFringe(spriteList)
-		#self.displayMap.blitLayer("over")
-		#self.displayMap.blitLayer("collision")
 		self.screen.fill((0,0,0))
 		self.displayMap.blit(self.screen)
-		for sprite in sorted(spriteList, key=lambda k:k.mapRect.y):
-			sprite.blit(self.screen)
-		
+				
 		# gui display
 		self.chatWindow.updateSurface(x,y)
 		self.entry.updateSurface()
