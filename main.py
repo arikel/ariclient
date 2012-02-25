@@ -62,10 +62,10 @@ class Game(GameClient):
 		self.displayMap.addPlayer(id, x, y)
 		#self.displayMap.players[id].setMovement(1, 1)
 		#self.displayMap.players[id].setMovement(0, 0)
-		print "Player %s 's map = %s" % (self.displayMap.players[id].id, self.displayMap.players[id]._map)
+		#print "Player %s 's map = %s" % (self.displayMap.players[id].id, self.displayMap.players[id]._map)
 		
 	def addMob(self, id, x=50.0, y=50.0):
-		print "adding mob %s" % (id)
+		#print "adding mob %s" % (id)
 		self.displayMap.addMob(id, 1, x, y)
 		
 		

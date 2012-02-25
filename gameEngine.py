@@ -49,7 +49,7 @@ class MapObject:
 	def __init__(self, id, _map = None):
 		self.id = id
 		self._map = _map
-		print "Creating MapObject, name = %s, map = %s" % (self.id, self._map)
+		#print "Creating MapObject, name = %s, map = %s" % (self.id, self._map)
 		# float pixel position on map
 		self.category = None
 		self.currentMapName = None

@@ -284,7 +284,7 @@ class Map(GameMap):
 		if id not in self.players:
 			self.players[id]=Player(id, self, x, y)
 			self.players[id].setSprite(makePlayerSprite(id))
-			print "Map added player : %s, his map is : %s" % (id, self.players[id]._map)
+			#print "Map added player : %s, his map is : %s" % (id, self.players[id]._map)
 			
 	def delPlayer(self, playerName):
 		del self.players[playerName]

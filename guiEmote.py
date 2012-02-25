@@ -5,7 +5,7 @@ from guiFunctions import *
 from guiWidget import Widget
 
 EmoteDic = {}
-for i in range(8):
+for i in range(12):
 	x = i
 	y = 0
 	while(x>3):
@@ -26,7 +26,7 @@ class EmoteEngine(Widget):
 		
 		self.topButton = EmoteButton(0,x,y)
 		self.buttons = []
-		for i in range(6):
+		for i in range(len(EmoteDic)):
 			b = EmoteButton(i, x, y+(i+1)*20)
 			self.buttons.append(b)
 			

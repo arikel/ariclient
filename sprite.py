@@ -127,7 +127,7 @@ class BaseSprite(object):
 			#screen.blit(
 			#	FONT.render("o", False, TEXTCOLOR),
 			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
-			#pygame.draw.rect()
+			#pygame.draw.rect(screen, (255,120,120,120), self.rect, 1)
 	
 	def destroy(self):
 		pass
