@@ -6,11 +6,14 @@
 import pygame
 import random
 
+from config import *
 from gameEngine import *
 from mapDisplay import MapTileset, Map
 
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+
 class MapEditor(object):
-	def __init__(self, screen = None):
+	def __init__(self, screen = SCREEN):
 		self.map = None
 		self.currentTileCode = "wwww"
 		self.dragging = False
@@ -119,10 +122,9 @@ class MapEditor(object):
 	
 if __name__ == "__main__":
 	from utils import KeyHandler
-	screen = pygame.display.set_mode((640,480))
 	kh = KeyHandler()
 	m = MapEditor()
-	m.open("testmap.txt")
+	m.open("maps/testmap.txt")
 	
 	while kh.keyDict[pygame.K_ESCAPE]==0:
 		events = kh.getEvents()
