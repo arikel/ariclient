@@ -4,9 +4,10 @@
 # wxMapeditor.py
 
 import wx
-import os
+import os, sys
 import pygame
-import mapeditor
+from utils import KeyHandler
+import thread
 # warning, in wx, a frame is a window, a window is a frame.
 
 class SimpleFrame(wx.Frame):	
@@ -61,6 +62,44 @@ class SimpleFrame(wx.Frame):
 		about = wx.AboutDialogInfo()
 		about.Name = "ariclient map editor"
 		wx.AboutBox(about)
+		
+		
+class PygameThread:
+	def __init__(self, screen):
+		self.running = False
+		self.screen = screen
+
+	def Start(self):
+		self.running = True
+		thread.start_new_thread(self.Run, ())
+
+	def Stop(self):
+		self.running = False
+
+	def IsRunning(self):
+		return self.running
+
+	def Run(self):
+		m = self.map
+		kh = KeyHandler()
+		while self.running:
+			events = kh.getEvents()
+			m.update(events)
+
+		self.running = False
+		
+	def SetMap(self, map):
+		self.map = map
+
+	def NewMap(self, size):
+		self.map = mapeditor.MapEditor(self.screen)
+		self.map.new(*size)
+		
+	def LoadMap(self, filename):
+		self.map = mapeditor.MapEditor(self.screen)
+		self.map.open(filename)
+		
+		
 
 		
 		
@@ -70,74 +109,26 @@ class TestPanel(wx.Panel):
 	dragOriginX = 0
 	dragOriginY = 0
 	
-	def __init__(self, parent, refreshRate=60):
-		wx.Panel.__init__(self, parent, -1, size = wx.Size(640,480))
-		self.timer = wx.Timer(self, -1)
-		self.refreshRate = refreshRate
-		#self.timer.Start(refreshRate)
+	def __init__(self, parent, wsize = wx.Size(700,500)):
+		wx.Panel.__init__(self, parent, -1, size = wsize)
+		
+		self.hwnd = self.GetHandle()
+		if sys.platform == "win32":
+			os.environ['SDL_VIDEODRIVER'] = 'windib'
+		os.environ['SDL_WINDOWID'] = str(self.hwnd) #must be before pygame init
 
 		pygame.init()
-		#self.screen = pygame.Surface((640,480))
-		self.screen = pygame.display.set_mode((640,480))
+		import mapeditor #import here since the screen is initialized during import
+		self.screen = pygame.display.set_mode(wsize)
+		self.pygamethread = PygameThread(self.screen)
+		#workaround to use the mapeditor in the thread
 		self.map = mapeditor.MapEditor(self.screen)
-		self.map.new(80,60)
+		self.map.open("maps/testmap.txt")
+		self.pygamethread.SetMap(self.map)
+		self.pygamethread.Start()
 
-		self.Bind(wx.EVT_PAINT, self.OnPaint)
-		self.Bind(wx.EVT_TIMER, self.OnUpdate, self.timer)
-		self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
-		self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
-		self.Bind(wx.EVT_LEFT_DOWN, self.OnStartDraw)
-		self.Bind(wx.EVT_MOTION, self.OnMouseMove)
-		self.Bind(wx.EVT_LEFT_UP, self.OnStopDraw)
-		
-		self.Update()
-
-
-	def OnPaint(self, evt):
-		#skips exceptions (like initialized before the main App)
-		try:
-			s = pygame.image.tostring(self.screen, 'RGB')  # Convert the surface to an RGB string
-			img = wx.ImageFromData(640, 480, s)  # Load this string into a wx image
-			bmp = wx.BitmapFromImage(img)  # Get the image in bitmap form
-			dc = wx.BufferedPaintDC(self)  # Device context for drawing the bitmap
-			dc.DrawBitmap(bmp, 0, 0, False)  # Blit the bitmap image to the display
-			del dc
-		except:
-			pass
-
-	def Update(self):
-		self.screen.fill((0,0,0))
-		self.map.blit(self.screen)
-		
-	def OnUpdate(self, evt):
-		self.screen.fill((0,0,0))
-		self.map.blit(self.screen)
-		self.Refresh()
-
-	def OnMouseEnter(self, evt):
-		pass
-		
-	def OnMouseLeave(self, evt):
-		if self.draw:
-			self.draw = False
-			self.timer.Stop()
-		
-	def OnStartDraw(self, evt):
-		self.draw = True
-		self.timer.Start(self.refreshRate)
-		#self.map.startDrag()
-		
-	def OnMouseMove(self, evt):
-		if self.draw:
-			tx, ty = self.map.getMouseTilePos(evt.m_x, evt.m_y)
-			self.map.drawTile(self.map.currentLayer, tx, ty)
-		
-	def OnStopDraw(self, evt):
-		self.draw = False
-		self.timer.Stop()
-		#self.map.stopDrag()
-
-
+	def __del__(self):
+		self.pygamethread.Stop()
 
 
 if __name__ == "__main__":
