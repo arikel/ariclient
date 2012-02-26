@@ -206,6 +206,9 @@ class TextEntry(Label):
 
 class LoginScreen(Widget):
 	def __init__(self):
+		self.infoLabel = Label("Info")
+		self.infoLabel.setPos(10,180)
+		
 		self.loginLabel = Label("LOGIN")
 		self.loginLabel.setPos(10,20)
 		self.passwordLabel = Label("PASSWORD")
@@ -217,13 +220,14 @@ class LoginScreen(Widget):
 		self.passwordEntry.setPos(10,140)
 		
 	def blit(self, screen):
+		self.infoLabel.blit(screen)
 		self.loginLabel.blit(screen)
 		self.passwordLabel.blit(screen)
 		self.loginEntry.blit(screen)
 		self.passwordEntry.blit(screen)
 		
 	def handleEvents(self, x, y, events=None):
-		if not events:return
+		if not events:return False
 		res = self.loginEntry.handleInput(events)
 		self.passwordEntry.handleInput(events)
 		return res

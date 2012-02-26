@@ -29,7 +29,10 @@ pathList.append("graphics/gui/emotes.png")
 #pathList.append("graphics/sprites/female.png")
 
 for imgPath in pathList:
-	ImgDB[imgPath] = pygame.image.load(imgPath)#.convert_alpha()
+	try:
+		ImgDB[imgPath] = pygame.image.load(imgPath).convert_alpha()
+	except:
+		ImgDB[imgPath] = pygame.image.load(imgPath)
 
 def coupeMsg(msg, longueur, font=FONT):
 	msg = msg.replace("\n", " ")
