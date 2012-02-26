@@ -10,7 +10,15 @@ from config import *
 from gameEngine import *
 from mapDisplay import MapTileset, Map
 
-SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+import inspect, os.path
+
+caller = inspect.stack()[-1]
+
+if os.path.basename(caller[1]).lower() != 'wxmapeditor.py':
+	SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+else:
+	SCREEN = None
+	print 'Skipping display initialization'
 
 class MapEditor(object):
 	def __init__(self, screen = SCREEN):

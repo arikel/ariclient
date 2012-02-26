@@ -8,17 +8,27 @@ import os, sys
 import pygame
 from utils import KeyHandler
 import thread
+
+import mapeditor
 # warning, in wx, a frame is a window, a window is a frame.
 
-class SimpleFrame(wx.Frame):	
+class wxMapEditor(wx.Frame):	
 	def __init__(self):
 		wx.Frame.__init__(self, None, -1, "ariclient map editor", size=(800,600))
 		
+		self.__init_menu__()
+		
+		self.CreateStatusBar()
+		
+		self.__init_controls__()
+
+	def __init_menu__(self):
 		#Creation of the Menu with two items, about ans quit
 		menubar = wx.MenuBar()
 		
 		fileMenu = wx.Menu()
 		OpenMn = fileMenu.Append(wx.ID_OPEN, '&Open', 'Open a map')
+		SaveMn = fileMenu.Append(wx.ID_SAVE, '&Save', 'Save a map')
 		fileMenu.AppendSeparator()
 		QuitMn = fileMenu.Append(wx.ID_EXIT, '&Quit', 'Quit application')
 		
@@ -29,29 +39,50 @@ class SimpleFrame(wx.Frame):
 		menubar.Append(aboutMenu, '&?')
 		
 		self.SetMenuBar(menubar)
-		self.CreateStatusBar()
-
-		self.panel = TestPanel(self)
-
-		sizer = wx.BoxSizer( wx.HORIZONTAL )
-		sizer.Add( self.panel, 0, wx.ALL, 5 )
-		self.SetSizer( sizer )
-		
 		
 		#Binds the two items to the correct funcion, AboutBox and Quit application
 		self.Bind(wx.EVT_MENU, self.OnOpen, OpenMn)
+		self.Bind(wx.EVT_MENU, self.OnSave, SaveMn)
 		self.Bind(wx.EVT_MENU, self.OnQuit, QuitMn)
-		
 		self.Bind(wx.EVT_MENU, self.OnAbout, AboutMn)
 		
+	def __init_controls__(self):
+		
+		self.brushes = wx.TreeCtrl(self, -1, size = wx.Size(100,600))
+		self.brushesRoot = self.brushes.AddRoot("Brushes")
+		self.brushes.AppendItem(self.brushesRoot, "Grass")
+		self.brushes.AppendItem(self.brushesRoot, "Water")		
+
+		self.panel = PygamePanel(self)
+
+		sizer = wx.BoxSizer( wx.HORIZONTAL )
+		sizer.Add( self.brushes, 0, wx.ALL, 5 )
+		sizer.Add( self.panel, 0, wx.ALL, 5 )
+		self.SetSizer( sizer )
+		
+				
 	def OnOpen(self, event):
 		self.dirname = ''
-		dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+		dlg = wx.FileDialog(self, "Open a file...", self.dirname, "", "*.txt", wx.OPEN)
 		if dlg.ShowModal() == wx.ID_OK:
 			self.filename = dlg.GetFilename()
 			self.dirname = dlg.GetDirectory()
 			filePath = os.path.join(self.dirname, self.filename)
+			print filePath
+			self.panel.pygamethread.LoadMap(filePath)
 			
+			
+		dlg.Destroy()
+		
+	def OnSave(self, event):
+		self.dirname = ''
+		dlg = wx.FileDialog(self, "Save file as...", self.dirname, "", "*.txt", wx.SAVE)
+		if dlg.ShowModal() == wx.ID_OK:
+			self.filename = dlg.GetFilename()
+			self.dirname = dlg.GetDirectory()
+			filePath = os.path.join(self.dirname, self.filename)
+			print filePath
+			self.panel.pygamethread.SaveMap(filePath)
 			
 		dlg.Destroy()
 		
@@ -67,6 +98,7 @@ class SimpleFrame(wx.Frame):
 class PygameThread:
 	def __init__(self, screen):
 		self.running = False
+		self._wait = False
 		self.screen = screen
 
 	def Start(self):
@@ -83,27 +115,44 @@ class PygameThread:
 		m = self.map
 		kh = KeyHandler()
 		while self.running:
+			while self._wait: #lock the update
+				pass
 			events = kh.getEvents()
 			m.update(events)
 
 		self.running = False
 		
+	def LockUpdate(self):
+		self._wait = True
+		
+	def ReleaseUpdate(self):
+		self._wait = False
+		
 	def SetMap(self, map):
+		self.LockUpdate()
 		self.map = map
+		self.ReleaseUpdate()
 
 	def NewMap(self, size):
-		self.map = mapeditor.MapEditor(self.screen)
+		#self.map = mapeditor.MapEditor(self.screen)
+		self.LockUpdate()
 		self.map.new(*size)
+		self.ReleaseUpdate()
 		
 	def LoadMap(self, filename):
-		self.map = mapeditor.MapEditor(self.screen)
+		#self.map = mapeditor.MapEditor(self.screen)
+		self.LockUpdate()
 		self.map.open(filename)
+		self.ReleaseUpdate()
 		
-		
+	def SaveMap(self, filename):
+		self.LockUpdate()
+		self.map.save(filename)
+		self.ReleaseUpdate()
 
 		
 		
-class TestPanel(wx.Panel):
+class PygamePanel(wx.Panel):
 	
 	draw = False
 	dragOriginX = 0
@@ -118,7 +167,6 @@ class TestPanel(wx.Panel):
 		os.environ['SDL_WINDOWID'] = str(self.hwnd) #must be before pygame init
 
 		pygame.init()
-		import mapeditor #import here since the screen is initialized during import
 		self.screen = pygame.display.set_mode(wsize)
 		self.pygamethread = PygameThread(self.screen)
 		#workaround to use the mapeditor in the thread
@@ -133,6 +181,6 @@ class TestPanel(wx.Panel):
 
 if __name__ == "__main__":
 	app = wx.App()
-	frame = SimpleFrame()
+	frame = wxMapEditor()
 	frame.Show()
 	app.MainLoop()
