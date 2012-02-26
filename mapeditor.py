@@ -41,21 +41,35 @@ class MapEditor(object):
 		self.map = Map("new")
 		self.map.setSize(x, y)
 		
-	def getMouseTilePos(self, x, y):
-		tx = (x-self.map.offsetX)/self.map.tileWidth
-		ty = (y-self.map.offsetY)/self.map.tileHeight
-		return tx, ty
-		
 	def setSize(self, x, y):
 		if not self.map:return
 		self.map.setSize(x, y)
+	
+	def getMouseTilePos(self, x, y):
+		tx = (x+self.map.offsetX)/self.map.tileWidth
+		ty = (y+self.map.offsetY)/self.map.tileHeight
+		return tx, ty
+			
+	def startDrag(self):
+		if not self.map:return
+		print "started to drag map"
+		self.dragging = True
+		x, y = pygame.mouse.get_pos()
+		self.dragOriginX = self.map.offsetX + x
+		self.dragOriginY = self.map.offsetY + y
+		
+		
+	def stopDrag(self):
+		print "stopped dragging"
+		self.dragging = False
 		
 	def update(self, events = []):
 		if not self.map:return
 		x, y = pygame.mouse.get_pos()
 		
 		if self.dragging:
-			self.map.setOffset(x - self.dragOriginX, y - self.dragOriginY)
+			self.map.setOffset(self.dragOriginX-x, self.dragOriginY-y)
+			
 			#print "setting map offset : %s %s" % (self.map.offsetX, self.map.offsetY)
 		tx, ty = self.getMouseTilePos(x, y)
 		
@@ -77,9 +91,9 @@ class MapEditor(object):
 				if event.key == pygame.K_SPACE:
 					self.toggleTileCode()
 				elif event.key == pygame.K_s:
-					self.save("testmap.txt")
+					self.save("maps/testmap.txt")
 				elif event.key == pygame.K_o:
-					self.open("testmap.txt")
+					self.open("maps/testmap.txt")
 				elif event.key == pygame.K_r:
 					self.setSize(40,20)
 					
@@ -108,17 +122,7 @@ class MapEditor(object):
 			self.setTileCode("wwww")
 			
 			
-	def startDrag(self):
-		if not self.map:return
-		print "started to drag map"
-		self.dragging = True
-		x, y = pygame.mouse.get_pos()
-		self.dragOriginX = x - self.map.offsetX
-		self.dragOriginY = y - self.map.offsetY
-		
-	def stopDrag(self):
-		print "stopped dragging"
-		self.dragging = False
+	
 	
 if __name__ == "__main__":
 	from utils import KeyHandler
