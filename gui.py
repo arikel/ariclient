@@ -12,6 +12,8 @@ from guiWidget import Widget
 from guiScroll import *
 from guiEntry import *
 from guiEmote import *
+from guiGauge import *
+
 
 if __name__=="__main__":
 	

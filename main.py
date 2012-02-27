@@ -42,6 +42,9 @@ class Game(GameClient):
 		self.entry = TextEntry("")
 		self.entry.setPos(5,SCREEN_HEIGHT-20)
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
+		self.hpbar = HpBar(0,100)
+		self.hpbar.setPos(2, 2)
+		self.hpbar.setValue(1)
 		
 		self.kh = KeyHandler()
 		self.dx = 0
@@ -165,6 +168,10 @@ class Game(GameClient):
 		self.entry.blit(self.screen)
 		
 		self.emoteEngine.blit(self.screen)
+		
+		#hpbar test
+		self.hpbar.add(1)
+		self.hpbar.blit(self.screen)
 		
 		pygame.display.flip()
 		

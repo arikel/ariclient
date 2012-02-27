@@ -61,3 +61,8 @@ def ustr(o):
 	#if isinstance(o, basestring):
 	#	return o.value()
 	return unicode(str(o.encode("utf-8")))
+
+
+def bound(value, minvalue, maxvalue):
+	"""returns a value which is between minvalue <= value <= maxvalue"""
+	return max(minvalue, min(maxvalue, value))
