@@ -137,6 +137,8 @@ class MapObject:
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 			self.updateDirection()
 			return
+			
+		# in case of collision, handle possible sliding
 		oldDx = self.dx
 		oldDy = self.dy
 		
@@ -427,7 +429,9 @@ class GameMap:
 			if "=" in line:
 				if len(line.split("="))!=2: continue
 				key , value = line.split("=")
-				if key.strip() == "w":
+				if key.strip() == "name":
+					self.name = value.strip()
+				elif key.strip() == "w":
 					self.w = int(value.strip())
 				elif key.strip() == "h":
 					self.h = int(value.strip())
@@ -537,30 +541,20 @@ class GameMap:
 		return self.tileCollide(int(x)/self.tileWidth, int(y)/self.tileHeight)
 		
 	
-	def addPlayer(self, player, x=None, y=None):
-		if x == None:
-			x = player.x
-			y = player.y
-		if player.id not in self.players:
-			self.players[player.id]=player
-			player._map = self
-			self.players[player.id].setPos(x, y)
+	def addPlayer(self, playerId, x, y):
+		if playerId not in self.players:
+			self.players[playerId]=Player(playerId, self, x, y)
 			
 	def delPlayer(self, playerName):
 		del self.players[playerName]
 	
-	def addMob(self, mob, x=None, y=None):
-		if x == None:
-			x = mob.x
-			y = mob.y
-		if mob.id not in self.mobs:
-			#print "Engine : adding mob : %s -> %s" % (mob.id, mob)
-			self.mobs[mob.id]=mob
-			mob._map = self
-			self.mobs[mob.id].setPos(x, y)
+	def addMob(self, id, mobId, x, y):
+		newId = id
+		self.mobs[newId]=Mob(newId, mobId, self, x, y)
+		#self.mobs[mob.id].setPos(x, y)
 	
-	def delMob(self, mobId):
-		del self.mobs[mobId]
+	def delMob(self, id):
+		del self.mobs[id]
 		
 	def update(self, dt):
 		for player in self.players.values():

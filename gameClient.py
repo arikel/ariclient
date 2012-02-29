@@ -37,10 +37,10 @@ class GameClient(ConnectionListener):
 		
 		
 	def SendUpdateMove(self, x, y, dx, dy):
-		connection.Send({"action": "update_move", "message":" ", "x":x, "y":y, "dx":dx, "dy": dy, "who":self.id})
+		connection.Send({"action": "player_update_move", "x":x, "y":y, "dx":dx, "dy": dy, "id":self.id})
 		
 	def SendLogin(self, password):
-		connection.Send({"action": "login", "message": " ", "id":self.id, "password" : password})
+		connection.Send({"action": "login", "id":self.id, "password" : password})
 		
 	def SendEmote(self, emote):
 		connection.Send({"action": "emote", "id":self.id, "emote" : emote})
@@ -62,30 +62,33 @@ class GameClient(ConnectionListener):
 			if playerId not in data['players']:
 				#del self.players[player]
 				self.delPlayer(playerId)
-				
-	def Network_message(self, data):
-		print data['who'] + ": " + data['message']
-		self.chatWindow.addText(data['message'])
-		
-	def Network_public_message(self, data):
-		print data['who'] + ": " + data['message']
-		msg = "<" + data['who'] + "> " + data['message'].decode('utf-8')
-		self.chatWindow.addText(msg)
-		#self.chatWindow.addText(data['message'].decode('utf-8'))
-		
-	def Network_private_message(self, data):
-		print data['who'] + "(prv): " + data['message']
-		msg = "<" + data['who'] + " (prv)> " + data['message'].decode('utf-8')
-		self.chatWindow.addText(msg)
-		
-	def Network_emote(self, data):
-		playerId = data['id']
-		emote = data['emote']
-		self.displayMap.players[playerId]._sprite.setEmote(emote)
 	
-	def Network_update_move(self, data):
-		id = data['who']
-		if id == self.id:return
+	def Network_player_enter_map(self, data):
+		id = data["id"]
+		x = data['x']
+		y = data['y']
+		dx = data['dx']
+		dy = data['dy']
+		self.displayMap.addPlayer(id, x, y)
+		self.displayMap.players[id].setMovement(dx, dy)
+		print "Player %s entered the map" % (id)
+		
+	def Network_player_leave_map(self, data):
+		id = data["id"]
+		self.displayMap.delPlayer(id)
+		print "Player %s left the map" % (id)
+		
+	
+	def Network_player_update_move(self, data):
+		id = data['id']
+		if id == self.id:
+			# if we're not connected yet
+			if self.id not in self.displayMap.players:
+				self.addPlayer(self.id, data['x'], data['y'])
+				print "Looks like we're on the map now..."
+			# TODO : check if we're far from what the server believes, if so, correct position
+			return
+		
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
@@ -119,6 +122,24 @@ class GameClient(ConnectionListener):
 			self.displayMap.mobs[id].setMovement(dx, dy)
 			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+	
+	
+	def Network_public_message(self, data):
+		print data['id'] + ": " + data['message']
+		msg = "<" + data['id'] + "> " + data['message'].decode('utf-8')
+		self.chatWindow.addText(msg)
+		#self.chatWindow.addText(data['message'].decode('utf-8'))
+		
+	def Network_private_message(self, data):
+		print data['id'] + "(prv): " + data['message']
+		msg = "<" + data['id'] + " (prv)> " + data['message'].decode('utf-8')
+		self.chatWindow.addText(msg)
+		
+	def Network_emote(self, data):
+		playerId = data['id']
+		emote = data['emote']
+		self.displayMap.players[playerId]._sprite.setEmote(emote)	
+	
 	# built in stuff
 
 	def Network_connected(self, data):

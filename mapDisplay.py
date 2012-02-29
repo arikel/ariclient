@@ -332,7 +332,9 @@ class Map(GameMap):
 			if "=" in line:
 				if len(line.split("="))!=2: continue
 				key , value = line.split("=")
-				if key.strip() == "w":
+				if key.strip() == "name":
+					self.name = value.strip()
+				elif key.strip() == "w":
 					self.w = int(value.strip())
 				elif key.strip() == "h":
 					self.h = int(value.strip())

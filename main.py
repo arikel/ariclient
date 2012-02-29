@@ -58,10 +58,10 @@ class Game(GameClient):
 		self.prevTime = 0.0
 		self.speed = 0.05
 
-	def addPlayer(self, id, x=50.0, y=50.0):
+	def addPlayer(self, id, x, y):
 		if id == "anonymous":
 			return
-		print "adding player to map : %s" % (id)
+		print "adding player to map : %s, at %s, %s" % (id, x, y)
 		self.displayMap.addPlayer(id, x, y)
 		#self.displayMap.players[id].setMovement(1, 1)
 		#self.displayMap.players[id].setMovement(0, 0)
