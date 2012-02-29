@@ -2,7 +2,11 @@
 # -*- coding: utf8 -*-
 from tmxHandler import *
 import random
+import math
 
+def getDist(a, b):# a, b == Rect or derivative : Player, Mob...
+	return math.sqrt((a.x-b.x)**2+(a.y-b.y)**2)
+	
 class Item:
 	weight = 0.1
 	baseCost = 2
@@ -212,7 +216,7 @@ class Player(Being, MapObject):
 		self.category = "player"
 		self.setPos(x, y)
 		
-		
+'''
 class MapBase:
 	def __init__(self, filename=None):
 		self.filename = filename
@@ -299,7 +303,7 @@ class MapBase:
 			mob.update(dt)
 			#print "updating mob %s : %s / %s, dt = %d" % (mob.id, mob.x, mob.y, dt)
 			#print "updated pos for player %s : %s / %s, direction : %s / %s" % (player.id, player.x, player.y, player.dx, player.dy)
-			
+'''
 
 class MapLayer(object):
 	def __init__(self, name, w, h, tileWidth=16, tileHeight=16):
@@ -404,8 +408,9 @@ class GameMap:
 	
 	def getSaveData(self):
 		data = ""
-		data = data + "w = " + str(self.w) + "\n\n"
-		data = data + "h = " + str(self.h) + "\n\n"
+		data = data + "name = " + str(self.name) + "\n"
+		data = data + "w = " + str(self.w) + "\n"
+		data = data + "h = " + str(self.h) + "\n"
 		
 		for layerName in self.layers:
 			data = data + layerName + " = " + str(self.layers[layerName].getSaveData()) + "\n\n"

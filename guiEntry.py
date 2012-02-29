@@ -237,7 +237,7 @@ class LoginScreen(Widget):
 		while self.running:
 			screen.fill((100,120,160))
 			x, y = pygame.mouse.get_pos()
-			print "mouse at %s, %s" % (x, y)
+			#print "mouse at %s, %s" % (x, y)
 			events = pygame.event.get()
 			res = self.handleEvents(x, y, events)
 			if res:
@@ -246,7 +246,7 @@ class LoginScreen(Widget):
 			pygame.display.flip()
 		return res
 		
-			
+	
 if __name__=="__main__":
 	pygame.init()
 	screen = pygame.display.set_mode((640,480))

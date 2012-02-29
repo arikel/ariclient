@@ -37,13 +37,16 @@ class GameClient(ConnectionListener):
 		
 		
 	def SendUpdateMove(self, x, y, dx, dy):
-		connection.Send({"action": "player_update_move", "x":x, "y":y, "dx":dx, "dy": dy, "id":self.id})
+		connection.Send({"action": "player_update_move", "x":x, "y":y, "dx":dx, "dy": dy})
 		
 	def SendLogin(self, password):
 		connection.Send({"action": "login", "id":self.id, "password" : password})
 		
 	def SendEmote(self, emote):
-		connection.Send({"action": "emote", "id":self.id, "emote" : emote})
+		connection.Send({"action": "emote", "emote" : emote})
+		
+	def SendWarpRequest(self, mapName, x, y):
+		connection.Send({"action": "warp_request", "mapName":mapName, "x":x, "y":y})
 		
 	#######################################
 	### Network event/message callbacks ###
@@ -85,8 +88,11 @@ class GameClient(ConnectionListener):
 			# if we're not connected yet
 			if self.id not in self.displayMap.players:
 				self.addPlayer(self.id, data['x'], data['y'])
-				print "Looks like we're on the map now..."
-			# TODO : check if we're far from what the server believes, if so, correct position
+				print("Looks like we're on the map now...")
+			else:
+				if getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))>20.0:
+					self.displayMap.players[self.id].setPos(data['x'], data['y'])
+			
 			return
 		
 		x = data['x']
@@ -122,8 +128,13 @@ class GameClient(ConnectionListener):
 			self.displayMap.mobs[id].setMovement(dx, dy)
 			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
-	
-	
+	def Network_warp(self, data):
+		mapFileName = data['mapFileName']
+		x = data['x']
+		y = data['y']
+		print "Warping to %s , %s, %s" % (mapFileName, x, y)
+		self.setMap(mapFileName, x, y)
+		
 	def Network_public_message(self, data):
 		print data['id'] + ": " + data['message']
 		msg = "<" + data['id'] + "> " + data['message'].decode('utf-8')

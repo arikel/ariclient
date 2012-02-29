@@ -14,7 +14,7 @@ from optparse import OptionParser
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
-from mapDisplay import GraphicMap, Map
+from mapDisplay import Map
 from gui import *
 from utils import KeyHandler
 from gameEngine import *
@@ -78,6 +78,10 @@ class Game(GameClient):
 	def delMob(self, id):
 		self.displayMap.delMob(id)
 		
+	def setMap(self, mapFileName, x, y):
+		self.displayMap = Map(mapFileName)
+		self.addPlayer(self.id, x, y)
+		
 	def update(self):
 		
 		t = pygame.time.get_ticks()
@@ -130,7 +134,7 @@ class Game(GameClient):
 					self.entry.getFocus()
 				if key == pygame.K_SPACE and not self.entry.has_focus:
 					#print "Starting to type text..."
-					self.SendEmote(0)
+					self.SendWarpRequest("second", 50,70)
 					
 			if event.type == pygame.QUIT:
 				#pygame.quit()

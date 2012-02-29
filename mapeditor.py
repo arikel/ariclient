@@ -99,7 +99,7 @@ class MapEditor(object):
 				if event.key == pygame.K_SPACE:
 					self.toggleTileCode()
 				elif event.key == pygame.K_s:
-					self.save("maps/testmap.txt")
+					self.save("maps/testmap2.txt")
 				elif event.key == pygame.K_o:
 					self.open("maps/testmap.txt")
 				elif event.key == pygame.K_r:

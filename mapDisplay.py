@@ -6,6 +6,8 @@ from gameEngine import *
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
 
 #-------------------------------------------------------------------------------
+'''
+
 class GraphicMap(MapBase):
 	def __init__(self, screen, filename):
 		MapBase.__init__(self, filename)
@@ -116,17 +118,6 @@ class GraphicMap(MapBase):
 		if ( (-self.frameWidth<=sX<=self.screenWidth+self.frameWidth) and (-self.frameHeight<=sY<=self.screenHeight+self.frameHeight) ):
 			return True
 		return False
-	'''
-	def updateTile(self, mapX, mapY, screen = None):
-		if screen == None:
-			screen = self.screen
-		screenX, screenY = self.getScreenXY(mapX, mapY)
-		for layerName in self.layerList:
-			if (mapX, mapY) in self.layers[layerName].tiles:
-				gid = self.layers[layerName].tiles[(mapX, mapY)]
-				offset = self.offsets[gid]
-				screen.blit(self.frames[gid], (screenX, screenY-offset))
-	'''		
 		
 		
 	def aff(self):
@@ -197,6 +188,8 @@ class GraphicMap(MapBase):
 	def stopDrag(self):
 		self.dragging = False
 		#print "Stopping Drag!"
+'''
+
 		
 class MapTileset(object):
 	def __init__(self, filePath):
@@ -285,6 +278,8 @@ class Map(GameMap):
 			self.players[id]=Player(id, self, x, y)
 			self.players[id].setSprite(makePlayerSprite(id))
 			#print "Map added player : %s, his map is : %s" % (id, self.players[id]._map)
+		else:
+			print("Error, asked to add player %s, but that one is already here." % (id))
 			
 	def delPlayer(self, playerName):
 		del self.players[playerName]
