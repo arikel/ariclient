@@ -138,13 +138,13 @@ class GameClient(ConnectionListener):
 	def Network_public_message(self, data):
 		print data['id'] + ": " + data['message']
 		msg = "<" + data['id'] + "> " + data['message'].decode('utf-8')
-		self.chatWindow.addText(msg)
+		self.gui.chatWindow.addText(msg)
 		#self.chatWindow.addText(data['message'].decode('utf-8'))
 		
 	def Network_private_message(self, data):
 		print data['id'] + "(prv): " + data['message']
 		msg = "<" + data['id'] + " (prv)> " + data['message'].decode('utf-8')
-		self.chatWindow.addText(msg)
+		self.gui.chatWindow.addText(msg)
 		
 	def Network_emote(self, data):
 		playerId = data['id']

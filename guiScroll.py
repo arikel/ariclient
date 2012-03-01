@@ -68,7 +68,7 @@ class VScrollBar(Widget):
 	def updateCarret(self):
 		# ascenseur
 		self.carretSize = max( self.h/float(self.nbPos), MIN_CARRET_SIZE )
-		print("carretSize : %s" % (self.carretSize))
+		#print("carretSize : %s" % (self.carretSize))
 		
 		self.delta = self.h - self.carretSize # nb of pixel positions available to the carret
 		
@@ -120,7 +120,7 @@ class VScrollBar(Widget):
 	
 		
 	def startDrag(self, x, y):
-		print("started to drag")
+		#print("started to drag")
 		self.dragging = True
 		self.dragOffset = float(self.carretRect.y - y)
 		
