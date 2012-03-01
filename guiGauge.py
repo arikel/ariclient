@@ -1,5 +1,5 @@
 import pygame
-from guiEntry import Frame
+from guiFrame import Frame
 from guiFunctions import *
 
 class Gauge(Frame):
