@@ -14,7 +14,7 @@ from guiWidget import Widget
 from guiScroll import *
 from guiEntry import *
 from guiEmote import *
-from guiGauge import *
+from guiProgressBar import *
 from guiLogin import LoginScreen
 
 class ClientGUI(object):

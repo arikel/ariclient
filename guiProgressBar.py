@@ -2,7 +2,8 @@ import pygame
 from guiFrame import Frame
 from guiFunctions import *
 
-class Gauge(Frame):
+class ProgressBar(Frame):
+	"""A simple progress bar made with rectangles"""
 	def __init__(self,
 		minvalue = 0,
 		maxvalue = 100,
@@ -20,22 +21,27 @@ class Gauge(Frame):
 		self.value = self.maxvalue = maxvalue
 		
 	def add(self, value):
+		"""Increase the current absolute value of the progress bar"""
 		self.value = bound(self.value + value, self.minvalue, self.maxvalue)
 		self.updateSurface()
 	
 	def sub(self, value):
+		"""Decrease the current absolute value of the progress bar"""
 		self.value = bound(self.value - value, self.minvalue, self.maxvalue)
 		self.updateSurface()
 		
 	def setValue(self, value):
+		"""Set the current value of the progress bar"""
 		self.value = bound(value, self.minvalue, self.maxvalue)
 		self.updateSurface()
 		
 	def setColor(self, color):
+		"""Change the bar color"""
 		self.barcolor = color
 		self.updateSurface()
 		
 	def _gerPercentage(self):
+		"""Get the current percentage value/(max-min)"""
 		return float(self.value)/float(self.maxvalue-self.minvalue)
 		
 	def updateSurface(self):
@@ -48,7 +54,13 @@ class Gauge(Frame):
 			lenght, self.height-2*self.borderWidth-2))
 
 
-class HpBar(Gauge):
+class HpBar(ProgressBar):
+	"""A progress bar used to show Hp or Mp or Vp,
+	   it has 3 colors binded to the 3 levels:
+			High;
+			Medium;
+			Low;
+	"""
 	
 	dir = 1
 	
@@ -62,10 +74,24 @@ class HpBar(Gauge):
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
 		borderwidth = 1):
-			Gauge.__init__(self,minvalue, maxvalue, barcolors[0], width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
+			ProgressBar.__init__(self,minvalue, maxvalue, barcolors[0], width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
 			self.barcolors = barcolors
+			
+	def setColor(self, color, level):
+		"""Set the desired color for the value level: 
+			0 or 'low,
+			1 or 'medium',
+			2 or 'high'
+		"""
+		if level not in (2, 1, 0, 'high', 'medium', 'low'):
+			return
+		if type(level) is not int:
+			level = {'high': 1, 'medium': 1, 'low': 0}[level]
+		self.barcolors[level] = color
+		self.updateSurface()
 	
 	def _getPercentage(self):
+		"""Calculate the percentage and set the right color for the bar"""
 
 		perc = float(self.value)/float(self.maxvalue-self.minvalue)
 		
