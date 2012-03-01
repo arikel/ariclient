@@ -13,18 +13,27 @@ from guiEntry import TextEntry
 
 class LoginScreen(Widget):
 	def __init__(self):
-		self.infoLabel = Label("Info")
-		self.infoLabel.setPos(10,180)
+		self.x = 220
+		self.y = 180
+		self.step1 = 120
+		self.step2 = 60
 		
-		self.loginLabel = Label("LOGIN")
-		self.loginLabel.setPos(10,20)
-		self.passwordLabel = Label("PASSWORD")
-		self.passwordLabel.setPos(10,100)
+		self.loginLabel = Label("Name", width=100)
+		self.loginLabel.setPos(self.x,self.y)
+		
 		self.loginEntry = TextEntry("")
-		self.loginEntry.setPos(10,60)
+		self.loginEntry.setPos(self.x + self.step1 ,self.y)
 		self.loginEntry.getFocus()
+		
+		
+		self.passwordLabel = Label("Password")
+		self.passwordLabel.setPos(self.x,self.y +  + 2*self.step2)
+		
 		self.passwordEntry = TextEntry("")
-		self.passwordEntry.setPos(10,140)
+		self.passwordEntry.setPos(self.x + self.step1, self.y +  + 2*self.step2)
+		
+		self.infoLabel = Label("Info")
+		self.infoLabel.setPos(self.x,self.y + 5*self.step1)
 		
 	def blit(self, screen):
 		self.infoLabel.blit(screen)

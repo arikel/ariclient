@@ -29,7 +29,7 @@ class Widget(pygame.Rect):
 	# pos
 	def set_parent(self, _parent):
 		self._parent = _parent
-	def re_parentTo(self, _parent):
+	def reparentTo(self, _parent):
 		self.set_parent(_parent)
 	def detach(self):
 		self._parent = None

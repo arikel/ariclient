@@ -36,17 +36,8 @@ class TextEntry(Label):
 		self.has_focus = False
 		
 	def handleInput(self, events=None):
-		'''
-		for event in events:
-			if event.type == pygame.KEYDOWN:
-				key = event.key
-				if key == pygame.K_RETURN and not self.has_focus:
-					self.has_focus = True
-					return None
-		'''		
 		if not self.has_focus or events==None:
 			return None
-		#print "entry handle input!"
 		for event in events:
 			if event.type == pygame.KEYDOWN:
 				key = event.key
@@ -62,20 +53,16 @@ class TextEntry(Label):
 				elif key == pygame.K_MINUS:
 					self.baseText = self.baseText + "_"
 				elif 33<=key<=127:
-					#if self.shift:
-					#	toAdd = chr(key).upper()
-					#else:
-					#	toAdd = chr(key)
 					toAdd = ustr(event.unicode)
 					self.baseText = self.baseText + toAdd
 					
 				elif key == pygame.K_RETURN:
-					res = self.baseText
-					self.baseText = ""
-					self.setText(self.baseText)
-					#self.has_focus = False
-					#print("Focus off")
-					return res
+					#res = self.baseText
+					#self.baseText = ""
+					#self.setText(self.baseText)
+					#return res
+					return self.baseText
+					
 				elif key == 303 or key == 304:
 					self.shift = True
 				else:

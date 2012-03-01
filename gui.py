@@ -43,9 +43,18 @@ class ClientGUI(object):
 			self.chatWindow.handleEvents(x,y,events)
 			if event.type == pygame.KEYDOWN:
 				key = event.key	
-				if key == pygame.K_RETURN and not self.entry.has_focus:
-					#print "Starting to type text..."
-					self.entry.getFocus()
+					
+				if key == pygame.K_RETURN:
+					if self.entry.has_focus:
+						if len(self.entry.baseText)>0:
+							self.game.SendMessagePublic(self.entry.baseText)
+							self.entry.setText("")
+							self.entry.loseFocus()
+						else:
+							self.entry.loseFocus()
+					else:
+						self.entry.getFocus()
+		
 		res = self.entry.handleInput(events)
 		if res:
 			self.game.SendMessagePublic(res)

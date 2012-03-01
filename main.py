@@ -85,7 +85,6 @@ class Game(GameClient):
 			self.Loop()
 			return
 		
-		#print "dt = %s , mouv = %s" % (dt, self.speed*dt)
 		events = self.kh.getEvents()
 		moved = False
 		
@@ -97,12 +96,12 @@ class Game(GameClient):
 		
 		if not self.gui.entry.has_focus:
 			
-			#self.displayMap.players[self.id].update(dt)
 			if (self.prevMove != (self.dx, self.dy)):# or (t>self.sendPosCooldown):
 				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
 				#self.sendPosCooldown = t+25
 				#print "Player direction changed from %s to %s/%s" % (self.prevMove, self.dx, self.dy)
 				self.SendUpdateMove(self.displayMap.players[self.id].x, self.displayMap.players[self.id].y, self.dx, self.dy)
+		
 		else:
 			self.dx = 0
 			self.dy = 0
@@ -114,7 +113,7 @@ class Game(GameClient):
 		for event in events:
 			if event.type == pygame.KEYDOWN:
 				key = event.key
-					
+
 				if key == pygame.K_ESCAPE and not self.gui.entry.has_focus:
 					#print "Escape and no typing : quit"
 					#pygame.quit()
