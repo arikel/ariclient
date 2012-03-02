@@ -6,6 +6,7 @@ from config import *
 from guiFunctions import ImgDB
 from gameEngine import *
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
+from mapParticle import MapParticleManager
 
 #-------------------------------------------------------------------------------
 '''
@@ -280,6 +281,8 @@ class Map(GameMap):
 		self.collisionVisible = False
 		self.warpVisible = False
 		
+		self.particleManager = MapParticleManager(self)
+		
 	def selectTarget(self, id):
 		self.selected = id
 		self.selectCursor = ImgDB["graphics/gui/guibase.png"].subsurface((16,32,32,16)).convert_alpha()
@@ -309,6 +312,8 @@ class Map(GameMap):
 		
 		
 	def update(self, dt):
+		self.particleManager.update()
+		
 		for playerName in self.players:
 			self.players[playerName].update(dt)
 			
@@ -393,6 +398,9 @@ class Map(GameMap):
 				if sprite.id == self.selected:
 					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))
 			sprite.blit(screen)
+		
+		# particles
+		self.particleManager.blit(screen)
 		
 	def clearTile(self, layerName, x, y):
 		self.layers[layerName].clearTile(x, y)

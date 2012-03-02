@@ -32,8 +32,6 @@ class Animation(object):
 				frame = img.subsurface(rect)
 			
 			self.frames.append(frame)
-			
-
 
 class BaseSprite(object):
 	def __init__(self, id, tileWidth = 16, tileHeight = 16):
@@ -107,8 +105,6 @@ class BaseSprite(object):
 		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
 		self.rect.y = self.mapRect.y - y - self.rect.h
 		
-	
-	
 	def update(self, t=None):
 		if t == None:
 			t = pygame.time.get_ticks()

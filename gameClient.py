@@ -116,6 +116,19 @@ class GameClient(ConnectionListener):
 		id = data["id"]
 		self.displayMap.delMob(id)
 		print "Mob %s left the map" % (id)
+	
+	def Network_mob_took_damage(self, data):
+		mobId = data["id"]
+		if mobId not in self.displayMap.mobs:
+			return
+		dmg = data["dmg"]
+		
+		print "Mob %s took %s damage points" % (mobId, dmg)
+		x, y = self.displayMap.mobs[mobId].mapRect.topleft
+		y -= self.displayMap.mobs[mobId]._sprite.rect.h
+		x -= self.displayMap.mobs[mobId]._sprite.rect.w
+		
+		self.displayMap.particleManager.addParticle("damage", x, y, str(dmg))
 		
 	def Network_mob_update_move(self, data):
 		id = data['id']
