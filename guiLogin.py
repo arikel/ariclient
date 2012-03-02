@@ -7,6 +7,7 @@ import math
 import re
 import string
 
+from guiFunctions import *
 from guiWidget import Widget
 from guiLabel import Label
 from guiEntry import TextEntry
@@ -18,7 +19,7 @@ class LoginScreen(Widget):
 		self.step1 = 120
 		self.step2 = 60
 		
-		self.loginLabel = Label("Name", width=100)
+		self.loginLabel = Label("Name", FONT2, width=100)
 		self.loginLabel.setPos(self.x,self.y)
 		
 		self.loginEntry = TextEntry("")
@@ -26,7 +27,7 @@ class LoginScreen(Widget):
 		self.loginEntry.getFocus()
 		
 		
-		self.passwordLabel = Label("Password")
+		self.passwordLabel = Label("Password", FONT2, width=100)
 		self.passwordLabel.setPos(self.x,self.y +  + 2*self.step2)
 		
 		self.passwordEntry = TextEntry("")

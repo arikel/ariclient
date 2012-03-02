@@ -18,8 +18,8 @@ class ScrollButton(Widget):
 		self.initRect(x, y, 20,20)
 		self.makeSurface()
 		#print("making button, direction = %s" % (direction))
-		self.img = GuiBaseImg.subsurface((1,1,20,20)).convert_alpha()
-		self.imgHover = GuiBaseImg.subsurface((22,1,20,20)).convert_alpha()
+		self.img = ImgDB["graphics/gui/guibase.png"].subsurface((1,1,20,20)).convert_alpha()
+		self.imgHover = ImgDB["graphics/gui/guibase.png"].subsurface((22,1,20,20)).convert_alpha()
 		if direction == "down":
 			self.img = pygame.transform.rotate(self.img, 180)
 			self.imgHover = pygame.transform.rotate(self.imgHover, 180)

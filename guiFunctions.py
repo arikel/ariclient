@@ -16,17 +16,16 @@ TEXTCOLOR = (200,200,200)
 BORDERCOLOR = TEXTCOLOR
 TEXTCOLORHOVER = (255,255,255)
 
-GuiBaseImg = pygame.image.load("graphics/gui/guibase.png")
-
 MIN_CARRET_SIZE = 5
 CARRET_WIDTH = 20
 
 ImgDB = {}
 pathList = []
-pathList.append("graphics/sprites/male.png")
-pathList.append("graphics/sprites/monsters01.png")
+pathList.append("graphics/gui/guibase.png")
 pathList.append("graphics/gui/emotes.png")
-#pathList.append("graphics/sprites/female.png")
+pathList.append("graphics/sprites/male.png")
+pathList.append("graphics/sprites/female.png")
+pathList.append("graphics/sprites/monsters01.png")
 
 for imgPath in pathList:
 	try:

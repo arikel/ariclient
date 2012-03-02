@@ -23,6 +23,7 @@ from gameClient import GameClient
 class Game(GameClient):
 	def __init__(self, host, port):
 		self.screen = SCREEN
+		
 		pygame.init()
 		
 		# GUI
@@ -56,20 +57,30 @@ class Game(GameClient):
 		#self.displayMap.players[id].setMovement(0, 0)
 		#print "Player %s 's map = %s" % (self.displayMap.players[id].id, self.displayMap.players[id]._map)
 		
+	def delPlayer(self, id):
+		self.displayMap.delPlayer(id)
+	
 	def addMob(self, id, x=50.0, y=50.0):
 		#print "adding mob %s" % (id)
 		self.displayMap.addMob(id, 1, x, y)
-		
-		
-	def delPlayer(self, id):
-		self.displayMap.delPlayer(id)
-		
+			
 	def delMob(self, id):
 		self.displayMap.delMob(id)
 		
 	def setMap(self, mapFileName, x, y):
 		self.displayMap = Map(mapFileName)
 		self.addPlayer(self.id, x, y)
+		
+	def getClosestMobName(self):
+		myRect = self.displayMap.players[self.id].mapRect
+		minDist = 2000.0
+		closestMob = None
+		for mobName, mob in self.displayMap.mobs.items():
+			dist = getDist(mob.mapRect, myRect)
+			if dist < minDist:
+				minDist = dist
+				closestMob = mobName
+		return closestMob
 		
 	def update(self):
 		
@@ -122,6 +133,15 @@ class Game(GameClient):
 				if key == pygame.K_SPACE and not self.gui.entry.has_focus:
 					#print "Starting to type text..."
 					self.SendWarpRequest("second", 50,70)
+				
+				if key == KEY_SELECT_TARGET:
+					mobName = self.getClosestMobName()
+					if mobName:
+						self.displayMap.selectTarget(mobName)
+				
+				if key == KEY_ATTACK:
+					if self.displayMap.selected:
+						self.SendAttackMob(self.displayMap.selected)
 					
 			if event.type == pygame.QUIT:
 				#pygame.quit()

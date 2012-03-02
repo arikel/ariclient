@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pygame
+from config import *
+from guiFunctions import ImgDB
 from gameEngine import *
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
 
@@ -247,6 +249,7 @@ class MapTileset(object):
 class Map(GameMap):
 	def __init__(self, filename = None):
 		self.filename = filename
+		self.screenRect = pygame.Rect((0,0,SCREEN_WIDTH,SCREEN_HEIGHT))
 		
 		self.tileWidth = 16
 		self.tileHeight = 16
@@ -272,6 +275,15 @@ class Map(GameMap):
 		
 		self.offsetXmax = 0
 		self.offsetYmax = 0
+		
+		self.selected = None
+		
+	def selectTarget(self, id):
+		self.selected = id
+		self.selectCursor = ImgDB["graphics/gui/guibase.png"].subsurface((16,32,32,16)).convert_alpha()
+		
+	def unselectTarget(self):
+		self.selected = None
 		
 	def addPlayer(self, id, x=50.0, y=50.0):
 		if id not in self.players:
@@ -307,6 +319,13 @@ class Map(GameMap):
 		
 	def isValidPos(self, x, y):
 		if (0<=x<self.w) and (0<=y<self.h):
+			return True
+		return False
+		
+	def isMobOnScreen(self, mobId):
+		if mobId not in self.mobs:
+			return False
+		if self.screenRect.collides(self.mobs[mobId].rect):
 			return True
 		return False
 		
@@ -368,6 +387,9 @@ class Map(GameMap):
 		sprites.extend([p._sprite for p in self.mobs.values()])
 		
 		for sprite in sorted(sprites, key = lambda k:k.mapRect.y):
+			if self.selected:
+				if sprite.id == self.selected:
+					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))
 			sprite.blit(screen)
 		
 	def clearTile(self, layerName, x, y):

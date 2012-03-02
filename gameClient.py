@@ -39,6 +39,9 @@ class GameClient(ConnectionListener):
 	def SendUpdateMove(self, x, y, dx, dy):
 		connection.Send({"action": "player_update_move", "x":x, "y":y, "dx":dx, "dy": dy})
 		
+	def SendAttackMob(self, mobId):
+		connection.Send({"action": "attack_mob", "target":mobId})
+		
 	def SendLogin(self, password):
 		connection.Send({"action": "login", "id":self.id, "password" : password})
 		
@@ -108,6 +111,11 @@ class GameClient(ConnectionListener):
 			self.displayMap.players[id].setMovement(dx, dy)
 			
 		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+	
+	def Network_mob_leave_map(self, data):
+		id = data["id"]
+		self.displayMap.delMob(id)
+		print "Mob %s left the map" % (id)
 		
 	def Network_mob_update_move(self, data):
 		id = data['id']
