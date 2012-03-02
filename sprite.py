@@ -18,7 +18,7 @@ class Animation(object):
 		self.frameTime = frameTime
 		
 		if imgPath in ImgDB:
-			img = ImgDB[imgPath]
+			img = ImgDB[imgPath].convert_alpha()
 		else:
 			img = pygame.image.load(imgPath).convert_alpha()
 		#print "image loaded, rect = %s" % (img.get_rect())
@@ -54,7 +54,7 @@ class BaseSprite(object):
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
 		
-		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255)).convert_alpha()
+		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))#.convert_alpha()
 		self.idImg.set_alpha(120)
 		
 		self.emoteCooldown = 0
@@ -71,7 +71,9 @@ class BaseSprite(object):
 			self.emoteCooldown = pygame.time.get_ticks() + 2000
 		
 	def setTalk(self, msg):
-		self.talkImg = FONT.render(msg, False, (20,20,20), (200,200,200,255))
+		self.talk = msg
+		self.talkImg = FONT.render(msg, False, (20,20,20), (200,200,200,255))#.convert_alpha()
+		self.talkImg.set_alpha(120)
 		self.talkCooldown = pygame.time.get_ticks() + 2000
 		
 	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):

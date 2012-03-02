@@ -135,11 +135,19 @@ class GameClient(ConnectionListener):
 		y = data['y']
 		print "Warping to %s , %s, %s" % (mapFileName, x, y)
 		self.setMap(mapFileName, x, y)
-		
+	
+	
+	#-------------------------------------------------------------------
+	# chat
+	
 	def Network_public_message(self, data):
 		print data['id'] + ": " + data['message']
 		msg = "<" + data['id'] + "> " + data['message'].decode('utf-8')
 		self.gui.chatWindow.addText(msg)
+		if data['id'] in self.displayMap.players:
+			self.displayMap.players[data['id']]._sprite.setTalk(data['message'].decode('utf-8'))
+		else:
+			print "received message from %s but not in map" % (data['id'])
 		#self.chatWindow.addText(data['message'].decode('utf-8'))
 		
 	def Network_private_message(self, data):
