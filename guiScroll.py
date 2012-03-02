@@ -176,6 +176,8 @@ class VScrollBar(Widget):
 		self.setCarretPos(0)
 		
 	def handleEvents(self, x, y, events = None):
+		self.updateSurface(x, y)
+		
 		for event in events:
 			if event.type == pygame.KEYDOWN:
 				key = event.key
@@ -189,8 +191,12 @@ class VScrollBar(Widget):
 				
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				if pygame.mouse.get_pressed() == (1, 0, 0):
+					#print "Vertical scroll bar received click"
+					
 					if self.carretHover(x, y):
+						#print "Vertical scroll starting drag!"
 						self.startDrag(x, y)
+						
 					elif self.hover(x,y):
 						if y > self.carretRect.bottom:
 							self.setCarretPos(self.currentPos + 1)
@@ -202,6 +208,7 @@ class VScrollBar(Widget):
 					self.setCarretPos(self.currentPos + 1)
 					
 			if event.type == pygame.MOUSEBUTTONUP:
+				#print "Stopping carret drag"
 				self.stopDrag()
 
 
@@ -262,8 +269,8 @@ class ScrollTextWindow(Widget):
 		self.surface.fill(BGCOLOR)
 		self.bar.updateSurface(x,y)
 		self.surface.blit(self.bar.surface, (self.w-20,0))
-		#self.makeTextSurface()
 		self.surface.blit(self.textSurface.subsurface((0, self.currentPos*self.lineStep,self.textSurface.get_width(), self.textSurface.get_height()-(self.currentPos*self.lineStep))), (self.padding,0))
+		
 		
 	def handleEvents(self, x, y, events = None):
 		self.bar.handleEvents(x,y,events)
@@ -322,11 +329,12 @@ class ScrollTextWindow(Widget):
 			self.textSurface.blit(msg, (0,n*self.lineStep, w, h))
 			n += 1
 		
-		self.surface.fill(BGCOLOR)
+		#self.surface.fill(BGCOLOR)
 		#self.surface.blit(self.textSurface, (self.padding,self.padding, self.textSurface.get_rect().w, self.textSurface.get_rect().h))
 		#print("setting nbPos : %s" % (self.nbLines - self.nbVisibleLines))
 		self.setNbPos(self.nbLines - self.nbVisibleLines)
 		#print("NbLines : %s , - %s visible = %s positions" % (self.nbLines, self.nbVisibleLines, self.nbPos))
-		
-		self.surface.blit(self.textSurface.subsurface((0, self.currentPos*self.lineStep,self.textSurface.get_width(), self.textSurface.get_height()-(self.currentPos*self.lineStep))), (self.padding,0))
+		x, y = pygame.mouse.get_pos()
+		self.updateSurface(x,y)
+		#self.surface.blit(self.textSurface.subsurface((0, self.currentPos*self.lineStep,self.textSurface.get_width(), self.textSurface.get_height()-(self.currentPos*self.lineStep))), (self.padding,0))
 	

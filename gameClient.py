@@ -55,7 +55,7 @@ class GameClient(ConnectionListener):
 	#-------------------------------------------------------------------
 	# on client receive from server :
 	#-------------------------------------------------------------------
-	
+	'''
 	def Network_players(self, data):
 		print "*** players: " + ", ".join([p for p in data['players']])
 		for playerId in data['players']:
@@ -65,7 +65,7 @@ class GameClient(ConnectionListener):
 			if playerId not in data['players']:
 				#del self.players[player]
 				self.delPlayer(playerId)
-	
+	'''
 	def Network_player_enter_map(self, data):
 		id = data["id"]
 		x = data['x']
@@ -90,7 +90,7 @@ class GameClient(ConnectionListener):
 				self.addPlayer(self.id, data['x'], data['y'])
 				print("Looks like we're on the map now...")
 			else:
-				if getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))>20.0:
+				if getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))>16.0:
 					self.displayMap.players[self.id].setPos(data['x'], data['y'])
 			
 			return
@@ -128,6 +128,7 @@ class GameClient(ConnectionListener):
 			self.displayMap.mobs[id].setMovement(dx, dy)
 			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+		
 	def Network_warp(self, data):
 		mapFileName = data['mapFileName']
 		x = data['x']

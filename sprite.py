@@ -54,16 +54,25 @@ class BaseSprite(object):
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
 		
-		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))#.convert_alpha()
+		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255)).convert_alpha()
 		self.idImg.set_alpha(120)
 		
 		self.emoteCooldown = 0
 		self.emote = None
 		
+		self.selected = False
+		
+		self.talkCooldown = 0
+		self.talk = None
+		
 	def setEmote(self, emote):
 		if emote in EmoteDic:
 			self.emote = EmoteDic[emote]
 			self.emoteCooldown = pygame.time.get_ticks() + 2000
+		
+	def setTalk(self, msg):
+		self.talkImg = FONT.render(msg, False, (20,20,20), (200,200,200,255))
+		self.talkCooldown = pygame.time.get_ticks() + 2000
 		
 	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
@@ -115,6 +124,10 @@ class BaseSprite(object):
 		if self.emote:
 			if t>self.emoteCooldown:
 				self.emote = None
+				
+		if self.talk:
+			if t>self.talkCooldown:
+				self.talk = None
 			
 		
 	def blit(self, screen):
@@ -124,6 +137,9 @@ class BaseSprite(object):
 			screen.blit(self.idImg, (self.rect.x, self.rect.y+self.rect.h+2))
 			if self.emote:
 				screen.blit(self.emote, (self.rect.x+3, self.rect.y-16))
+			if self.talk:
+				screen.blit(self.talkImg, (self.rect.x+3, self.rect.y-16))
+			
 			#screen.blit(
 			#	FONT.render("o", False, TEXTCOLOR),
 			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))

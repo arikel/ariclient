@@ -39,11 +39,11 @@ class ClientGUI(object):
 		
 	def handleEvents(self, events=[]):
 		x, y = pygame.mouse.get_pos()
+		self.chatWindow.handleEvents(x,y,events)
+		
 		for event in events:
-			self.chatWindow.handleEvents(x,y,events)
 			if event.type == pygame.KEYDOWN:
-				key = event.key	
-					
+				key = event.key
 				if key == pygame.K_RETURN:
 					if self.entry.has_focus:
 						if len(self.entry.baseText)>0:
@@ -54,7 +54,8 @@ class ClientGUI(object):
 							self.entry.loseFocus()
 					else:
 						self.entry.getFocus()
-		
+				self.chatWindow.updateSurface(x, y)
+			
 		res = self.entry.handleInput(events)
 		if res:
 			self.game.SendMessagePublic(res)
@@ -63,7 +64,7 @@ class ClientGUI(object):
 		emote = self.emoteEngine.handleEvents(events)
 		if emote > -1:
 			self.game.SendEmote(emote)
-			
+		
 	def blit(self):
 		self.chatWindow.blit(self.screen)
 		self.entry.blit(self.screen)
