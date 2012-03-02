@@ -40,7 +40,7 @@ class BaseSprite(object):
 		self.name = self.id
 		
 		self.rect = pygame.Rect(0,0,1,1) # screen position
-		self.mapRect = pygame.Rect(0,0,1,1) # map position
+		self.mapRect = pygame.Rect(0,0,tileWidth,tileHeight) # map position
 		
 		self.anim = {}
 		self.currentAnim = "idle-down"
@@ -79,7 +79,6 @@ class BaseSprite(object):
 		
 	def setAnim(self, animName):
 		if animName in self.anim and animName != self.currentAnim:
-			#self.currentAnim = self.anim[animName]
 			self.currentAnim = animName
 			self.rect.w = self.anim[self.currentAnim].w
 			self.rect.h = self.anim[self.currentAnim].h
@@ -101,6 +100,8 @@ class BaseSprite(object):
 		return(self.mapRect.x/self.tileWidth, self.mapRect.y/self.tileHeight+1)
 	
 	def setMapOffset(self, x, y):
+		self.mapOffsetX = x
+		self.mapOffsetY = y
 		self.rect.x = self.mapRect.x - x - self.rect.w/2
 		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
 		self.rect.y = self.mapRect.y - y - self.rect.h
@@ -141,7 +142,10 @@ class BaseSprite(object):
 			#screen.blit(
 			#	FONT.render("o", False, TEXTCOLOR),
 			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
-			#pygame.draw.rect(screen, (255,120,120,120), self.rect, 1)
+			pygame.draw.rect(screen,
+				(255,120,120,120),
+				(self.mapRect.x-self.mapOffsetX, self.mapRect.y-self.mapOffsetY, self.mapRect.w, self.mapRect.h),
+				1)
 	
 	def destroy(self):
 		pass

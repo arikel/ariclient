@@ -51,6 +51,9 @@ class GameClient(ConnectionListener):
 	def SendWarpRequest(self, mapName, x, y):
 		connection.Send({"action": "warp_request", "mapName":mapName, "x":x, "y":y})
 		
+	def SendWarpInfoRequest(self):
+		connection.Send({"action": "warp_info_request"})
+		
 	#######################################
 	### Network event/message callbacks ###
 	#######################################
@@ -58,17 +61,15 @@ class GameClient(ConnectionListener):
 	#-------------------------------------------------------------------
 	# on client receive from server :
 	#-------------------------------------------------------------------
-	'''
-	def Network_players(self, data):
-		print "*** players: " + ", ".join([p for p in data['players']])
-		for playerId in data['players']:
-			if playerId not in self.displayMap.players:
-				self.addPlayer(playerId)
-		for playerId in self.displayMap.players.keys():
-			if playerId not in data['players']:
-				#del self.players[player]
-				self.delPlayer(playerId)
-	'''
+	def Network_warp_info(self, data):
+		name = data['name']
+		x = data['x']
+		y = data['y']
+		w = data['w']
+		h = data['h']
+		self.displayMap.addWarp(name, x, y, w, h)
+		print "received warp info for %s" % (name)
+		
 	def Network_player_enter_map(self, data):
 		id = data["id"]
 		x = data['x']

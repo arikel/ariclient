@@ -280,8 +280,18 @@ class Map(GameMap):
 		self.selected = None
 		self.collisionVisible = False
 		self.warpVisible = False
+		self.warpImg = None
+		
+		self.warps = []
 		
 		self.particleManager = MapParticleManager(self)
+		
+	def addWarp(self, name, x, y, w, h):
+		for warp in self.warps:
+			if warp.name == name:
+				return
+		self.warps.append(MapWarp(name, x, y, w, h))
+		self.makeWarpImage()
 		
 	def selectTarget(self, id):
 		self.selected = id
@@ -387,9 +397,23 @@ class Map(GameMap):
 				code = self.layers[name].getTile(x, y)
 				self.layerImages[name].blit(self.tileset.getTile(code), (x*self.tileWidth, y*self.tileHeight))
 	
+	def makeWarpImage(self):
+		self.warpImg = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
+		self.warpImg.fill((255,0,255))
+		self.warpImg.set_colorkey((255,0,255))
+		
+		for warp in self.warps:
+			pygame.draw.rect(self.warpImg, (255,120,120), (warp.x, warp.y, warp.w, warp.h))
+		self.warpImg.set_alpha(120)
+		
 	def blit(self, screen):
 		screen.blit(self.layerImages["ground"], (-self.offsetX,-self.offsetY))
 		#print "Map offset : %s %s " % (self.offsetX, self.offsetY)
+		
+		if self.warpVisible and self.warpImg:
+			screen.blit(self.warpImg, (-self.offsetX, -self.offsetY))
+		
+		
 		sprites = [p._sprite for p in self.players.values()]
 		sprites.extend([p._sprite for p in self.mobs.values()])
 		

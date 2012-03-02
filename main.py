@@ -132,7 +132,8 @@ class Game(GameClient):
 				
 				if key == pygame.K_SPACE and not self.gui.entry.has_focus:
 					#print "Starting to type text..."
-					self.SendWarpRequest("second", 50,70)
+					self.SendWarpInfoRequest()
+					self.displayMap.warpVisible = not self.displayMap.warpVisible
 				
 				if key == KEY_SELECT_TARGET:
 					mobName = self.getClosestMobName()

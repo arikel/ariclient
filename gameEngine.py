@@ -386,6 +386,15 @@ class MapLayer(object):
 		data = data.replace(' ', '')
 		return data
 
+class MapWarp(pygame.Rect):
+	def __init__(self, name, x, y, w, h, targetMapName=None, destX=None, destY=None):
+		self.name = name
+		# x, y, w, h, destX, destY are in pixels
+		pygame.Rect.__init__(self, (x, y, w, h))
+		self.targetMap = targetMapName
+		self.destX = destX
+		self.destY = destY
+
 class GameMap:
 	def __init__(self, filename=None):
 		self.filename = filename

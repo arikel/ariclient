@@ -27,9 +27,9 @@ class MapParticle(object):
 		
 		if self.text:
 			if self.genre == "damage":
-				self.img.blit(FONT.render(self.text, False, (250,250,120)), (16,0))
+				self.img.blit(FONT2.render(self.text, False, (250,250,120)), (16,0))
 			else:
-				self.img.blit(FONT.render(self.text, False, (60,100,250)), (16,0))
+				self.img.blit(FONT2.render(self.text, False, (60,100,250)), (16,0))
 		
 	def update(self):
 		
