@@ -134,7 +134,7 @@ class MapObject:
 			return
 		if self._sprite:
 			#print "Map object has sprite (%s), blit in map : %s" % (self.id, self._map)
-			self._sprite.update()
+			self._sprite.update() # Sprite takes a t (pygame.time.get_ticks), not a dt
 			self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
 			
 		if self.nextMovePossible(dt):

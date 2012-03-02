@@ -277,6 +277,8 @@ class Map(GameMap):
 		self.offsetYmax = 0
 		
 		self.selected = None
+		self.collisionVisible = False
+		self.warpVisible = False
 		
 	def selectTarget(self, id):
 		self.selected = id
