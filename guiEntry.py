@@ -78,7 +78,11 @@ class TextEntry(Label):
 				if key == 303 or key == 304:
 					self.shift = False
 		return None
-
+	
+	# blit	
+	def blit(self, screen):
+		if self.has_focus:
+			screen.blit(self.surface, self)
 
 
 
