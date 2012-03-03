@@ -87,6 +87,7 @@ class Game(GameClient):
 		t = pygame.time.get_ticks()
 		x, y = pygame.mouse.get_pos()
 		dt = t - self.prevTime
+		#print "update time : dt = %s" % (dt)
 		self.prevTime = t
 		self.prevMove = (self.dx, self.dy)
 		

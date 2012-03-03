@@ -94,9 +94,12 @@ class GameClient(ConnectionListener):
 				self.addPlayer(self.id, data['x'], data['y'])
 				print("Looks like we're on the map now...")
 			else:
-				if getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))>16.0:
+				d= getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))
+				if d>16.0:
 					self.displayMap.players[self.id].setPos(data['x'], data['y'])
-			
+					print "server corrected our location"
+			#	else:
+			#		print "on update move, server sees me at %s pixels from where i am" % (d)
 			return
 		
 		x = data['x']
@@ -155,7 +158,11 @@ class GameClient(ConnectionListener):
 		mapFileName = data['mapFileName']
 		x = data['x']
 		y = data['y']
-		print "Warping to %s , %s, %s" % (mapFileName, x, y)
+		player = self.displayMap.players[self.id]
+		w = self.displayMap.tileWidth
+		h = self.displayMap.tileHeight
+		
+		print "Player in %s / %s (tile %s / %s), warping to %s , %s, %s" % (player.x, player.y, int(player.x / w), int(player.y / h), mapFileName, x, y)
 		self.setMap(mapFileName, x, y)
 	
 	
