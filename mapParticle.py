@@ -3,7 +3,7 @@
 
 import pygame
 from config import *
-from guiFunctions import ImgDB, FONT, FONT2
+from gui import ImgDB, FONT, FONT2
 from gameEngine import *
 
 			
