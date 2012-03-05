@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 try:
 	import psyco
-	psyco.full()
+	#psyco.full()
+	psyco.profile()
 	print("module psyco found.")
 except:
 	print("module psyco NOT found.")

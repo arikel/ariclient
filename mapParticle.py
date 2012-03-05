@@ -31,14 +31,14 @@ class MapParticle(object):
 			else:
 				self.img.blit(FONT2.render(self.text, False, (60,100,250)), (16,0))
 		
-	def update(self):
+	def update(self, dt=0.0):
 		
 		self.screen_x = self.x - self._map.offsetX
 		self.screen_y = self.y - self._map.offsetY
 		
 		if pygame.time.get_ticks()>self.deathTime:
 			return
-		self.y -= 0.1
+		self.y -= 0.05*dt
 		
 	def blit(self, screen):
 		screen.blit(self.img, (self.screen_x, self.screen_y))
@@ -48,6 +48,7 @@ class MapParticleManager(object):
 	def __init__(self, _map):
 		self._map = _map
 		self.particles = []
+		self.prevTime = 0
 		
 	def addParticle(self, genre, x, y, text=None):
 		particle = MapParticle(self._map, x, y, genre, text)
@@ -55,8 +56,10 @@ class MapParticleManager(object):
 		
 	def update(self):
 		t = pygame.time.get_ticks()
+		dt = t - self.prevTime
+		self.prevTime = t
 		for particle in self.particles:
-			particle.update()
+			particle.update(dt)
 		for particle in self.particles:
 			if particle.deathTime < t:
 				self.particles.remove(particle)

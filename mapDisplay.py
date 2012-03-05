@@ -332,6 +332,6 @@ class Map(GameMap):
 if __name__=="__main__":
 	pygame.init()
 	screen = pygame.display.set_mode((800,600))
-	m = Map(screen, "maps/001-1.tmx")
-	m.blit()
+	m = Map("maps/testmap.txt")
+	m.blit(screen)
 	pygame.display.update()
