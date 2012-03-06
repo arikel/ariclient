@@ -1,13 +1,13 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
 
+from OpenGL.GL import *
+from OpenGL.GLU import *
 import pygame
+from pygame.locals import *
+import random
 from config import *
-#from guiFunctions import ImgDB
-from gui import *
-from gameEngine import *
-from sprite import BaseSprite, makePlayerSprite, makeMobSprite
-from mapParticle import MapParticleManager
+from utils import KeyHandler
 
 #-------------------------------------------------------------------------------
 # MapTileset
@@ -38,17 +38,17 @@ class MapTileset(object):
 				code = items[1].strip()
 				self.addTile(x, y, code)
 		
-		self.notFoundImg = pygame.surface.Surface((self.w, self.h)).convert_alpha()
+		self.notFoundImg = pygame.surface.Surface((self.w, self.h))#.convert_alpha()
 		self.notFoundImg.fill((180,40,40))
 		
-		self.emptyTile = pygame.surface.Surface((self.w, self.h)).convert_alpha()
+		self.emptyTile = pygame.surface.Surface((self.w, self.h))#.convert_alpha()
 		self.emptyTile.fill((255,0,255))
 		self.emptyTile.set_colorkey((255,0,255))
 		self.emptyTile.set_alpha(100)
 		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath
-		self.img = pygame.image.load(self.imgPath).convert_alpha()
+		self.img = pygame.image.load(self.imgPath)#.convert_alpha()
 		
 	def addTile(self, x, y, code):
 		if not code in self.tiles:
@@ -65,12 +65,94 @@ class MapTileset(object):
 		tile = random.randint(1, nb) - 1
 		return self.tiles[code][tile]
 
+class MapLayer(object):
+	def __init__(self, name, w, h, tileWidth=16, tileHeight=16):
+		self.name = name
+		self.w = w # width in tiles
+		self.h = h # height in tiles
+		self.tileWidth = tileWidth
+		self.tileHeight = tileHeight
+		
+		self.tiles = [] # [x][y] : code
+		print "init MapLayer %s : w = %s, h = %s" % (name, w, h)
+		for x in range(self.w):
+			line = []
+			for y in range(self.h):
+				line.append("0000")
+			self.tiles.append(line)
+		
+	def isValidPos(self, x, y):
+		if (0<=x<self.w) and (0<=y<self.h):
+			return True
+		return False
+		
+	def getTile(self, x, y):
+		return self.tiles[x][y]
+		
+	def setTile(self, x, y, code):
+		self.tiles[x][y] = code
+		
+	def clearTile(self, x, y):
+		if self.name == "collision":
+			self.tiles[x][y] = 0
+		else:
+			self.tiles[x][y] = "0000"
+		
+	def fill(self, code):
+		for x in range(self.w):
+			for y in range(self.h):
+				self.setTile(x,y,code)
+	
+	def setSize(self, w, h):
+		print "Layer %s setting size : %s %s" % (self.name, w, h)
+		self.oldTiles = self.tiles
+		self.tiles = [] # [x][y] : code
+		self.w = w
+		self.h = h
+		
+		for x in range(self.w):
+			line = []
+			for y in range(self.h):
+				if len(self.oldTiles)>x and len(self.oldTiles[0])>y:
+					#print "copying tile %s %s (max = %s %s)" % (x, y, len(self.oldTiles), len(self.oldTiles[0]))
+					line.append(self.oldTiles[x][y])
+				else:
+					line.append("gggg")
+		
+			self.tiles.append(line)
+			
+		
+	def setData(self, data):
+		tilecodes = data.split(",")
+		if len(tilecodes) != self.w * self.h:
+			print "data not matching width and height"
+			return False
+		n = 0
+		for x in range(self.w):
+			for y in range(self.h):
+				self.setTile(x, y, tilecodes[n])
+				n +=1
+	
+	def getSaveData(self):
+		data = []
+		for x in range(self.w):
+			for y in range(self.h):
+				data.append(self.getTile(x, y))
+		data = str(data)
+		data = data.replace("[", "")
+		data = data.replace("]", "")
+		data = data.replace("'", "")
+		data = data.replace('"', '')
+		data = data.replace(' ', '')
+		return data
+
+
 #-------------------------------------------------------------------------------
 # Map
-class Map(GameMap):
+class Map(object):
 	def __init__(self, filename = None):
 		self.filename = filename
-		self.screenRect = pygame.Rect((0,0,SCREEN_WIDTH,SCREEN_HEIGHT))
+		self.screenRect = pygame.Rect((0,0,800,600))
 		
 		self.tileWidth = 16
 		self.tileHeight = 16
@@ -97,74 +179,25 @@ class Map(GameMap):
 		self.offsetXmax = 0
 		self.offsetYmax = 0
 		
-		self.selected = None
-		self.collisionVisible = False
-		self.warpVisible = False
-		self.warpImg = None
+	def makeCollisionGrid(self):
+		if not self.filename:return False
+		self.addLayer("collision")
+		for x in range(self.w):
+			for y in range(self.h):
+				if self.layers["ground"].getTile(x, y) == "wwww":
+					self.layers["collision"].tiles[x][y] = 1
+				else:
+					self.layers["collision"].tiles[x][y] = 0
 		
-		self.warps = []
-		
-		self.particleManager = MapParticleManager(self)
-		
-	def addWarp(self, name, x, y, w, h):
-		for warp in self.warps:
-			if warp.name == name:
-				return
-		self.warps.append(MapWarp(name, x, y, w, h))
-		self.makeWarpImage()
-		
-	def selectTarget(self, id):
-		self.selected = id
-		self.selectCursor = ImgDB["graphics/gui/guibase.png"].subsurface((16,32,32,16)).convert_alpha()
-		
-	def unselectTarget(self):
-		self.selected = None
-		
-	def addPlayer(self, id, x=50.0, y=50.0):
-		if id not in self.players:
-			self.players[id]=Player(id, self, x, y)
-			self.players[id].setSprite(makePlayerSprite(id))
-			#print "Map added player : %s, his map is : %s" % (id, self.players[id]._map)
-		else:
-			print("Error, asked to add player %s, but that one is already here." % (id))
-			
-	def delPlayer(self, playerName):
-		del self.players[playerName]
-		
-		
-	def addMob(self, id, mobId, x=50.0, y=50.0):
-		if id not in self.mobs:
-			self.mobs[id]=Mob(id, mobId, self, x, y)
-			self.mobs[id].setSprite(makeMobSprite(id))
-	
-	def delMob(self, id):
-		del self.mobs[id]
-		
-		
-	def update(self, dt):
-		self.particleManager.update()
-		
-		for playerName in self.players:
-			self.players[playerName].update(dt)
-			
-		for mobName in self.mobs:
-			self.mobs[mobName].update(dt)
-			
-	def setOffset(self, x, y):
-		self.offsetX = x
-		self.offsetY = y
 		
 	def isValidPos(self, x, y):
 		if (0<=x<self.w) and (0<=y<self.h):
 			return True
-		return False
-		
-	def isMobOnScreen(self, mobId):
-		if mobId not in self.mobs:
-			return False
-		if self.screenRect.colliderect(self.mobs[mobId]._sprite.rect):
-			return True
-		return False
+		return False	
+			
+	def setOffset(self, x, y):
+		self.offsetX = x
+		self.offsetY = y
 		
 	def setSize(self, x, y):
 		for layerName in self.layers:
@@ -208,7 +241,7 @@ class Map(GameMap):
 		if name not in self.layers:return
 		print "map makes layer image for %s" % (name)
 		self.layerImages[name] = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
-		self.layerImages[name].convert_alpha()
+		self.layerImages[name]#.convert_alpha()
 		
 		self.updateLayerImage(name)
 		
@@ -245,18 +278,7 @@ class Map(GameMap):
 		if self.warpVisible and self.warpImg:
 			screen.blit(self.warpImg, (-self.offsetX, -self.offsetY))
 		
-		# map objects
-		sprites = [p._sprite for p in self.players.values()]
-		sprites.extend([p._sprite for p in self.mobs.values() if self.isMobOnScreen(p.id)])
-		
-		for sprite in sorted(sprites, key = lambda k:k.mapRect.y):
-			if self.selected:
-				if sprite.id == self.selected:
-					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))
-			sprite.blit(screen)
-		
-		# particles
-		self.particleManager.blit(screen)
+		# map objects removed
 		
 	def clearTile(self, layerName, x, y):
 		self.layers[layerName].clearTile(x, y)
@@ -329,9 +351,208 @@ class Map(GameMap):
 			self.layerImages[layerName].blit(self.tileset.getTile(newCode), ((x+1)*self.tileWidth, (y+1)*self.tileHeight))
 
 
-if __name__=="__main__":
-	pygame.init()
-	screen = pygame.display.set_mode((800,600))
-	m = Map("maps/testmap.txt")
-	m.blit(screen)
-	pygame.display.update()
+
+class SpriteSheet(object):
+	def __init__(self, filePath, frameW=16, frameH=16):
+		self.file = filePath
+		self.img = pygame.image.load(filePath)
+		self.imgData = pygame.image.tostring(self.img, "RGBA", 1)
+		self.w = self.img.get_width()
+		self.h = self.img.get_height()
+		self.frameW = frameW
+		self.frameH = frameH
+		
+		self.X = self.w / self.frameW # image width in tiles
+		self.Y = self.h / self.frameH # image height in tiles
+		
+		self.stepx = 1.0/self.X
+		self.stepy = 1.0/self.Y
+		
+		self.makeArrays(50,40)
+		
+	def setTexture(self):
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.w,self.h,0,GL_RGBA, GL_UNSIGNED_BYTE, self.imgData)
+	
+	def makeArrays(self, X, Y):
+		self.vertexList = []
+		self.texList = []
+		for x in range(X):
+			for y in range(Y):
+				vertex = (x,y,0)
+				tex = (0, -0)
+				self.vertexList.append(vertex)
+				self.texList.append(tex)
+				
+				vertex = (x+1,y,0)
+				tex = (self.stepx, -0)
+				self.vertexList.append(vertex)
+				self.texList.append(tex)
+				
+				vertex = (x+1,y-1,0)
+				tex = (self.stepx, -self.stepy)
+				self.vertexList.append(vertex)
+				self.texList.append(tex)
+				
+				vertex = (x,y-1,0)
+				tex = (0, -self.stepy)
+				self.vertexList.append(vertex)
+				self.texList.append(tex)
+				
+				
+	def drawTile(self, x, y, tileIndexX=0, tileIndexY=0):
+		dx0 = tileIndexX * self.stepx
+		dx1 = (tileIndexX+1.0) * self.stepx
+		dy0 = tileIndexY * self.stepy
+		dy1 = (tileIndexY+1.0) * self.stepy
+		
+		glTranslatef(x, y, 0.0)
+		
+		glBegin(GL_QUADS)
+		
+		glTexCoord2f(dx0,-dy0)
+		glVertex3f(0.0, 0.0, 0)
+		
+		glTexCoord2f(dx1,-dy0)
+		glVertex3f(1.0, 0.0, 0)
+		
+		glTexCoord2f(dx1,-dy1)
+		glVertex3f(1.0, -1.0, 0)
+		
+		glTexCoord2f(dx0,-dy1)
+		glVertex3f(0.0, -1.0, 0)
+		
+		glEnd()
+		
+		glTranslatef(-x, -y, 0.0)
+
+
+class Game(object):
+	def __init__(self, mapFileName=None):
+		
+		if mapFileName:
+			self.map = Map(mapFileName)
+			self.mapGroundImgData = pygame.image.tostring(self.map.layerImages["ground"], "RGBA", 1)
+			
+		else:
+			self.map = None
+			self.mapGroundImgData = None
+		
+		video_flags = OPENGL|DOUBLEBUF
+	
+		pygame.init()
+		pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT), video_flags)
+		
+		self.resize((SCREEN_WIDTH,SCREEN_HEIGHT))
+		self.initGL()
+		
+		self.camX = -44
+		self.camY = 29
+		self.camZ = -56
+		
+		self.kh = KeyHandler()
+		
+		
+	def resize(self, (width, height)):
+		if height==0:
+			height=1
+		glViewport(0, 0, width, height)
+		glMatrixMode(GL_PROJECTION)
+		glLoadIdentity()
+		gluPerspective(45, 1.0*width/height, 0.1, 10000.0)
+		glMatrixMode(GL_MODELVIEW)
+		glLoadIdentity()
+
+	def initGL(self):
+		glShadeModel(GL_SMOOTH)
+		
+		glClearColor(0.28, 0.78, 0.72, 0.0)
+		glClearDepth(1.0)
+		
+		glEnable(GL_DEPTH_TEST)
+		glDepthFunc(GL_LEQUAL)
+		
+		#glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+		
+		glEnable(GL_BLEND)
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		
+		glEnable(GL_TEXTURE_2D)
+		
+		texture = glGenTextures(1)
+		glBindTexture(GL_TEXTURE_2D, texture)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+		
+		glLoadIdentity()
+		
+	def blit(self):
+		glTranslatef(self.camX, self.camY, self.camZ)
+		
+		self.blitGround()
+		
+		glTranslatef(-self.camX, -self.camY, -self.camZ)
+		
+	def blitGround(self):
+		if not self.mapGroundImgData:
+			return
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.map.w*16,self.map.h*16,0,GL_RGBA, GL_UNSIGNED_BYTE, self.mapGroundImgData)
+	
+		glBegin(GL_QUADS)
+			
+		glTexCoord2f(0,0)
+		glVertex3f(0.0, 0.0, 0)
+		
+		glTexCoord2f(1,0)
+		glVertex3f(self.map.w, 0.0, 0)
+		
+		glTexCoord2f(1,-1)
+		glVertex3f(self.map.w, -self.map.h, 0)
+		
+		glTexCoord2f(0,-1)
+		glVertex3f(0.0, -self.map.h, 0)
+		
+		glEnd()	
+		
+	def update(self):
+		speed = 0.1
+		if self.kh.keyDict[KEY_LEFT]:
+			self.camX +=speed
+		if self.kh.keyDict[KEY_RIGHT]:
+			self.camX -=speed
+		if self.kh.keyDict[KEY_UP]:
+			self.camY -=speed
+		if self.kh.keyDict[KEY_DOWN]:
+			self.camY +=speed
+		if self.kh.keyDict[KEY_SELECT_TARGET]:
+			self.camZ -=speed*5
+		if self.kh.keyDict[KEY_ATTACK]:
+			self.camZ +=speed*5
+		
+	def run(self):
+		self.running = True
+		
+		frames = 0
+		ticks = pygame.time.get_ticks()
+		
+		while self.running:
+			events = self.kh.getEvents()
+			self.update()
+			for event in events:
+				if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+					self.running = False
+				if event.type == KEYDOWN:
+					if event.key == K_SPACE:
+						print "Cam x,y,z : %s, %s, %s" % (self.camX, self.camY, self.camZ)
+						
+			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+			self.blit()
+			pygame.display.flip()
+			frames = frames+1
+			
+		print("Game stopped")
+		print("fps:  %d" % ((frames*1000)/(pygame.time.get_ticks()-ticks)))
+		
+
+if __name__ == '__main__':
+	game = Game("maps/testmap.txt")
+	game.run()
