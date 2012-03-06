@@ -8,6 +8,7 @@ from pygame.locals import *
 import random
 from config import *
 from utils import KeyHandler
+from gui import FONT, ImgDB
 
 #-------------------------------------------------------------------------------
 # MapTileset
@@ -263,7 +264,7 @@ class Map(object):
 		for warp in self.warps:
 			pygame.draw.rect(self.warpImg, (255,120,120), (warp.x, warp.y, warp.w, warp.h))
 		self.warpImg.set_alpha(120)
-		
+	'''	
 	def blit(self, screen):
 		# ground
 		screen.blit(self.layerImages["ground"], (-self.offsetX,-self.offsetY))
@@ -279,7 +280,8 @@ class Map(object):
 			screen.blit(self.warpImg, (-self.offsetX, -self.offsetY))
 		
 		# map objects removed
-		
+	'''
+	
 	def clearTile(self, layerName, x, y):
 		self.layers[layerName].clearTile(x, y)
 		self.layerImages[layerName].blit(self.tileset.emptyTile, (x*self.tileWidth, y*self.tileHeight))
@@ -350,7 +352,135 @@ class Map(object):
 			self.layers[layerName].setTile(x+1, y+1, newCode)
 			self.layerImages[layerName].blit(self.tileset.getTile(newCode), ((x+1)*self.tileWidth, (y+1)*self.tileHeight))
 
+class Animation(object):
+	def __init__(self, id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored = False):
+		self.id = id
+		self.x = x
+		self.y = y
+		self.w = w
+		self.h = h
+		self.nbFrames = nbFrames
+		self.frameTime = frameTime
+		
+		if imgPath in ImgDB:
+			img = ImgDB[imgPath]
+		else:
+			img = pygame.image.load(imgPath)
+		#print "image loaded, rect = %s" % (img.get_rect())
+		self.frames = []
+		for i in range(self.nbFrames):
+			#print "making frame %s %s %s %s" % (x+w*i, y, w, h)
+			rect = pygame.Rect(x+w*i, y, w, h)
+			if mirrored:
+				frame = pygame.image.tostring(pygame.transform.flip(img.subsurface(rect), 1, 0), "RGBA", 1)
+			else:
+				frame = pygame.image.tostring(img.subsurface(rect), "RGBA", 1)
+			
+			self.frames.append(frame)
 
+class BaseSprite(object):
+	def __init__(self, id, tileWidth = 16, tileHeight = 16):
+		#pygame.sprite.Sprite.__init__(self)
+		self.id = id
+		self.name = self.id
+		
+		self.rect = pygame.Rect(0,0,64,64) # screen position
+		self.mapRect = pygame.Rect(0,0,64,64) # map position
+		
+		self.anim = {}
+		self.currentAnim = "idle"
+		self.currentFrame = 0
+		self.frameUpdateTime = pygame.time.get_ticks() + random.randint(1,1000)
+		
+		self.tileWidth = tileWidth
+		self.tileHeight = tileHeight
+		self.mapOffsetX = 0
+		self.mapOffsetY = 0
+		
+		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))
+		self.idImg.set_alpha(120)
+		self.idImg = pygame.image.tostring(self.idImg, "RGBA", 1)
+
+
+		
+	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
+		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
+		
+	def setAnim(self, animName):
+		if animName in self.anim and animName != self.currentAnim:
+			self.currentAnim = animName
+			self.rect.w = self.anim[self.currentAnim].w
+			self.rect.h = self.anim[self.currentAnim].h
+			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
+				self.currentFrame = 0
+			self.frameUpdateTime = 0
+				
+	def setMapPos(self, x, y):
+		self.mapRect.x = x
+		self.mapRect.y = y
+		self.rect.topleft = self.mapRect.topleft
+		
+	def setPos(self, x, y):
+		self.setMapPos(x, y)
+		
+	def getPos(self):
+		return (self.mapRect.x, self.mapRect.y)
+	
+	def getTilePos(self):
+		return(self.mapRect.x/self.tileWidth, self.mapRect.y/self.tileHeight+1)
+	
+	def setMapOffset(self, x, y):
+		self.mapOffsetX = x
+		self.mapOffsetY = y
+		self.rect.x = self.mapRect.x - x - self.rect.w/2
+		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
+		self.rect.y = self.mapRect.y - y - self.rect.h
+		
+	def update(self, t=None):
+		if t == None:
+			t = pygame.time.get_ticks()
+		
+		# if no animation playing, no update
+		if not self.currentAnim:
+			self.imgData = None
+			return
+		
+		if t>= self.frameUpdateTime:
+			self.currentFrame += 1
+			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
+				self.currentFrame = 0
+			self.frameUpdateTime = t + self.anim[self.currentAnim].frameTime
+		
+		self.imgData = self.anim[self.currentAnim].frames[self.currentFrame]
+			
+		
+	def blit(self):
+		
+		#print "currentFrame = %s" % (self.currentFrame)
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64,64,0,GL_RGBA, GL_UNSIGNED_BYTE, self.imgData)
+		
+		#x1, y1, x2, y2 = self.mapRect.left, self.mapRect.top, self.mapRect.right, self.mapRect.bottom
+		x1, y1, x2, y2 = self.mapRect.left, self.mapRect.top, self.mapRect.right, self.mapRect.bottom
+		
+		glBegin(GL_QUADS)
+		
+		glTexCoord2f(0,0)
+		glVertex3f(x1, -y1, 0)
+		
+		glTexCoord2f(1,0)
+		glVertex3f(x2, -y1, 0)
+		
+		glTexCoord2f(1,-1)
+		glVertex3f(x2, -y2, 0)
+		
+		glTexCoord2f(0,-1)
+		glVertex3f(x1, -y2, 0)
+		
+		glEnd()
+		
+		
+		
+			
 
 class SpriteSheet(object):
 	def __init__(self, filePath, frameW=16, frameH=16):
@@ -437,6 +567,15 @@ class Game(object):
 			self.map = None
 			self.mapGroundImgData = None
 		
+		self.sprites = []
+		
+		for i in range(80):
+			coco = BaseSprite("coco")
+			coco.addAnim("idle", "graphics/sprites/male1.png", 0,0,64,64,8,75)
+			coco.setAnim("idle")
+			coco.setPos(random.randint(1,1280),random.randint(1,960))
+			self.sprites.append(coco)
+		
 		video_flags = OPENGL|DOUBLEBUF
 	
 		pygame.init()
@@ -459,6 +598,7 @@ class Game(object):
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
 		gluPerspective(45, 1.0*width/height, 0.1, 10000.0)
+		#gluOrtho2D(-100,100,-100,100)
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 
@@ -471,26 +611,31 @@ class Game(object):
 		glEnable(GL_DEPTH_TEST)
 		glDepthFunc(GL_LEQUAL)
 		
-		#glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 		
 		glEnable(GL_BLEND)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 		
 		glEnable(GL_TEXTURE_2D)
 		
-		texture = glGenTextures(1)
-		glBindTexture(GL_TEXTURE_2D, texture)
+		#texture = glGenTextures(1)
+		#glBindTexture(GL_TEXTURE_2D, texture)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 		
 		glLoadIdentity()
 		
 	def blit(self):
-		glTranslatef(self.camX, self.camY, self.camZ)
+		#glTranslatef(self.camX, self.camY, self.camZ)
 		
 		self.blitGround()
 		
-		glTranslatef(-self.camX, -self.camY, -self.camZ)
+		for sprite in self.sprites:
+			sprite.blit()
+		
+		#glTranslatef(-self.camX, -self.camY, -self.camZ)	
+			
+		
 		
 	def blitGround(self):
 		if not self.mapGroundImgData:
@@ -503,18 +648,19 @@ class Game(object):
 		glVertex3f(0.0, 0.0, 0)
 		
 		glTexCoord2f(1,0)
-		glVertex3f(self.map.w, 0.0, 0)
+		glVertex3f(self.map.w*16, 0.0, 0)
 		
 		glTexCoord2f(1,-1)
-		glVertex3f(self.map.w, -self.map.h, 0)
+		glVertex3f(self.map.w*16, -self.map.h*16, 0)
 		
 		glTexCoord2f(0,-1)
-		glVertex3f(0.0, -self.map.h, 0)
+		glVertex3f(0.0, -self.map.h*16, 0)
 		
 		glEnd()	
 		
 	def update(self):
-		speed = 0.1
+		t = pygame.time.get_ticks()
+		speed = 2
 		if self.kh.keyDict[KEY_LEFT]:
 			self.camX +=speed
 		if self.kh.keyDict[KEY_RIGHT]:
@@ -527,6 +673,11 @@ class Game(object):
 			self.camZ -=speed*5
 		if self.kh.keyDict[KEY_ATTACK]:
 			self.camZ +=speed*5
+		if self.camZ>0:
+			self.camZ = 0
+		
+		for sprite in self.sprites:
+			sprite.update(t)
 		
 	def run(self):
 		self.running = True
@@ -545,7 +696,9 @@ class Game(object):
 						print "Cam x,y,z : %s, %s, %s" % (self.camX, self.camY, self.camZ)
 						
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+			glTranslatef(self.camX, self.camY, self.camZ)
 			self.blit()
+			glTranslatef(-self.camX, -self.camY, -self.camZ)
 			pygame.display.flip()
 			frames = frames+1
 			
