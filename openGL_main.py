@@ -396,12 +396,7 @@ class BaseSprite(object):
 		self.tileHeight = tileHeight
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
-		
-		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))
-		self.idImg.set_alpha(120)
-		self.idImg = pygame.image.tostring(self.idImg, "RGBA", 1)
-
-
+	
 		
 	def addAnim(self, id, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[id] = Animation(id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
@@ -483,7 +478,7 @@ class BaseSprite(object):
 			
 
 class SpriteSheet(object):
-	def __init__(self, filePath, frameW=16, frameH=16):
+	def __init__(self, filePath, frameW=64, frameH=64):
 		self.file = filePath
 		self.img = pygame.image.load(filePath)
 		self.imgData = pygame.image.tostring(self.img, "RGBA", 1)
@@ -530,6 +525,7 @@ class SpriteSheet(object):
 				
 				
 	def drawTile(self, x, y, tileIndexX=0, tileIndexY=0):
+		self.setTexture()
 		dx0 = tileIndexX * self.stepx
 		dx1 = (tileIndexX+1.0) * self.stepx
 		dy0 = tileIndexY * self.stepy
@@ -570,10 +566,10 @@ class Game(object):
 		self.sprites = []
 		
 		for i in range(80):
-			coco = BaseSprite("coco")
-			coco.addAnim("idle", "graphics/sprites/male1.png", 0,0,64,64,8,75)
-			coco.setAnim("idle")
-			coco.setPos(random.randint(1,1280),random.randint(1,960))
+			coco = SpriteSheet("graphics/sprites/male1.png")
+			#coco.addAnim("idle", "graphics/sprites/male1.png", 0,0,64,64,8,75)
+			#coco.setAnim("idle")
+			#coco.setPos(random.randint(1,1280),random.randint(1,960))
 			self.sprites.append(coco)
 		
 		video_flags = OPENGL|DOUBLEBUF
