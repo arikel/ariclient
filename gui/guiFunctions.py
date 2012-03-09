@@ -21,8 +21,12 @@ CARRET_WIDTH = 20
 
 ImgDB = {}
 pathList = []
+#gui elements
 pathList.append("graphics/gui/guibase.png")
 pathList.append("graphics/gui/emotes.png")
+pathList.append("graphics/gui/progressbars.png")
+
+#ingame sprites
 pathList.append("graphics/sprites/male.png")
 pathList.append("graphics/sprites/female.png")
 pathList.append("graphics/sprites/monsters01.png")

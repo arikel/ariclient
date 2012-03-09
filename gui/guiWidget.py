@@ -12,10 +12,13 @@ class Widget(pygame.Rect):
 	_parent = None
 	_children = []
 	_hover = False
+	_visibile = True
+	_blitfunction = None
 	# rect
 	def initRect(self, x=0, y=0, width=10, height=10):
 		#self.rect = pygame.Rect(x, y, width, height)
 		pygame.Rect.__init__(self, x, y, width, height)
+		self.show()
 
 	# width
 	def getWidth(self):
@@ -79,4 +82,20 @@ class Widget(pygame.Rect):
 	# blit	
 	def blit(self, screen):
 		"""Blits the widget to the "screen" surface"""
+		self._blitfunction(screen)
+		
+	def doblit(self, screen):
 		screen.blit(self.surface, self)
+		
+	def donothing(self, *args):
+		pass
+		
+	def show(self, visibility=True):
+		"""Shows or hide the witget"""
+		if visibility and True:
+			self._blitfunction = self.doblit
+		else:
+			self._blitfunction = self.donothing
+		
+	def hide(self):
+		self.show(False)

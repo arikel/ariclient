@@ -15,6 +15,7 @@ from guiScroll import *
 from guiEntry import *
 from guiEmote import *
 from guiProgressBar import *
+from guiButton import ShowFrameButton
 from guiLogin import LoginScreen
 
 class ClientGUI(object):
@@ -29,9 +30,18 @@ class ClientGUI(object):
 		self.entry = TextEntry("")
 		self.entry.setPos(5,SCREEN_HEIGHT-20)
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
-		self.hpbar = HpBar(0,100)
-		self.hpbar.setPos(2, 2)
+		
+		self.menubutton = ShowFrameButton(text='Show:Hide',widget=self.chatWindow)
+		self.menubutton.setPos(2, 2)
+		
+		px, py = 55, 2
+		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6))
+		self.hpbar.setPos(px, py)
 		self.hpbar.setValue(1)
+		
+		self.mpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6))
+		self.mpbar.setPos(px, py+10)
+		self.mpbar.setValue(100)
 
 	def launchLogin(self):
 		self.id = self.loginScreen.launch(self.screen)
@@ -64,6 +74,8 @@ class ClientGUI(object):
 		emote = self.emoteEngine.handleEvents(events)
 		if emote > -1:
 			self.game.SendEmote(emote)
+			
+		self.menubutton.handleEvents(events)
 		
 	def blit(self):
 		self.chatWindow.blit(self.screen)
@@ -74,7 +86,11 @@ class ClientGUI(object):
 		#hpbar test
 		self.hpbar.add(1)
 		self.hpbar.blit(self.screen)
+
+		self.mpbar.blit(self.screen)
 		
+		self.menubutton.blit(self.screen)
+
 if __name__=="__main__":
 	
 	pygame.init()

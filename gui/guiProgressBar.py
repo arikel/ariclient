@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf8 -*-
+
 import pygame
 from guiFrame import Frame
 from guiFunctions import *
@@ -8,8 +11,9 @@ class ProgressBar(Frame):
 		minvalue = 0,
 		maxvalue = 100,
 		barcolor = (50,200,100),
+		image = None,
 		width = 100,
-		height = 20,
+		height = 10,
 		bgcolor = (0,0,0),
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
@@ -19,6 +23,12 @@ class ProgressBar(Frame):
 		self.barcolor = barcolor
 		self.minvalue = minvalue
 		self.value = self.maxvalue = maxvalue
+		self.image = image
+		if image:
+			print 'set renderer as image'
+			self.render = self.drawImage
+		else:
+			self.render = self.drawRect
 		
 	def add(self, value):
 		"""Increase the current absolute value of the progress bar"""
@@ -40,18 +50,25 @@ class ProgressBar(Frame):
 		self.barcolor = color
 		self.updateSurface()
 		
-	def _gerPercentage(self):
+	def _getPercentage(self):
 		"""Get the current percentage value/(max-min)"""
 		return float(self.value)/float(self.maxvalue-self.minvalue)
+		
+	def drawRect(self, w):
+		pygame.draw.rect(self.surface,
+			self.barcolor,
+			(self.borderWidth+1, self.borderWidth+1,
+			w, self.height-2*self.borderWidth-2))
+			
+	def drawImage(self, w):
+		subimg = self.image.subsurface((0, 0, w, 6))
+		self.surface.blit(subimg, (self.borderWidth+1, self.borderWidth+1))
 		
 	def updateSurface(self):
 		percentage = self._getPercentage()
 		lenght = max(int(percentage*self.width)-2*self.borderWidth-2, 0)
 		Frame.updateSurface(self)
-		pygame.draw.rect(self.surface,
-			self.barcolor,
-			(self.borderWidth+1, self.borderWidth+1,
-			lenght, self.height-2*self.borderWidth-2))
+		self.render(lenght)
 
 
 class HpBar(ProgressBar):
@@ -74,7 +91,7 @@ class HpBar(ProgressBar):
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
 		borderwidth = 1):
-			ProgressBar.__init__(self,minvalue, maxvalue, barcolors[0], width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
+			ProgressBar.__init__(self,minvalue, maxvalue, barcolors[0], None, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
 			self.barcolors = barcolors
 			
 	def setColor(self, color, level):
@@ -103,14 +120,13 @@ class HpBar(ProgressBar):
 			self.barcolor = self.barcolors[0]
 
 		return perc
-	
+			
 	def jam(self):
 		self.value += self.dir
 		if self.value > self.maxvalue:
 			self.dir = -1
 		if self.value < self.minvalue:
 			self.dir = 1
-			
-			
+
 		self.value = bound(self.value, self.minvalue, self.maxvalue)
 		self.updateSurface()
