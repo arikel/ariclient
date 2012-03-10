@@ -91,8 +91,8 @@ class Widget(pygame.Rect):
 		pass
 		
 	def show(self, visibility=True):
-		"""Shows or hide the witget"""
-		if visibility and True:
+		"""Shows or hide the widget"""
+		if visibility:
 			self._blitfunction = self.doblit
 		else:
 			self._blitfunction = self.donothing
