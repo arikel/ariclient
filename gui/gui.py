@@ -27,11 +27,15 @@ class ClientGUI(object):
 		self.loginScreen = LoginScreen()
 		self.mode = "login"
 		
+		
+		guilayout = BaseLayouter(direction='vertical')
 		toplayout = BaseLayouter()
 		barlayout = BaseLayouter(direction='vertical')
-		self.chatWindow = ScrollTextWindow(0,SCREEN_HEIGHT-120,SCREEN_WIDTH,100)
+		
+		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
+		
+		self.chatWindow = ScrollTextWindow(0,0,SCREEN_WIDTH,100)
 		self.entry = TextEntry("")
-		self.entry.setPos(5,SCREEN_HEIGHT-20)
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
 		
 		self.menubutton = ShowFrameButton(text='Show:Hide',widget=self.chatWindow)
@@ -42,13 +46,16 @@ class ClientGUI(object):
 		self.mpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6))
 		self.mpbar.setValue(100)
 		
-		toplayout.add(self.menubutton, 2)
+		guilayout.add(toplayout)
+		guilayout.add(separator)
+		guilayout.add(self.chatWindow)
+		guilayout.add(self.entry)
 		
+		toplayout.add(self.menubutton, 2)
 		toplayout.add(barlayout, 2)
-		barlayout.add(self.hpbar, 0)
-		barlayout.add(self.mpbar, 0)
-		toplayout.fit()
-		barlayout.fit()
+		barlayout.add(self.hpbar)
+		barlayout.add(self.mpbar)
+		guilayout.fit()
 		
 
 	def launchLogin(self):
