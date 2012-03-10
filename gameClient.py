@@ -93,11 +93,11 @@ class GameClient(ConnectionListener):
 			if self.id not in self.displayMap.players:
 				self.addPlayer(self.id, data['x'], data['y'])
 				print("Looks like we're on the map now...")
-			else:
-				d= getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))
-				if d>16.0:
-					self.displayMap.players[self.id].setPos(data['x'], data['y'])
-					print "server corrected our location"
+			#else:
+				#d= getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))
+				#if d>16.0:
+				#	self.displayMap.players[self.id].setPos(data['x'], data['y'])
+				#	print "server corrected our location"
 			#	else:
 			#		print "on update move, server sees me at %s pixels from where i am" % (d)
 			return

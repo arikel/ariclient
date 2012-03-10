@@ -7,6 +7,7 @@ SCREEN_HEIGHT = 600
 
 SERVER_ADDRESS = "88.173.217.230"
 #SERVER_ADDRESS = "127.0.0.1"
+#SERVER_ADDRESS = "mmorg.dyndns-at-home.com"
 SERVER_PORT = 18647
 
 # controls
