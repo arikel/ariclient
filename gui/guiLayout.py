@@ -9,20 +9,21 @@ class BaseLayouter(Widget):
 	
 	layoutercount = 0
 	
-	def __init__(self, parent=None, direction='horizontal'):
-		self.initRect(0, 0, 0, 0)
+	def __init__(self,direction='horizontal', parent=None):
 		self.c = BaseLayouter.layoutercount
+		Widget.__init__(self, 0, 0, 0, 0, parent)
 		BaseLayouter.layoutercount += 1
-		self.set_parent(parent)
 		self.direction = direction
 		self.set_parent(parent)
+		if parent:
+			self.surface = parent.surface
 		self._widgets = []
 		
 	def __del__(self):
 		BaseLayouter.layoutercount -= 1
 
 	def __repr__(self):
-		return '<%s %d>' % (self.__class__.__name__, self.c)
+		return '<%s %x>' % (self.__class__.__name__, self.c)
 	
 	def __str__(self):
 		return self.__repr__()
@@ -34,10 +35,15 @@ class BaseLayouter(Widget):
 		#map(lambda x, y: del x, self._widgets)
 		pass
 		
+	def doblit(self, *args):
+		for child in self._children:
+			child.blit(self.surface)
+			print 'drawing %s at %d,%d' % (child, child.x, child.y)
+		
 	def fit(self):
 		x, y = self.x, self.y
 		for widget, padding in self._widgets:
-			widget.setPos(x+padding, y+padding)			
+			widget.setPos(x+padding, y+padding)
 			if type(widget) == type(self):
 				widget.fit()
 

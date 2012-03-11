@@ -9,15 +9,17 @@ from guiFunctions import *
 #-----------------------------------------------------------------------
 class Widget(pygame.Rect):
 	"""Main class used to define all the GUI components"""
-	_parent = None
-	_children = []
 	_hover = False
-	_visibile = True
-	_blitfunction = None
+	
 	# rect
-	def initRect(self, x=0, y=0, width=10, height=10):
+	def __init__(self, x=0, y=0, width=10, height=10, parent=None):
 		#self.rect = pygame.Rect(x, y, width, height)
 		pygame.Rect.__init__(self, x, y, width, height)
+		self._parent = parent
+		self.setPos(x,y)
+		if parent:
+			parent.add_child(self)
+		self._children = []
 		self.show()
 
 	# width
@@ -43,6 +45,9 @@ class Widget(pygame.Rect):
 		"""Changes the parent of the widget"""
 		self.set_parent(_parent)
 		
+	def add_child(self, child):
+		self._children.append(child)
+		
 	def detach(self):
 		"""Detatch the widget from its parent"""
 		self._parent = None
@@ -59,10 +64,7 @@ class Widget(pygame.Rect):
 		"""Sets the widget position
 		if the widget is a child of another widget the position
 		is relative to the parent widget"""
-		if self._parent:
-			self.topleft = (x+self._parent.x, y+self._parent.y)
-		else:
-			self.topleft = (x, y)
+		self.topleft = (x, y)
 		
 	def centerH(self, screen):
 		w = screen.get_width()
@@ -83,6 +85,8 @@ class Widget(pygame.Rect):
 	def blit(self, screen):
 		"""Blits the widget to the "screen" surface"""
 		self._blitfunction(screen)
+		for child in self._children:
+			child.blit(self.surface)
 		
 	def doblit(self, screen):
 		screen.blit(self.surface, self)
@@ -96,6 +100,17 @@ class Widget(pygame.Rect):
 			self._blitfunction = self.doblit
 		else:
 			self._blitfunction = self.donothing
+		for child in self._children:
+			child.show(visibility)
 		
 	def hide(self):
 		self.show(False)
+		
+	def is_visible(self):
+		return self._blitfunction == self.doblit
+	
+	def __repr__(self):
+		return "<%s %x>" % (self.__class__.__name__, id(self))
+		
+	def __str__(self):
+		return repr(self)

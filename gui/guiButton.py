@@ -16,8 +16,6 @@ from guiFrame import Frame
 #-----------------------------------------------------------------------	
 class AbstractButton(Label):
 	
-	click = False
-	
 	def __init__(self,
 		text= "OK",
 		font=FONT,
@@ -32,6 +30,8 @@ class AbstractButton(Label):
 		self.baseText = text
 		self.padding = 2
 		self.font = font
+		
+		self.click = False
 		
 		self.setText("  " + self.baseText + "  ")
 		
@@ -55,9 +55,6 @@ class AbstractButton(Label):
 					
 class ShowFrameButton(AbstractButton):
 	
-	click = False
-	fshow = True
-	
 	def __init__(self,
 		text= "Menu",
 		font=FONT,
@@ -65,13 +62,12 @@ class ShowFrameButton(AbstractButton):
 		height=0,
 		widget=Frame()):
 		AbstractButton.__init__(self, text, font, width, height, (86,111,175), (200,200,200), (255,255,255), 1)
-		self.fshow = True
 		self.widget = widget
 		self._auxtext = text.split(':')
-		self.setText("  " +  self._auxtext[self.fshow] + "  ")
+		self.setText("  " +  self._auxtext[widget.is_visible()] + "  ")
 		
 	def OnClick(self):
-		self.fshow = not self.fshow
-		self.widget.show(self.fshow)
-		self.setText("  " +  self._auxtext[self.fshow] + "  ")
+		fshow = not self.widget.is_visible()
+		self.widget.show(fshow)
+		self.setText("  " +  self._auxtext[fshow] + "  ")
 		

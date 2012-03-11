@@ -17,9 +17,10 @@ class ProgressBar(Frame):
 		bgcolor = (0,0,0),
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
-		borderwidth = 1):
+		borderwidth = 1,
+		parent = None):
 		
-		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
+		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		self.barcolor = barcolor
 		self.minvalue = minvalue
 		self.value = self.maxvalue = maxvalue
@@ -90,8 +91,9 @@ class HpBar(ProgressBar):
 		bgcolor = (0,0,0),
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
-		borderwidth = 1):
-			ProgressBar.__init__(self,minvalue, maxvalue, barcolors[0], None, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
+		borderwidth = 1,
+		parent=None):
+			ProgressBar.__init__(self,minvalue, maxvalue, barcolors[0], None, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 			self.barcolors = barcolors
 			
 	def setColor(self, color, level):

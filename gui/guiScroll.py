@@ -14,8 +14,8 @@ from guiWidget import Widget
 # ScrollButton
 #-----------------------------------------------------------------------	
 class ScrollButton(Widget):
-	def __init__(self, x=0, y=0, direction = "up"):
-		self.initRect(x, y, 20,20)
+	def __init__(self, x=0, y=0, direction = "up", parent=None):
+		Widget.__init__(self, x, y, 20,20, parent)
 		self.makeSurface()
 		#print("making button, direction = %s" % (direction))
 		self.img = ImgDB["graphics/gui/guibase.png"].subsurface((1,1,20,20)).convert_alpha()
@@ -49,8 +49,8 @@ class ScrollButton(Widget):
 #-----------------------------------------------------------------------
 
 class VScrollBar(Widget):
-	def __init__(self, nbPos=1, x=0, y=0, w=20, h=90):
-		self.initRect(x, y, w, h)
+	def __init__(self, nbPos=1, x=0, y=0, w=20, h=90, parent=None):
+		Widget.__init__(self, x, y, w, h)
 		self.makeSurface()
 		
 		self.currentPos = 0
@@ -213,9 +213,9 @@ class VScrollBar(Widget):
 
 
 class VScrollBar_buttons(Widget):
-	def __init__(self, x, y, h, nbPos=2):
+	def __init__(self, x, y, h, nbPos=2, parent= None):
 		w = 20
-		self.initRect(x, y, w, h)
+		Widget.__init__(self, x, y, w, h, parent)
 		self.makeSurface()
 		self.currentPos = 0
 		self.nbPos=int(nbPos)
@@ -249,8 +249,8 @@ class VScrollBar_buttons(Widget):
 						self.bar.setCarretPos(self.bar.currentPos+1)
 
 class ScrollTextWindow(Widget):
-	def __init__(self, x, y, w, h):
-		self.initRect(x,y,w,h)
+	def __init__(self, x, y, w, h, parent=None):
+		Widget.__init__(self,x,y,w,h,parent)
 		self.makeSurface()
 		
 		self.bar = VScrollBar_buttons(x+w-20, y, h, nbPos = 2)

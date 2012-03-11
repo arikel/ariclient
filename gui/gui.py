@@ -18,6 +18,7 @@ from guiProgressBar import *
 from guiButton import ShowFrameButton
 from guiLogin import LoginScreen
 from guiLayout import *
+from guiConfig import *
 
 class ClientGUI(object):
 	def __init__(self, game):
@@ -28,9 +29,9 @@ class ClientGUI(object):
 		self.mode = "login"
 		
 		
-		guilayout = BaseLayouter(direction='vertical')
+		guilayout = BaseLayouter('vertical')
 		toplayout = BaseLayouter()
-		barlayout = BaseLayouter(direction='vertical')
+		barlayout = BaseLayouter('vertical')
 		
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
 		
@@ -38,7 +39,9 @@ class ClientGUI(object):
 		self.entry = TextEntry("")
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
 		
-		self.menubutton = ShowFrameButton(text='Show:Hide',widget=self.chatWindow)
+		self.configwindow = ConfigWindow(100,100)
+		
+		self.menubutton = ShowFrameButton(text='Configuration:Configuration',widget=self.configwindow)
 
 		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6))
 		self.hpbar.setValue(1)
@@ -105,6 +108,8 @@ class ClientGUI(object):
 		self.mpbar.blit(self.screen)
 		
 		self.menubutton.blit(self.screen)
+		
+		self.configwindow.blit(self.screen)
 
 if __name__=="__main__":
 	

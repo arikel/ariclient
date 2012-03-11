@@ -24,8 +24,9 @@ class Label(Frame):
 		bgcolor=(100,100,100),
 		bordercolor=(255,255,255),
 		hoverbordercolor=(255,255,255), 
-		borderwidth = 1):
-		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth = 1)
+		borderwidth = 1,
+		parent=None):
+		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		
 		self.baseText = text
 		self.padding = 2

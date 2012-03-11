@@ -14,14 +14,14 @@ for i in range(12):
 	EmoteDic[i] = ImgDB["graphics/gui/emotes.png"].subsurface((x*19,y*19,19,19))
 
 class EmoteButton(Widget):
-	def __init__(self, nb=0, x=0, y=0):
-		self.initRect(x, y, 19,19)
+	def __init__(self, nb=0, x=0, y=0, parent=None):
+		Widget.__init__(self, x, y, 19,19, parent)
 		self.nb = nb
 		self.surface = EmoteDic[self.nb]
 
 class EmoteEngine(Widget):
-	def __init__(self, x, y):
-		self.initRect(x,y,19,19*6)
+	def __init__(self, x=0, y=0, parent=None):
+		Widget.__init__(self, x,y,19,19*6,parent)
 		self.open = False
 		
 		self.topButton = EmoteButton(0,x,y)

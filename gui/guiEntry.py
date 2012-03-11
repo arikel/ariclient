@@ -24,8 +24,9 @@ class TextEntry(Label):
 		bgcolor=(100,100,100),
 		bordercolor=(255,255,255),
 		hoverbordercolor=(255,255,255), 
-		borderwidth = 1):
-		Label.__init__(self, text, font, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth)
+		borderwidth = 1,
+		parent=None):
+		Label.__init__(self, text, font, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		self.has_focus = False
 		self.shift = False
 		

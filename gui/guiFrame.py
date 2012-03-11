@@ -21,9 +21,10 @@ class Frame(Widget):
 		bgcolor = (0,0,0),
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
-		borderwidth = 1):
+		borderwidth = 1,
+		parent = None):
 		
-		self.initRect(0, 0, width, height)
+		Widget.__init__(self, 0, 0, width, height, parent)
 		self.makeSurface()
 		
 		self.setBGColor(bgcolor)
