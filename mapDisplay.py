@@ -79,9 +79,9 @@ class Map(GameMap):
 		self.layers = {} # name : MapLayer
 		self.layerImages = {} # name : (big) surface
 		
-		self.mobs = {} # id : Mob
-		self.players = {} # id : Player
-		self.sprites = {} # id : Sprite (for players and mobs)
+		self.mobs = {} # name : Mob
+		self.players = {} # name : Player
+		self.sprites = {} # name : Sprite (for players and mobs)
 		
 		if filename:
 			self.load(filename)
@@ -113,32 +113,32 @@ class Map(GameMap):
 		self.warps.append(MapWarp(name, x, y, w, h))
 		self.makeWarpImage()
 		
-	def selectTarget(self, id):
-		self.selected = id
+	def selectTarget(self, name):
+		self.selected = name
 		self.selectCursor = ImgDB["graphics/gui/guibase.png"].subsurface((16,32,32,16)).convert_alpha()
 		
 	def unselectTarget(self):
 		self.selected = None
 		
-	def addPlayer(self, id, x=50.0, y=50.0):
-		if id not in self.players:
-			self.players[id]=Player(id, self, x, y)
-			self.players[id].setSprite(makePlayerSprite(id))
-			#print "Map added player : %s, his map is : %s" % (id, self.players[id]._map)
+	def addPlayer(self, name, x=50.0, y=50.0):
+		if name not in self.players:
+			self.players[name]=Player(name, self, x, y)
+			self.players[name].setSprite(makePlayerSprite(name))
+			
 		else:
-			print("Error, asked to add player %s, but that one is already here." % (id))
+			print("Error, asked to add player %s, but that one is already here." % (name))
 			
 	def delPlayer(self, playerName):
 		del self.players[playerName]
 		
 		
-	def addMob(self, id, mobId, x=50.0, y=50.0):
-		if id not in self.mobs:
-			self.mobs[id]=Mob(id, mobId, self, x, y)
-			self.mobs[id].setSprite(makeMobSprite(id))
+	def addMob(self, name, mobId, x=50.0, y=50.0):
+		if name not in self.mobs:
+			self.mobs[name]=Mob(name, mobId, self, x, y)
+			self.mobs[name].setSprite(makeMobSprite(name))
 	
-	def delMob(self, id):
-		del self.mobs[id]
+	def delMob(self, name):
+		del self.mobs[name]
 		
 		
 	def update(self, dt):
@@ -159,10 +159,10 @@ class Map(GameMap):
 			return True
 		return False
 		
-	def isMobOnScreen(self, mobId):
-		if mobId not in self.mobs:
+	def isMobOnScreen(self, mobName):
+		if mobName not in self.mobs:
 			return False
-		if self.screenRect.colliderect(self.mobs[mobId]._sprite.rect):
+		if self.screenRect.colliderect(self.mobs[mobName]._sprite.rect):
 			return True
 		return False
 		
@@ -247,11 +247,11 @@ class Map(GameMap):
 		
 		# map objects
 		sprites = [p._sprite for p in self.players.values()]
-		sprites.extend([p._sprite for p in self.mobs.values() if self.isMobOnScreen(p.id)])
+		sprites.extend([p._sprite for p in self.mobs.values() if self.isMobOnScreen(p.name)])
 		
 		for sprite in sorted(sprites, key = lambda k:k.mapRect.y):
 			if self.selected:
-				if sprite.id == self.selected:
+				if sprite.name == self.selected:
 					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))
 			sprite.blit(screen)
 		

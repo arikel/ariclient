@@ -49,24 +49,21 @@ class Game(GameClient):
 		self.prevTime = 0.0
 		self.speed = 0.05
 
-	def addPlayer(self, id, x, y):
-		if id == "anonymous":
+	def addPlayer(self, name, x, y):
+		if name == "anonymous":
 			return
-		print "adding player to map : %s, at %s, %s" % (id, x, y)
-		self.displayMap.addPlayer(id, x, y)
-		#self.displayMap.players[id].setMovement(1, 1)
-		#self.displayMap.players[id].setMovement(0, 0)
-		#print "Player %s 's map = %s" % (self.displayMap.players[id].id, self.displayMap.players[id]._map)
+		print "adding player to map : %s, at %s, %s" % (name, x, y)
+		self.displayMap.addPlayer(name, x, y)
 		
-	def delPlayer(self, id):
-		self.displayMap.delPlayer(id)
+		
+	def delPlayer(self, name):
+		self.displayMap.delPlayer(name)
 	
-	def addMob(self, id, x=50.0, y=50.0):
-		#print "adding mob %s" % (id)
-		self.displayMap.addMob(id, 1, x, y)
+	def addMob(self, name, x=50.0, y=50.0):
+		self.displayMap.addMob(name, 1, x, y)
 			
-	def delMob(self, id):
-		self.displayMap.delMob(id)
+	def delMob(self, name):
+		self.displayMap.delMob(name)
 		
 	def setMap(self, mapFileName, x, y):
 		self.displayMap = Map(mapFileName)

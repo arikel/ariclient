@@ -8,8 +8,8 @@ from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR, ImgDB, EmoteDic
 
 
 class Animation(object):
-	def __init__(self, id, imgPath, x, y, w, h, nbFrames, frameTime, mirrored = False):
-		self.id = id
+	def __init__(self, name, imgPath, x, y, w, h, nbFrames, frameTime, mirrored = False):
+		self.name = name
 		self.x = x
 		self.y = y
 		self.w = w
@@ -34,10 +34,9 @@ class Animation(object):
 			self.frames.append(frame)
 
 class BaseSprite(object):
-	def __init__(self, id, tileWidth = 16, tileHeight = 16):
+	def __init__(self, name, tileWidth = 16, tileHeight = 16):
 		#pygame.sprite.Sprite.__init__(self)
-		self.id = id
-		self.name = self.id
+		self.name = name
 		
 		self.rect = pygame.Rect(0,0,1,1) # screen position
 		self.mapRect = pygame.Rect(0,0,tileWidth,tileHeight) # map position
@@ -52,8 +51,8 @@ class BaseSprite(object):
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
 		
-		self.idImg = FONT.render(self.id, False, (20,20,20), (200,200,200,255))#.convert_alpha()
-		self.idImg.set_alpha(120)
+		self.nameImg = FONT.render(self.name, False, (20,20,20), (200,200,200,255))#.convert_alpha()
+		self.nameImg.set_alpha(120)
 		
 		self.emoteCooldown = 0
 		self.emote = None
@@ -132,16 +131,14 @@ class BaseSprite(object):
 	def blit(self, screen):
 		if self.currentAnim:
 			screen.blit(self.anim[self.currentAnim].frames[self.currentFrame], self.rect)
-			#screen.blit(FONT.render(self.id, False, TEXTCOLOR), (self.rect.x, self.rect.y+self.rect.h+2))
-			screen.blit(self.idImg, (self.rect.x, self.rect.y+self.rect.h+2))
+			
+			screen.blit(self.nameImg, (self.rect.x, self.rect.y+self.rect.h+2))
 			if self.emote:
 				screen.blit(self.emote, (self.rect.x+3, self.rect.y-16))
 			if self.talk:
 				screen.blit(self.talkImg, (self.rect.x+3, self.rect.y-16))
 			
-			#screen.blit(
-			#	FONT.render("o", False, TEXTCOLOR),
-			#	(self.rect.x+self.rect.w/2, self.rect.y+self.rect.h-16))
+			
 			pygame.draw.rect(screen,
 				(255,120,120,120),
 				(self.mapRect.x-self.mapOffsetX, self.mapRect.y-self.mapOffsetY, self.mapRect.w, self.mapRect.h),

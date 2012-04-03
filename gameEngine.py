@@ -50,10 +50,10 @@ class MapObject:
 	_map = None
 	_sprite = None
 	
-	def __init__(self, id, _map = None):
-		self.id = id
+	def __init__(self, name, _map = None):
+		self.name = name
 		self._map = _map
-		#print "Creating MapObject, name = %s, map = %s" % (self.id, self._map)
+		
 		# float pixel position on map
 		self.category = None
 		self.currentMapName = None
@@ -133,7 +133,6 @@ class MapObject:
 		if not self.mobile:
 			return
 		if self._sprite:
-			#print "Map object has sprite (%s), blit in map : %s" % (self.id, self._map)
 			self._sprite.update() # Sprite takes a t (pygame.time.get_ticks), not a dt
 			self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
 			
@@ -168,8 +167,8 @@ class MapObject:
 		return True
 
 class Being(object):
-	def __init__(self, id):
-		self.id = id
+	def __init__(self, name):
+		self.name = name
 		
 		self.hp = 1
 		self.hpMax = 1
