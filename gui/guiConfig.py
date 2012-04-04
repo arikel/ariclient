@@ -44,7 +44,6 @@ class ConfigWindow(Frame):
 		
 		
 		baselayout.fit()
-		
 		self.hide()
 		
 	

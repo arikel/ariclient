@@ -38,10 +38,10 @@ class EmoteEngine(Widget):
 				if pygame.mouse.get_pressed()[0]==1:
 					if self.open:
 						for b in self.buttons:
-							if b.hover(x, y):
+							if b.hover:
 								self.closeMenu()
 								return b.nb
-					if self.topButton.hover(x, y):
+					if self.topButton.hover:
 						if self.open:
 							self.closeMenu()
 						else:

@@ -53,7 +53,7 @@ class Label(Frame):
 		Frame.updateSurface(self)
 		self.surface.blit(self.msg, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))
 		#self.surface.blit(self.msg, (0,0,self.msgRect.width,self.msgRect.height))
-
+		Widget.updateSurface(self)
 #-----------------------------------------------------------------------
 # FixedLabel
 #-----------------------------------------------------------------------

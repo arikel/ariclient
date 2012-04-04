@@ -41,7 +41,7 @@ class ClientGUI(object):
 		
 		self.configwindow = ConfigWindow(100,100)
 		
-		self.menubutton = ShowFrameButton(text='Configuration:Configuration',widget=self.configwindow)
+		self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.configwindow)
 
 		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6))
 		self.hpbar.setValue(1)
@@ -62,12 +62,12 @@ class ClientGUI(object):
 		
 
 	def launchLogin(self):
-		self.id = self.loginScreen.launch(self.screen)
-		return self.id
+		self.name = self.loginScreen.launch(self.screen)
+		return self.name
 		
 	def handleEvents(self, events=[]):
-		x, y = pygame.mouse.get_pos()
-		self.chatWindow.handleEvents(x,y,events)
+		
+		self.chatWindow.handleEvents(events)
 		
 		for event in events:
 			if event.type == pygame.KEYDOWN:
@@ -82,7 +82,7 @@ class ClientGUI(object):
 							self.entry.loseFocus()
 					else:
 						self.entry.getFocus()
-				self.chatWindow.updateSurface(x, y)
+				self.chatWindow.updateSurface()
 			
 		res = self.entry.handleInput(events)
 		if res:

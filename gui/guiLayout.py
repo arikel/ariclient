@@ -14,7 +14,7 @@ class BaseLayouter(Widget):
 		Widget.__init__(self, 0, 0, 0, 0, parent)
 		BaseLayouter.layoutercount += 1
 		self.direction = direction
-		self.set_parent(parent)
+		#self.set_parent(parent)
 		if parent:
 			self.surface = parent.surface
 		self._widgets = []

@@ -32,17 +32,14 @@ class ScrollButton(Widget):
 			
 		self.surface.blit(self.img, (0,0,20,20))
 		
-	def updateSurface(self, x=0, y=0):#x, y = pygame.mouse.get_pos()
-		
-		if self.hover(x, y) and not self._hover:
-			self._hover = True
+	def updateSurface(self):
+		if self.hover:
 			self.surface.blit(self.imgHover, (0,0,20,20))
 			
-		elif self._hover and not self.hover(x, y):
-			self._hover = False
+		else:
 			self.surface.blit(self.img, (0,0,20,20))
 			
-		
+			
 		
 #-----------------------------------------------------------------------
 # VScrollBar
@@ -50,7 +47,7 @@ class ScrollButton(Widget):
 
 class VScrollBar(Widget):
 	def __init__(self, nbPos=1, x=0, y=0, w=20, h=90, parent=None):
-		Widget.__init__(self, x, y, w, h)
+		Widget.__init__(self, x, y, w, h, parent)
 		self.makeSurface()
 		
 		self.currentPos = 0
@@ -116,7 +113,7 @@ class VScrollBar(Widget):
 		self.checkCarretPos()
 	
 	def carretHover(self, x, y):
-		return self.carretRect.collidepoint(x, y)
+		return self.carretRect.collidepoint(x-self._parent.x, y-self._parent.y)
 	
 		
 	def startDrag(self, x, y):
@@ -156,16 +153,18 @@ class VScrollBar(Widget):
 		#print("position found : %s -> %s" % (pos, self.currentPos))
 		
 		
-	def updateSurface(self, x=0, y=0):
-		
+	def updateSurface(self):
+		x, y = pygame.mouse.get_pos()
 		self.drag(x, y)
 		self.surface.fill(TEXTCOLOR)
 		pygame.draw.rect(self.surface, BGCOLOR, (1,1,self.w-2, self.h-2))
 		
 		if self.carretHover(x, y):
 			self.carretSurface.fill(TEXTCOLORHOVER)
+			#print "updating carret : HOVER"
 		else:
 			self.carretSurface.fill(TEXTCOLOR)
+			#print "updating carret : not Hover"
 		
 		self.surface.blit(self.carretSurface, (0, self.carretRect.y-self.y, self.carretRect.width, self.carretRect.height))
 		
@@ -175,8 +174,9 @@ class VScrollBar(Widget):
 	def scrollToTop(self):
 		self.setCarretPos(0)
 		
-	def handleEvents(self, x, y, events = None):
-		self.updateSurface(x, y)
+	def handleEvents(self, events = None):
+		self.updateSurface()
+		x, y = pygame.mouse.get_pos()
 		
 		for event in events:
 			if event.type == pygame.KEYDOWN:
@@ -190,21 +190,25 @@ class VScrollBar(Widget):
 					
 				
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				if pygame.mouse.get_pressed() == (1, 0, 0):
+				#if pygame.mouse.get_pressed() == (1, 0, 0):
+				if event.button == 1:
 					#print "Vertical scroll bar received click"
 					
 					if self.carretHover(x, y):
 						#print "Vertical scroll starting drag!"
 						self.startDrag(x, y)
 						
-					elif self.hover(x,y):
-						if y > self.carretRect.bottom:
+					elif self.hover:
+						if y-self._parent.y > self.carretRect.bottom:
 							self.setCarretPos(self.currentPos + 1)
-						elif y < self.carretRect.y:
+							
+						elif y -self._parent.y < self.carretRect.y:
 							self.setCarretPos(self.currentPos - 1)
-				if event.button==4 and self.hover(x,y):# wheel up
+							
+							
+				if event.button==4 and self.hover:# wheel up
 					self.setCarretPos(self.currentPos - 1)
-				elif event.button==5 and self.hover(x,y): # wheel down
+				elif event.button==5 and self.hover: # wheel down
 					self.setCarretPos(self.currentPos + 1)
 					
 			if event.type == pygame.MOUSEBUTTONUP:
@@ -221,39 +225,44 @@ class VScrollBar_buttons(Widget):
 		self.nbPos=int(nbPos)
 		self.posMax = self.nbPos-1
 		
-		self.buttonUp = ScrollButton(self.x, self.y, "up")
-		self.buttonDown = ScrollButton(self.x, self.y+self.h - 20, "down")
+		self.buttonUp = ScrollButton(self.x, self.y, "up", parent)
+		self.buttonDown = ScrollButton(self.x, self.y+self.h - 20, "down", parent)
 		
-		self.bar = VScrollBar(self.nbPos, self.x, self.y+20, self.w, self.h-40)
+		self.bar = VScrollBar(self.nbPos, self.x, self.y+20, self.w, self.h-40, parent)
 		#print(Vscrollbuttons init : %s %s %s %s" % (x,y,w,h))
 		
-	def updateSurface(self, x, y):
-		self.buttonUp.updateSurface(x,y)
-		self.buttonDown.updateSurface(x,y)
+	def updateSurface(self):
+		x, y = pygame.mouse.get_pos()
+		
+		self.buttonUp.updateSurface()
+		self.buttonDown.updateSurface()
 		self.surface.blit(self.buttonUp.surface, (0,0,20,20))
 		self.surface.blit(self.buttonDown.surface, (0,self.h-20,20,20))
 		
-		self.bar.updateSurface(x,y)
+		self.bar.updateSurface()
 		self.surface.blit(self.bar.surface, (0,20))
 		
-	def handleEvents(self, x, y, events = None):
-		self.bar.handleEvents(x, y, events)
+	def handleEvents(self, events = None):
+		self.bar.handleEvents(events)
 		for event in events:
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				if pygame.mouse.get_pressed() == (1, 0, 0):
-					if self.buttonUp.hover(x,y):
+				#if pygame.mouse.get_pressed() == (1, 0, 0):
+				if event.button == 1:
+					if self.buttonUp.hover:
 						#print("click on button up")
 						self.bar.setCarretPos(self.bar.currentPos-1)
-					elif self.buttonDown.hover(x,y):
+					elif self.buttonDown.hover:
 						#print("click on button down")
 						self.bar.setCarretPos(self.bar.currentPos+1)
+			if event.type == pygame.MOUSEMOTION:
+				self.updateSurface()
 
 class ScrollTextWindow(Widget):
 	def __init__(self, x, y, w, h, parent=None):
 		Widget.__init__(self,x,y,w,h,parent)
 		self.makeSurface()
 		
-		self.bar = VScrollBar_buttons(x+w-20, y, h, nbPos = 2)
+		self.bar = VScrollBar_buttons(x+w-20, y, h, 2, self)
 		self.currentPos = 0
 		
 		self.padding = 5
@@ -265,15 +274,15 @@ class ScrollTextWindow(Widget):
 		self.baseText = ""
 		self.setText("Welcome.\n")
 		
-	def updateSurface(self, x, y):
+	def updateSurface(self):
 		self.surface.fill(BGCOLOR)
-		self.bar.updateSurface(x,y)
+		self.bar.updateSurface()
 		self.surface.blit(self.bar.surface, (self.w-20,0))
 		self.surface.blit(self.textSurface.subsurface((0, self.currentPos*self.lineStep,self.textSurface.get_width(), self.textSurface.get_height()-(self.currentPos*self.lineStep))), (self.padding,0))
 		
 		
-	def handleEvents(self, x, y, events = None):
-		self.bar.handleEvents(x,y,events)
+	def handleEvents(self, events = None):
+		self.bar.handleEvents(events)
 		if self.currentPos != self.bar.bar.currentPos:
 			self.currentPos = self.bar.bar.currentPos
 			self.makeTextSurface()
@@ -334,7 +343,7 @@ class ScrollTextWindow(Widget):
 		#print("setting nbPos : %s" % (self.nbLines - self.nbVisibleLines))
 		self.setNbPos(self.nbLines - self.nbVisibleLines)
 		#print("NbLines : %s , - %s visible = %s positions" % (self.nbLines, self.nbVisibleLines, self.nbPos))
-		x, y = pygame.mouse.get_pos()
-		self.updateSurface(x,y)
+		
+		self.updateSurface()
 		#self.surface.blit(self.textSurface.subsurface((0, self.currentPos*self.lineStep,self.textSurface.get_width(), self.textSurface.get_height()-(self.currentPos*self.lineStep))), (self.padding,0))
 	
