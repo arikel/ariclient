@@ -71,14 +71,14 @@ class GameClient(ConnectionListener):
 		print "received warp info for %s" % (name)
 		
 	def Network_player_enter_map(self, data):
-		id = data["id"]
+		name = data["id"]
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
 		dy = data['dy']
-		self.displayMap.addPlayer(id, x, y)
-		self.displayMap.players[id].setMovement(dx, dy)
-		print "Player %s entered the map" % (id)
+		self.displayMap.addPlayer(name, x, y)
+		self.displayMap.players[name].setMovement(dx, dy)
+		print "Player %s entered the map" % (name)
 		
 	def Network_player_leave_map(self, data):
 		id = data["id"]

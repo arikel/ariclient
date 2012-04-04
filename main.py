@@ -35,6 +35,8 @@ class Game(GameClient):
 		
 		self.Send({"action": "nickname", "id": self.id})
 		
+		print "Sent nickname to server, creating map..."
+		
 		self.displayMap = Map("maps/testmap.txt")
 		
 		self.kh = KeyHandler()
