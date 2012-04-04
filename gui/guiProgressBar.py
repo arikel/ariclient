@@ -26,7 +26,7 @@ class ProgressBar(Frame):
 		self.value = self.maxvalue = maxvalue
 		self.image = image
 		if image:
-			print 'set renderer as image'
+			#print 'set renderer as image'
 			self.render = self.drawImage
 		else:
 			self.render = self.drawRect
@@ -80,7 +80,7 @@ class HpBar(ProgressBar):
 			Low;
 	"""
 	
-	dir = 1
+	direction = 1
 	
 	def __init__(self,
 		minvalue = 0,
@@ -124,11 +124,11 @@ class HpBar(ProgressBar):
 		return perc
 			
 	def jam(self):
-		self.value += self.dir
+		self.value += self.direction
 		if self.value > self.maxvalue:
-			self.dir = -1
+			self.direction = -1
 		if self.value < self.minvalue:
-			self.dir = 1
+			self.direction = 1
 
 		self.value = bound(self.value, self.minvalue, self.maxvalue)
 		self.updateSurface()
