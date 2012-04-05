@@ -155,7 +155,7 @@ class GameClient(ConnectionListener):
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 		
 	def Network_warp(self, data):
-		print "received warp message"
+		#print "received warp message"
 		mapFileName = data['mapFileName']
 		x = data['x']
 		y = data['y']

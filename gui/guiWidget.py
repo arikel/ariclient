@@ -82,8 +82,8 @@ class Widget(pygame.Rect):
 		"""Returns the widget position as a touple (x, y)
 		if the widget is a child of another widget the position
 		is relative to the parent widget"""
-		if self._parent:
-			return (self.x-self._parent.x, self.y-self._parent.y)
+		#if self._parent:
+		#	return (self.x-self._parent.x, self.y-self._parent.y)
 		return self.topleft
 		
 	def setPos(self, x, y):

@@ -49,7 +49,8 @@ class Frame(Widget):
 		if autoexpand:
 			self.setWidth(x + last_width)
 			self.setHeight(y + last_height)
-	
+		
+		#self.updateSurface()
 		
 	def updateSurface(self):
 		self.surface.fill(self.borderColor)
