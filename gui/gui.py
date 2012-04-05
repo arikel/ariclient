@@ -51,7 +51,6 @@ class ClientGUI(object):
 		
 		self.hpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6), parent=self.BarFrame)
 		self.hpbar.setValue(1)
-		self.hpbar.setPos(0,1)
 		
 		#somehow seems that this is not shown without the width set to framesize -1... weird thing to be checked ...
 		self.mpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6), parent=self.BarFrame)

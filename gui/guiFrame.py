@@ -33,13 +33,9 @@ class Frame(Widget):
 		
 	def autolayout(self, direction='vertical', autoexpand = False):
 		x, y = 0, 0
-		last_width, last_height = 0, 0
 		for widget in self._children:
 			padding = widget.getPadding()
 			widget.setPos(x+padding, y+padding)
-			
-			last_width = widget.getWidth()
-			last_height = widget.getHeight()
 			
 			if direction == 'horizontal':
 				x += widget.getWidth() + 2 * padding
@@ -47,8 +43,8 @@ class Frame(Widget):
 				y += widget.getHeight() + 2 * padding
 				
 		if autoexpand:
-			self.setWidth(x + last_width)
-			self.setHeight(y + last_height)
+			self.setWidth(x + widget.getWidth())
+			self.setHeight(y + widget.getWidth())
 		
 		#self.updateSurface()
 		

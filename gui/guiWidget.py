@@ -71,7 +71,10 @@ class Widget(pygame.Rect):
 	def add_child(self, child):
 		if child not in self._children:
 			self._children.append(child)
-		#self._children.append(child)
+		else: #workaround to fix "the same kind of widget is in list" issue
+			pos = self._children.index(child)
+			if id(self._children[pos]) != id(child):
+				self._children.append(child)
 		
 	def remove_child(self, child):
 		if child in self._children:
@@ -176,7 +179,7 @@ class Widget(pygame.Rect):
 		return self._blitfunction == self.doblit
 	'''
 	def __repr__(self):
-		return "<%s %x>" % (self.__class__.__name__, id(self))
+		return "<%s %x @(%d, %d)>" % (self.__class__.__name__, id(self), self.x, self.y)
 		
 	def __str__(self):
 		return repr(self)
