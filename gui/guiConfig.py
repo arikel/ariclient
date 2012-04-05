@@ -27,26 +27,19 @@ class ConfigWindow(Frame):
 		print "created config window, self.surface = %s" % (self.surface)
 		
 		self.setPos(x,y)
-		baselayout = BaseLayouter('vertical', self)
-		cols = [BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout)]
-		for col in cols:
-			baselayout.add(col)
 			
-		cols[0].add(Label('Keys', parent=self), 5)
-		cols[1].setPos(0,50)
-		cols[2].add(Label('Up', parent=self), 5)
-		cols[2].add(TextEntry('', parent=self), 5)
-		cols[3].add(Label('Down', parent=self), 5)
-		cols[3].add(TextEntry('', parent=self), 5)
-		cols[4].add(Label('Left', parent=self), 5)
-		cols[4].add(TextEntry('', parent=self), 5)
-		cols[5].add(Label('Right', parent=self), 5)
-		cols[5].add(TextEntry('', parent=self), 5)
-		
-		baselayout.fit()
+		Label('Keys', parent=self).setPadding(5)
+		Frame(0,50, parent=self)
+		Label('Up', parent=self).setPadding(5)
+		#TextEntry('', parent=self)
+		Label('Down', parent=self).setPadding(5)
+		#TextEntry('', parent=self)
+		Label('Left', parent=self).setPadding(5)
+		#TextEntry('', parent=self)
+		Label('Right', parent=self).setPadding(5)
+		#TextEntry('', parent=self)
+
+		self.autolayout()
 		self.updateSurface()
 		self.hide()
-		
-	
-		
-		
+

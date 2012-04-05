@@ -5,6 +5,21 @@ import pygame
 from guiFunctions import *
 from guiWidget import Widget
 
+
+def fit_layout(self, widgets, x, y, direction='horizontal'):
+		for widget, padding in widgets:
+			widget.setPos(x+padding, y+padding)
+
+			if widget.getWidth() > self.getWidth():
+				self.setWidth(widget.getWidth())
+			if widget.getHeight() > self.getHeight():
+				self.setHeight(widget.getHeight())	
+			
+			if direction == 'horizontal':
+				x += widget.getWidth() + 2 * padding
+			elif direction == 'vertical':
+				y += widget.getHeight() + 2 * padding
+
 class BaseLayouter(Widget):
 	
 	layoutercount = 0

@@ -11,6 +11,7 @@ from config import *
 
 from guiFunctions import *
 from guiWidget import Widget
+from guiFrame import Frame
 from guiScroll import *
 from guiEntry import *
 from guiEmote import *
@@ -31,7 +32,6 @@ class ClientGUI(object):
 		
 		guilayout = BaseLayouter('vertical')
 		toplayout = BaseLayouter()
-		barlayout = BaseLayouter('vertical')
 		
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
 		
@@ -44,11 +44,17 @@ class ClientGUI(object):
 		self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.configwindow)
 		self.chatbutton = ShowFrameButton(text='ChatWindow:ChatWindow', widget = self.chatWindow)
 		
-		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6))
+		
+		self.BarFrame = Frame()
+		self.BarFrame.setPos(220, 2)
+		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6), parent=self.BarFrame)
 		self.hpbar.setValue(1)
 		
-		self.mpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6))
-		self.mpbar.setValue(100)
+		#somehow seems that this is not shown without the width set to framesize -1... weird thing to be checked ...
+		self.mpbar = ProgressBar(0,100, width = 99, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6), parent=self.BarFrame)
+		self.mpbar.setValue(1)
+		
+		self.BarFrame.autolayout()
 		
 		guilayout.add(toplayout)
 		guilayout.add(separator)
@@ -58,9 +64,6 @@ class ClientGUI(object):
 		
 		toplayout.add(self.menubutton, 2)
 		toplayout.add(self.chatbutton, 2)
-		toplayout.add(barlayout, 2)
-		barlayout.add(self.hpbar)
-		barlayout.add(self.mpbar)
 		guilayout.fit()
 		
 
@@ -107,9 +110,11 @@ class ClientGUI(object):
 		
 		#hpbar test
 		self.hpbar.add(1)
-		self.hpbar.blit(self.screen)
+		self.mpbar.add(1)
+		self.BarFrame.blit(self.screen)
+		#self.hpbar.blit(self.screen)
 
-		self.mpbar.blit(self.screen)
+		#self.mpbar.blit(self.screen)
 		
 		self.menubutton.blit(self.screen)
 		self.chatbutton.blit(self.screen)

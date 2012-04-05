@@ -16,6 +16,7 @@ class Widget(pygame.Rect):
 		self.visible = True
 		self.func = None
 		self.params = None
+		self._padding = 0 ##fixed padding can be changed with the padding function 
 		self._parent = None
 		self.set_parent(parent)
 		self._children = []
@@ -38,6 +39,12 @@ class Widget(pygame.Rect):
 		"""Sets the height of the widget"""
 		self.height = int(x)
 	
+	def setPadding(self, padding):
+		self._padding = padding
+		
+	def getPadding(self):
+		return self._padding
+		
 	# parent / children
 	def set_parent(self, _parent):
 		"""Sets the parent widget"""
