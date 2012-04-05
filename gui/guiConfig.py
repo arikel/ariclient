@@ -24,7 +24,8 @@ class ConfigWindow(Frame):
 		parent=None):
 		
 		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
-		self.updateSurface()
+		print "created config window, self.surface = %s" % (self.surface)
+		
 		self.setPos(x,y)
 		baselayout = BaseLayouter('vertical', self)
 		cols = [BaseLayouter(parent=baselayout), Widget(height=50,parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout)]
@@ -42,8 +43,8 @@ class ConfigWindow(Frame):
 		cols[5].add(Label('Right', parent=self), 5)
 		cols[5].add(TextEntry('', parent=self), 5)
 		
-		
 		baselayout.fit()
+		self.updateSurface()
 		self.hide()
 		
 	

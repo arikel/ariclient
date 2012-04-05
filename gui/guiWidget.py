@@ -9,16 +9,17 @@ from guiFunctions import *
 #-----------------------------------------------------------------------
 class Widget(pygame.Rect):
 	"""Main class used to define all the GUI components"""
-	visible = True
-	func = None
-	params = None
+	
 	def __init__(self, x=0, y=0, width=10, height=10, parent=None):
 		#self.rect = pygame.Rect(x, y, width, height)
 		pygame.Rect.__init__(self, x, y, width, height)
+		self.visible = True
+		self.func = None
+		self.params = None
 		self._parent = None
 		self.set_parent(parent)
-		self.setPos(x,y)
 		self._children = []
+		self.setPos(x,y)
 		
 
 	# width
@@ -42,7 +43,6 @@ class Widget(pygame.Rect):
 		"""Sets the parent widget"""
 		if self._parent:
 			self._parent.remove_child(self)
-		
 		self._parent = _parent
 		if self._parent:
 			self.dx = self._parent.x
@@ -64,6 +64,7 @@ class Widget(pygame.Rect):
 	def add_child(self, child):
 		if child not in self._children:
 			self._children.append(child)
+		#self._children.append(child)
 		
 	def remove_child(self, child):
 		if child in self._children:
@@ -83,7 +84,10 @@ class Widget(pygame.Rect):
 		if the widget is a child of another widget the position
 		is relative to the parent widget"""
 		self.topleft = (x, y)
-		
+		for child in self._children:
+			child.dx = x
+			child.dy = y
+			
 	def centerH(self, screen):
 		w = screen.get_width()
 		self.w = w-40
@@ -110,6 +114,8 @@ class Widget(pygame.Rect):
 		return self.surface
 	
 	def updateSurface(self):
+		#if not hasattr(self, "surface"):
+		#	return
 		for child in self._children:
 			child.updateSurface()
 			child.blit(self.surface)
@@ -126,6 +132,8 @@ class Widget(pygame.Rect):
 			
 	def blit(self, screen):
 		if not self.visible:
+			return
+		if not hasattr(self, "surface"):
 			return
 		self.updateSurface()
 		screen.blit(self.surface, self)

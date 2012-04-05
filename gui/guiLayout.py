@@ -9,15 +9,24 @@ class BaseLayouter(Widget):
 	
 	layoutercount = 0
 	
-	def __init__(self,direction='horizontal', parent=None):
+	def __init__(self, direction='horizontal', parent=None):
+		Widget.__init__(self, 0, 0, 1, 1, parent)
 		self.c = BaseLayouter.layoutercount
-		Widget.__init__(self, 0, 0, 0, 0, parent)
 		BaseLayouter.layoutercount += 1
 		self.direction = direction
+		#print "layouter direction = %s" % (direction)
 		#self.set_parent(parent)
+		
 		if parent:
+			print "creating layouter with parent surface = %s" % (parent.surface)
 			self.surface = parent.surface
+		else:
+			print "WARNING : BaseLayouter has no surface!!!"
+			self.makeSurface()
+		
+		#self.makeSurface()
 		self._widgets = []
+		
 		
 	def __del__(self):
 		BaseLayouter.layoutercount -= 1
@@ -30,10 +39,12 @@ class BaseLayouter(Widget):
 		
 	def add(self, widget, padding = 0):
 		self._widgets.append((widget, padding))
-	
+		self.add_child(widget)
+		
 	def remove(self, widget):
 		#map(lambda x, y: del x, self._widgets)
-		pass
+		#pass
+		self.remove_child(widget)
 		
 	def doblit(self, *args):
 		for child in self._children:

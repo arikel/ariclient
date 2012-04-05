@@ -42,7 +42,8 @@ class ClientGUI(object):
 		self.configwindow = ConfigWindow(100,100)
 		
 		self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.configwindow)
-
+		#self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.chatWindow)
+		
 		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6))
 		self.hpbar.setValue(1)
 		
