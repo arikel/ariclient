@@ -28,12 +28,12 @@ class ConfigWindow(Frame):
 		
 		self.setPos(x,y)
 		baselayout = BaseLayouter('vertical', self)
-		cols = [BaseLayouter(parent=baselayout), Widget(height=50,parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout)]
+		cols = [BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout), BaseLayouter(parent=baselayout)]
 		for col in cols:
 			baselayout.add(col)
 			
 		cols[0].add(Label('Keys', parent=self), 5)
-		
+		cols[1].setPos(0,50)
 		cols[2].add(Label('Up', parent=self), 5)
 		cols[2].add(TextEntry('', parent=self), 5)
 		cols[3].add(Label('Down', parent=self), 5)

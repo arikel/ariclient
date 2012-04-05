@@ -133,8 +133,8 @@ class Widget(pygame.Rect):
 	def blit(self, screen):
 		if not self.visible:
 			return
-		if not hasattr(self, "surface"):
-			return
+		#if not hasattr(self, "surface"):
+		#	return
 		self.updateSurface()
 		screen.blit(self.surface, self)
 		

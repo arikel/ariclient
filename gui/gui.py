@@ -42,7 +42,7 @@ class ClientGUI(object):
 		self.configwindow = ConfigWindow(100,100)
 		
 		self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.configwindow)
-		#self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.chatWindow)
+		self.chatbutton = ShowFrameButton(text='ChatWindow:ChatWindow', widget = self.chatWindow)
 		
 		self.hpbar = ProgressBar(0,100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6))
 		self.hpbar.setValue(1)
@@ -53,9 +53,11 @@ class ClientGUI(object):
 		guilayout.add(toplayout)
 		guilayout.add(separator)
 		guilayout.add(self.chatWindow)
+		
 		guilayout.add(self.entry)
 		
 		toplayout.add(self.menubutton, 2)
+		toplayout.add(self.chatbutton, 2)
 		toplayout.add(barlayout, 2)
 		barlayout.add(self.hpbar)
 		barlayout.add(self.mpbar)
@@ -95,6 +97,7 @@ class ClientGUI(object):
 			self.game.SendEmote(emote)
 			
 		self.menubutton.handleEvents(events)
+		self.chatbutton.handleEvents(events)
 		
 	def blit(self):
 		self.chatWindow.blit(self.screen)
@@ -109,6 +112,7 @@ class ClientGUI(object):
 		self.mpbar.blit(self.screen)
 		
 		self.menubutton.blit(self.screen)
+		self.chatbutton.blit(self.screen)
 		
 		self.configwindow.blit(self.screen)
 
