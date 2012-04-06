@@ -9,6 +9,7 @@ import string
 
 from guiFunctions import *
 from guiWidget import Widget
+from guiEntry import TextEntry
 
 #-----------------------------------------------------------------------
 # ScrollButton
@@ -17,7 +18,7 @@ class ScrollButton(Widget):
 	def __init__(self, x=0, y=0, direction = "up", parent=None):
 		Widget.__init__(self, x, y, 20,20, parent)
 		self.makeSurface()
-		#print("making button, direction = %s" % (direction))
+		print("making button, direction = %s, parent = %s" % (direction, parent))
 		self.img = ImgDB["graphics/gui/guibase.png"].subsurface((1,1,20,20)).convert_alpha()
 		self.imgHover = ImgDB["graphics/gui/guibase.png"].subsurface((22,1,20,20)).convert_alpha()
 		if direction == "down":
@@ -35,12 +36,10 @@ class ScrollButton(Widget):
 	def updateSurface(self):
 		if self.hover:
 			self.surface.blit(self.imgHover, (0,0,20,20))
-			
+			print "scrollbutton over"
 		else:
 			self.surface.blit(self.img, (0,0,20,20))
-			
-			
-		
+	
 #-----------------------------------------------------------------------
 # VScrollBar
 #-----------------------------------------------------------------------
@@ -48,6 +47,7 @@ class ScrollButton(Widget):
 class VScrollBar(Widget):
 	def __init__(self, nbPos=1, x=0, y=0, w=20, h=90, parent=None):
 		Widget.__init__(self, x, y, w, h, parent)
+		print "init scrollbar : %s, %s, %s, %s" % (self.x, self.y, self.w, self.h)
 		self.makeSurface()
 		
 		self.currentPos = 0
@@ -229,18 +229,25 @@ class VScrollBar_buttons(Widget):
 					if self.buttonUp.hover:
 						#print("click on button up")
 						self.bar.setCarretPos(self.bar.currentPos-1)
+						print "button up!"
 					elif self.buttonDown.hover:
 						#print("click on button down")
 						self.bar.setCarretPos(self.bar.currentPos+1)
+						print "button down!"
+					else:
+						print "click missed buttons"
+						x, y = pygame.mouse.get_pos()
+						print "target : %s %s, mouse : %s, %s" % (self.buttonUp.x - self.buttonUp.dx, self.buttonUp.y - self.buttonUp.dy, x, y)
 			if event.type == pygame.MOUSEMOTION:
 				self.updateSurface()
 
 class ScrollTextWindow(Widget):
 	def __init__(self, x, y, w, h, parent=None):
 		Widget.__init__(self,x,y,w,h,parent)
+		print "init scrolltextwindow : %s %s %s %s" % (self.x, self.y, self.w, self.h)
 		self.makeSurface()
 		
-		self.bar = VScrollBar_buttons(x+w-20, y, h, 2, self)
+		self.bar = VScrollBar_buttons(x+w-20, y, h, 2, parent)
 		self.currentPos = 0
 		
 		self.padding = 0
@@ -312,10 +319,28 @@ class ScrollTextWindow(Widget):
 		self.setNbPos(self.nbLines - self.nbVisibleLines)
 		self.updateSurface()
 	
-class ChatWindow(ScrollTextWindow):
+class ChatWindow(Widget):
 	def __init__(self, x, y, w, h, parent=None):
-		ScrollTextWindow.__init__(self, x, y, w, h, parent=None)
-		self.entry = TextEntry("", width = self.w, parent=self)
-		self.entry.setPos(0,self.h-20)
+		Widget.__init__(self, x, y, w, h, parent)
+		self.makeSurface()
+		self.entry = TextEntry("", width = w, parent=self)
+		self.scrollTextWindow = ScrollTextWindow(0, 0, w, h-20, parent=self)
 		
+		#print "created chatwindow, after init, w = %s, h = %s, x = %s, y = %s" % (self.w, self.h, self.x, self.y)
+		self.entry.setPos(0, self.h-20)
+		
+	def addText(self, text):
+		self.scrollTextWindow.addText(text)
+		
+	def getFocus(self):
+		self.entry.getFocus()
+		
+	def loseFocus(self):
+		self.entry.loseFocus()
+		
+	def handleEvents(self, events=[]):
+		self.scrollTextWindow.handleEvents(events)
+		self.entry.handleEvents(events)
+		if events:
+			self.updateSurface()
 		

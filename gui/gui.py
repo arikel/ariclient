@@ -31,8 +31,8 @@ class ClientGUI(object):
 		
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
 		
-		self.chatWindow = ScrollTextWindow(0,0,SCREEN_WIDTH,SCREEN_HEIGHT/6)
-		self.entry = TextEntry("", width = SCREEN_WIDTH)
+		self.chatWindow = ChatWindow(0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
+		
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
 		
 		self.configwindow = ConfigWindow(100,100)
@@ -57,9 +57,7 @@ class ClientGUI(object):
 		
 		guilayout.add(toplayout)
 		guilayout.add(separator)
-		guilayout.add(self.chatWindow)
-		
-		guilayout.add(self.entry)
+		#guilayout.add(self.chatWindow)
 		
 		toplayout.add(self.menubutton, 2)
 		toplayout.add(self.chatbutton, 2)
@@ -74,22 +72,17 @@ class ClientGUI(object):
 			if event.type == pygame.KEYDOWN:
 				key = event.key
 				if key == pygame.K_RETURN:
-					if self.entry.has_focus:
-						if len(self.entry.baseText)>0:
-							self.game.SendMessagePublic(self.entry.baseText)
-							self.entry.setText("")
-							self.entry.loseFocus()
+					if self.chatWindow.entry.has_focus:
+						if len(self.chatWindow.entry.baseText)>0:
+							self.game.SendMessagePublic(self.chatWindow.entry.baseText)
+							self.chatWindow.entry.setText("")
+							self.chatWindow.entry.loseFocus()
 						else:
-							self.entry.loseFocus()
+							self.chatWindow.entry.loseFocus()
 					else:
-						self.entry.getFocus()
+						self.chatWindow.entry.getFocus()
 				self.chatWindow.updateSurface()
 			
-		res = self.entry.handleEvents(events)
-		if res:
-			self.game.SendMessagePublic(res)
-			self.entry.has_focus = False
-		
 		emote = self.emoteEngine.handleEvents(events)
 		if emote > -1:
 			self.game.SendEmote(emote)
@@ -99,7 +92,6 @@ class ClientGUI(object):
 		
 	def blit(self):
 		self.chatWindow.blit(self.screen)
-		self.entry.blit(self.screen)
 		
 		self.emoteEngine.blit(self.screen)
 		

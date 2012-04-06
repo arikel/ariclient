@@ -120,7 +120,7 @@ class Game(GameClient):
 		self.dx = self.kh.keyDict[KEY_RIGHT] - self.kh.keyDict[KEY_LEFT]
 		self.dy = self.kh.keyDict[KEY_DOWN] - self.kh.keyDict[KEY_UP]
 		
-		if not self.gameGui.entry.has_focus:
+		if not self.gameGui.chatWindow.entry.has_focus:
 			
 			if (self.prevMove != (self.dx, self.dy)):# or (t>self.sendPosCooldown):
 				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
@@ -140,12 +140,12 @@ class Game(GameClient):
 			if event.type == pygame.KEYDOWN:
 				key = event.key
 
-				if key == pygame.K_ESCAPE and not self.gameGui.entry.has_focus:
+				if key == pygame.K_ESCAPE and not self.gameGui.chatWindow.entry.has_focus:
 					#print "Escape and no typing : quit"
 					#pygame.quit()
 					self.running = False
 				
-				if key == pygame.K_SPACE and not self.gameGui.entry.has_focus:
+				if key == pygame.K_SPACE and not self.gameGui.chatWindow.entry.has_focus:
 					#print "Starting to type text..."
 					self.SendWarpInfoRequest()
 					self.displayMap.warpVisible = not self.displayMap.warpVisible
