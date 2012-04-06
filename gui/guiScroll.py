@@ -65,7 +65,6 @@ class VScrollBar(Widget):
 	def updateCarret(self):
 		# ascenseur
 		self.carretSize = max( self.h/float(self.nbPos), MIN_CARRET_SIZE )
-		#print("carretSize : %s" % (self.carretSize))
 		
 		self.delta = self.h - self.carretSize # nb of pixel positions available to the carret
 		
@@ -73,16 +72,12 @@ class VScrollBar(Widget):
 			self.step = self.delta / float(self.maxPos)
 		else:
 			self.step = 0
-		#print("step = %s" % (self.step))
 		
 		self.carretRect = pygame.Rect(self.x, self.y, self.w, self.carretSize)
 		self.carretSurface = pygame.Surface((self.w, self.carretSize))
 		
 		self.carretPosMin = self.y 
 		self.carretPosMax = self.y + self.h - self.carretSize
-		
-		
-		#self.dragging = False
 		
 		self.checkCarretPos()
 	
@@ -96,13 +91,7 @@ class VScrollBar(Widget):
 			self.currentPos = self.maxPos
 		if self.currentPos < 0:
 			self.currentPos = 0
-		
 		self.carretRect.y = self.y + self.currentPos*self.step
-		#if self.carretRect.y > self.carretPosMax: self.carretRect.y = self.carretPosMax
-		#if self.carretRect.y < self.carretPosMin: self.carretRect.y = self.carretPosMin
-		
-		#print("after check : pos = %s" % (self.carretRect.y))
-		#self.info()
 		
 	def setCarretPos(self, n=0):
 		self.currentPos = int(n)
@@ -124,33 +113,22 @@ class VScrollBar(Widget):
 	def drag(self, x, y):
 		if not self.dragging:return
 		self.carretRect.y = y + self.dragOffset
-		
 		self.updatePos()
-		#self.currentPos = int(round(pos))
 		
 	def stopDrag(self):
 		if not self.dragging: return
 		self.dragging = False
-		#self.setCarretPos(int( (self.carretMax-self.carretMin)/self.carretSize ) )
-		#print("stopped dragging")
 		self.updatePos()
 		
 	def updatePos(self):
 		if self.carretRect.y > self.carretPosMax: self.carretRect.y = self.carretPosMax
 		if self.carretRect.y < self.carretPosMin: self.carretRect.y = self.carretPosMin
 		
-		#pos = (self.carretRect.y - self.rect.y) / float(self.carretSize)
-		#pos = (self.carretRect.y - self.carretPosMin) * self.nbPos / float(self.delta - self.carretSize/2.0)
 		if self.delta <=0:
 			return
 		pos = (self.carretRect.y - self.carretPosMin) * self.nbPos / float(self.delta)
-		#pos = (self.carretRect.y - self.carretPosMin) * self.nbPos / float(self.delta)
-		#if pos - int(pos)>=0.5:
-		#	pos = pos+0.5
-		#self.currentPos = int(pos)
 		self.currentPos = round(pos)
 		self.checkCarretPos()
-		#print("position found : %s -> %s" % (pos, self.currentPos))
 		
 		
 	def updateSurface(self):
@@ -265,7 +243,7 @@ class ScrollTextWindow(Widget):
 		self.bar = VScrollBar_buttons(x+w-20, y, h, 2, self)
 		self.currentPos = 0
 		
-		self.padding = 5
+		self.padding = 0
 		self.lineStep = 14
 		
 		self.nbVisibleLines = self.h /self.lineStep
@@ -314,9 +292,6 @@ class ScrollTextWindow(Widget):
 		self.setCarretPos(self.maxPos)
 		
 	def makeTextSurface(self):
-		
-		#lines = coupeMsg(self.baseText, self.getWidth()-2*self.padding-15, self.font)
-		#self.nbLines = len(lines)
 		lines = []
 		self.nbLines = 0
 		for line in self.baseText.split("\n"):
@@ -324,26 +299,23 @@ class ScrollTextWindow(Widget):
 			lines.extend(toAdd)
 			self.nbLines += len(toAdd)
 		
-		self.textSurface = pygame.Surface((self.w-2*self.padding-15, (len(lines)+1)*self.lineStep))
+		self.textSurface = pygame.Surface((self.w-2*self.padding-20, (len(lines)+1)*self.lineStep))
 		self.textSurface.fill((110,100,100))
 		
 		n = 0
 		for line in lines:
-			#print("Adding line : %s" % (line))
-			#gline = unicode(line, "utf-8")
-			#(w, h) = FONT.size(gline)
-			#msg = FONT.render(gline, False, TEXTCOLOR)
 			(w, h) = FONT.size(line)
 			msg = FONT.render(line, False, TEXTCOLOR)
 			self.textSurface.blit(msg, (0,n*self.lineStep, w, h))
 			n += 1
 		
-		#self.surface.fill(BGCOLOR)
-		#self.surface.blit(self.textSurface, (self.padding,self.padding, self.textSurface.get_rect().w, self.textSurface.get_rect().h))
-		#print("setting nbPos : %s" % (self.nbLines - self.nbVisibleLines))
 		self.setNbPos(self.nbLines - self.nbVisibleLines)
-		#print("NbLines : %s , - %s visible = %s positions" % (self.nbLines, self.nbVisibleLines, self.nbPos))
-		
 		self.updateSurface()
-		#self.surface.blit(self.textSurface.subsurface((0, self.currentPos*self.lineStep,self.textSurface.get_width(), self.textSurface.get_height()-(self.currentPos*self.lineStep))), (self.padding,0))
 	
+class ChatWindow(ScrollTextWindow):
+	def __init__(self, x, y, w, h, parent=None):
+		ScrollTextWindow.__init__(self, x, y, w, h, parent=None)
+		self.entry = TextEntry("", width = self.w, parent=self)
+		self.entry.setPos(0,self.h-20)
+		
+		

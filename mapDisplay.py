@@ -42,9 +42,9 @@ class MapTileset(object):
 		self.notFoundImg.fill((180,40,40))
 		
 		self.emptyTile = pygame.surface.Surface((self.w, self.h)).convert_alpha()
-		self.emptyTile.fill((255,0,255))
-		self.emptyTile.set_colorkey((255,0,255))
-		self.emptyTile.set_alpha(100)
+		#self.emptyTile.fill((255,0,255))
+		#self.emptyTile.set_colorkey((255,0,255))
+		#self.emptyTile.set_alpha(100)
 		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath

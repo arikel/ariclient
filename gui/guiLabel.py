@@ -21,9 +21,9 @@ class Label(Frame):
 		font=FONT,
 		width=0,
 		height=0,
-		bgcolor=(100,100,100),
-		bordercolor=(255,255,255),
-		hoverbordercolor=(255,255,255), 
+		bgcolor=COLOR_BG,
+		bordercolor=COLOR,
+		hoverbordercolor=COLOR_HOVER, 
 		borderwidth = 1,
 		parent=None):
 		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
@@ -31,21 +31,27 @@ class Label(Frame):
 		self.baseText = text
 		self.padding = 2
 		self.font = font
-		
+		#self.has_focus = False
 		self.setText(self.baseText)
 		
+	def getText(self):
+		return self.baseText
 		
 	def setText(self, msg):
 		self.baseText = msg
 		self.text = ustr(msg) #unicode(msg, "utf-8")
+		#if self.has_focus:
+		#	self.msg = self.font.render(self.text + "_", False, self.borderColor)
+		#else:
 		self.msg = self.font.render(self.text, False, self.borderColor)
+		
 		self.msgRect = self.msg.get_rect()
+		if self.w < self.msgRect.width+self.padding*2:
+			self.width = self.msgRect.width+self.padding*2
+		if self.height < self.msgRect.height+self.padding*2:
+			self.height = self.msgRect.height+self.padding*2
 		
-		self.width = self.msgRect.width+self.padding*2
-		self.height = self.msgRect.height+self.padding*2
-		#self.msgRect.topleft = self.rect.topleft
-		
-		self.surface = self.makeSurface()
+		self.makeSurface()
 		self.updateSurface()
 	
 		

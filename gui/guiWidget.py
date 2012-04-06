@@ -100,8 +100,7 @@ class Widget(pygame.Rect):
 			
 	def centerH(self, screen):
 		w = screen.get_width()
-		self.w = w-40
-		self.x = 20
+		self.setPos(w/2 - self.w/2, self.y)
 		
 	# hover
 	def is_hover(self):
@@ -147,37 +146,7 @@ class Widget(pygame.Rect):
 		#	return
 		self.updateSurface()
 		screen.blit(self.surface, self)
-		
-	
-	'''
-	# blit	
-	def blit(self, screen):
-		"""Blits the widget to the "screen" surface"""
-		self._blitfunction(screen)
-		for child in self._children:
-			child.blit(self.surface)
-		
-	def doblit(self, screen):
-		screen.blit(self.surface, self)
-		
-	def donothing(self, *args):
-		pass
-		
-	def show(self, visibility=True):
-		"""Shows or hide the widget"""
-		if visibility:
-			self._blitfunction = self.doblit
-		else:
-			self._blitfunction = self.donothing
-		for child in self._children:
-			child.show(visibility)
-		
-	def hide(self):
-		self.show(False)
-		
-	def is_visible(self):
-		return self._blitfunction == self.doblit
-	'''
+
 	def __repr__(self):
 		return "<%s %x @(%d, %d)>" % (self.__class__.__name__, id(self), self.x, self.y)
 		

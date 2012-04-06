@@ -10,7 +10,7 @@ import string
 pygame.font.init()
 FONT =  pygame.font.Font("fonts/Verdana.ttf", 12)
 FONT2 = pygame.font.Font("fonts/Verdana.ttf", 16)
-FONT_MANGA = pygame.font.Font("fonts/mangat.ttf", 20)
+FONT_MANGA = pygame.font.Font("fonts/mangat.ttf", 28)
 
 BGCOLOR = (0,0,0)
 TEXTCOLOR = (200,200,200)
@@ -20,6 +20,7 @@ TEXTCOLORHOVER = (255,255,255)
 COLOR = (200,200,200)
 COLOR_HOVER = (255,255,255)
 COLOR_BG = (50,50,50)
+COLOR_BG_HOVER = (80,80,80)
 
 MIN_CARRET_SIZE = 5
 CARRET_WIDTH = 20
@@ -75,9 +76,9 @@ def bound(value, minvalue, maxvalue):
 	"""returns a value which is between minvalue <= value <= maxvalue"""
 	return max(minvalue, min(maxvalue, value))
 
-def renderText(msg, font = FONT, color = COLOR):
+def renderText(msg, font = FONT, aa=False, color = COLOR):
 	#img = font.render(msg, False, color)
 	#return img
-	return font.render(msg, False, color)
+	return font.render(msg, aa, color)
 	
 	

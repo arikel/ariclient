@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 try:
 	import psyco
-	#psyco.full()
-	psyco.profile()
+	psyco.full()
+	#psyco.profile()
 	print("module psyco found.")
 except:
 	print("module psyco NOT found.")
@@ -24,20 +24,12 @@ from gameClient import GameClient
 class Game(GameClient):
 	def __init__(self, host, port):
 		self.screen = SCREEN
+		self.host = host
+		self.port = port
 		
 		pygame.init()
 		
-		# GUI
-		self.gui = ClientGUI(self)
-		self.id = self.gui.launchLogin()
-		
-		GameClient.__init__(self, host, port)
-		
-		self.Send({"action": "nickname", "id": self.id})
-		
-		print "Sent nickname to server, creating map..."
-		
-		self.displayMap = Map("maps/testmap.txt")
+		self.connectToServer()
 		
 		self.kh = KeyHandler()
 		self.dx = 0
@@ -50,7 +42,18 @@ class Game(GameClient):
 		
 		self.prevTime = 0.0
 		self.speed = 0.05
-
+		
+		self.displayMap = None
+		
+		# GUI
+		self.gameGui = ClientGUI(self)
+		self.loginGui = LoginGUI(self)
+		
+		self.update = self.updateLogin
+	
+	def connectToServer(self):
+		GameClient.__init__(self, self.host, self.port)
+	
 	def addPlayer(self, name, x, y):
 		if name == "anonymous":
 			return
@@ -68,6 +71,9 @@ class Game(GameClient):
 		self.displayMap.delMob(name)
 		
 	def setMap(self, mapFileName, x, y):
+		if not self.displayMap:
+			self.update = self.updateGame
+			self.id = self.loginGui.name
 		self.displayMap = Map(mapFileName)
 		self.addPlayer(self.id, x, y)
 		
@@ -82,7 +88,15 @@ class Game(GameClient):
 				closestMob = mobName
 		return closestMob
 		
-	def update(self):
+	def updateNetwork(self):
+		self.Loop()
+		
+	def updateLogin(self):
+		self.updateNetwork()
+		self.loginGui.update()
+		
+	def updateGame(self):
+		self.updateNetwork()
 		
 		t = pygame.time.get_ticks()
 		x, y = pygame.mouse.get_pos()
@@ -94,10 +108,10 @@ class Game(GameClient):
 		if self.id not in self.displayMap.players:
 			#print "not connected to map"
 			# network
-			self.Loop()
 			return
 		
-		events = self.kh.getEvents()
+		events = pygame.event.get()
+		self.kh.handleEvents(events)
 		moved = False
 		
 		# keyboard handling
@@ -106,7 +120,7 @@ class Game(GameClient):
 		self.dx = self.kh.keyDict[KEY_RIGHT] - self.kh.keyDict[KEY_LEFT]
 		self.dy = self.kh.keyDict[KEY_DOWN] - self.kh.keyDict[KEY_UP]
 		
-		if not self.gui.entry.has_focus:
+		if not self.gameGui.entry.has_focus:
 			
 			if (self.prevMove != (self.dx, self.dy)):# or (t>self.sendPosCooldown):
 				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
@@ -126,12 +140,12 @@ class Game(GameClient):
 			if event.type == pygame.KEYDOWN:
 				key = event.key
 
-				if key == pygame.K_ESCAPE and not self.gui.entry.has_focus:
+				if key == pygame.K_ESCAPE and not self.gameGui.entry.has_focus:
 					#print "Escape and no typing : quit"
 					#pygame.quit()
 					self.running = False
 				
-				if key == pygame.K_SPACE and not self.gui.entry.has_focus:
+				if key == pygame.K_SPACE and not self.gameGui.entry.has_focus:
 					#print "Starting to type text..."
 					self.SendWarpInfoRequest()
 					self.displayMap.warpVisible = not self.displayMap.warpVisible
@@ -149,7 +163,7 @@ class Game(GameClient):
 				#pygame.quit()
 				self.running = False
 		
-		self.gui.handleEvents(events)
+		self.gameGui.handleEvents(events)
 
 		
 		# graphics 
@@ -158,12 +172,10 @@ class Game(GameClient):
 		self.displayMap.blit(self.screen)
 		
 		# gui display
-		self.gui.blit()
+		self.gameGui.blit()
 		
 		pygame.display.flip()
 		
-		# network
-		self.Loop()
 		
 		
 		
@@ -184,8 +196,12 @@ if __name__=="__main__":
 		SERVER_PORT = int(options.SERVER_PORT)
 
 	g = Game(SERVER_ADDRESS, SERVER_PORT)
+	nbFrames = 0
+	d0 = pygame.time.get_ticks()
 	
 	while g.running:
 		g.update()
-
+		nbFrames += 1
+	d1 = pygame.time.get_ticks()
+	print "%s frames in %s seconds : %s FPS" % (nbFrames, (d1-d0)/1000.0, nbFrames/((d1-d0)/1000.0))
 	pygame.quit()

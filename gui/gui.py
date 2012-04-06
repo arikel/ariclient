@@ -17,7 +17,7 @@ from guiEntry import *
 from guiEmote import *
 from guiProgressBar import *
 from guiButton import ShowFrameButton
-from guiLogin import LoginScreen
+from guiLogin import LoginGUI
 from guiLayout import *
 from guiConfig import *
 
@@ -26,17 +26,13 @@ class ClientGUI(object):
 		self.game = game
 		self.screen = self.game.screen
 		
-		self.loginScreen = LoginScreen()
-		self.mode = "login"
-		
-		
 		guilayout = BaseLayouter('vertical')
 		toplayout = BaseLayouter()
 		
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
 		
-		self.chatWindow = ScrollTextWindow(0,0,SCREEN_WIDTH,100)
-		self.entry = TextEntry("")
+		self.chatWindow = ScrollTextWindow(0,0,SCREEN_WIDTH,SCREEN_HEIGHT/6)
+		self.entry = TextEntry("", width = SCREEN_WIDTH)
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
 		
 		self.configwindow = ConfigWindow(100,100)
@@ -70,10 +66,6 @@ class ClientGUI(object):
 		guilayout.fit()
 		
 
-	def launchLogin(self):
-		self.name = self.loginScreen.launch(self.screen)
-		return self.name
-		
 	def handleEvents(self, events=[]):
 		
 		self.chatWindow.handleEvents(events)
@@ -93,7 +85,7 @@ class ClientGUI(object):
 						self.entry.getFocus()
 				self.chatWindow.updateSurface()
 			
-		res = self.entry.handleInput(events)
+		res = self.entry.handleEvents(events)
 		if res:
 			self.game.SendMessagePublic(res)
 			self.entry.has_focus = False

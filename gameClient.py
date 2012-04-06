@@ -25,6 +25,13 @@ class GameClient(ConnectionListener):
 		connection.Pump()
 		self.Pump()
 	
+	def SendLogin(self, name, password):
+		print "GameClient : sent login %s %s" % (name, password)
+		connection.Send({"action": "login", "id":name, "password" : password})
+	
+	def SendRegister(self, name, password):
+		print "GameClient : sent register %s %s" % (name, password)
+		connection.Send({"action": "register", "id":name, "password" : password})
 	
 	def SendMessagePublic(self, msg):
 		msg = msg.encode("utf-8", "replace")
@@ -42,8 +49,7 @@ class GameClient(ConnectionListener):
 	def SendAttackMob(self, mobId):
 		connection.Send({"action": "attack_mob", "target":mobId})
 		
-	def SendLogin(self, password):
-		connection.Send({"action": "login", "id":self.id, "password" : password})
+
 		
 	def SendEmote(self, emote):
 		connection.Send({"action": "emote", "emote" : emote})
@@ -61,6 +67,33 @@ class GameClient(ConnectionListener):
 	#-------------------------------------------------------------------
 	# on client receive from server :
 	#-------------------------------------------------------------------
+	
+	def Network_login_error(self, data):
+		msg = data["msg"]
+		print "Login error : %s" % (msg)
+		self.loginGui.infoLabel.setText(msg)
+		
+	def Network_login_accepted(self, data):
+		self.loginGui.running = False
+		mapFileName = data["mapFileName"]
+		print "Login accepted, entering map : %s" % (mapFileName)
+		x = data["x"]
+		y = data["y"]
+		self.setMap(mapFileName, x, y)
+		#self.gui.loginScreen.infoLabel.setText(msg)
+		
+	def Network_register_error(self, data):
+		msg = data["msg"]
+		print "Register error : %s" % (msg)
+		self.loginGui.infoLabel.setText(msg)
+		
+	def Network_register_accepted(self, data):
+		msg = data["msg"]
+		print "Register accepted"
+		self.loginGui.infoLabel.setText(msg)
+		
+		#self.gui.loginScreen.infoLabel.setText(msg)
+			
 	def Network_warp_info(self, data):
 		name = data['name']
 		x = data['x']
@@ -165,7 +198,7 @@ class GameClient(ConnectionListener):
 		
 		print "Player in %s / %s (tile %s / %s), warping to %s , %s, %s" % (player.x, player.y, int(player.x / w), int(player.y / h), mapFileName, x, y)
 		self.setMap(mapFileName, x, y)
-	
+		
 	
 	#-------------------------------------------------------------------
 	# chat
@@ -173,7 +206,7 @@ class GameClient(ConnectionListener):
 	def Network_public_message(self, data):
 		print data['id'] + ": " + data['message']
 		msg = "<" + data['id'] + "> " + data['message'].decode('utf-8')
-		self.gui.chatWindow.addText(msg)
+		self.gameGui.chatWindow.addText(msg)
 		if data['id'] in self.displayMap.players:
 			self.displayMap.players[data['id']]._sprite.setTalk(data['message'].decode('utf-8'))
 		else:
@@ -183,7 +216,7 @@ class GameClient(ConnectionListener):
 	def Network_private_message(self, data):
 		print data['id'] + "(prv): " + data['message']
 		msg = "<" + data['id'] + " (prv)> " + data['message'].decode('utf-8')
-		self.gui.chatWindow.addText(msg)
+		self.gameGui.chatWindow.addText(msg)
 		
 	def Network_emote(self, data):
 		playerId = data['id']

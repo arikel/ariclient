@@ -21,22 +21,43 @@ class TextEntry(Label):
 		font=FONT,
 		width=0,
 		height=0,
-		bgcolor=(100,100,100),
-		bordercolor=(255,255,255),
-		hoverbordercolor=(255,255,255), 
+		bgcolor=COLOR_BG,
+		bordercolor=COLOR,
+		hoverbordercolor=COLOR_HOVER, 
 		borderwidth = 1,
 		parent=None):
-		Label.__init__(self, text, font, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		
 		self.has_focus = False
 		self.shift = False
 		
+		Label.__init__(self, text, font, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		
+		
 	def getFocus(self):
 		self.has_focus = True
+		self.setText(self.baseText)
 		
 	def loseFocus(self):
 		self.has_focus = False
+		self.setText(self.baseText)
+	
+	def setText(self, msg):
+		self.baseText = msg
+		self.text = ustr(msg) #unicode(msg, "utf-8")
+		if self.has_focus:
+			self.msg = self.font.render(self.text + "_", False, self.borderColor)
+		else:
+			self.msg = self.font.render(self.text, False, self.borderColor)
+		self.msgRect = self.msg.get_rect()
+		if self.w < self.msgRect.width+self.padding*2:
+			self.width = self.msgRect.width+self.padding*2
+		if self.height < self.msgRect.height+self.padding*2:
+			self.height = self.msgRect.height+self.padding*2
 		
-	def handleInput(self, events=None):
+		self.makeSurface()
+		self.updateSurface()
+	
+	def handleEvents(self, events=None):
 		if not self.has_focus or events==None:
 			return None
 		for event in events:
@@ -45,7 +66,7 @@ class TextEntry(Label):
 				if key == pygame.K_ESCAPE:
 					self.baseText = ""
 					self.setText(self.baseText)
-					self.has_focus = False
+					self.loseFocus()
 					return None
 				if key == pygame.K_BACKSPACE:
 					self.baseText = self.baseText[0:-1]
@@ -82,8 +103,8 @@ class TextEntry(Label):
 	
 	# blit	
 	def blit(self, screen):
-		if self.has_focus:
-			screen.blit(self.surface, self)
+		#if self.has_focus:
+		screen.blit(self.surface, self)
 
 
 

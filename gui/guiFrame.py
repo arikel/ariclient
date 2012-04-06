@@ -18,9 +18,9 @@ class Frame(Widget):
 	def __init__(self,
 		width = 100,
 		height = 20,
-		bgcolor = (0,0,0),
-		bordercolor = (200,200,200),
-		hoverbordercolor = (255,255,255),
+		bgcolor = COLOR_BG,
+		bordercolor = COLOR,
+		hoverbordercolor = COLOR_HOVER,
 		borderwidth = 1,
 		parent = None):
 		
@@ -45,9 +45,8 @@ class Frame(Widget):
 		if autoexpand:
 			self.setWidth(x + widget.getWidth())
 			self.setHeight(y + widget.getWidth())
-		
-		#self.updateSurface()
-		
+			self.updateSurface()
+			
 	def updateSurface(self):
 		self.surface.fill(self.borderColor)
 		pygame.draw.rect(self.surface,

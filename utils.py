@@ -14,11 +14,20 @@ class KeyHandler(object):
 		for key in CONTROL_KEY_LIST:
 			self.keyDict[key] = 0
 		
-	def getEvents(self):
-		events = pygame.event.get()
+	def handleEvents(self, events=[]):
 		for event in events:
 			if event.type == pygame.KEYDOWN:
 				self.keyDict[event.key] = 1
 			elif event.type == pygame.KEYUP:
 				self.keyDict[event.key] = 0
+		
+	def getEvents(self):
+		events = pygame.event.get()
+		self.handleEvents(events)
 		return events
+
+	def getKey(self, key):
+		if key not in self.keyDict:
+			self.keyDict[key]=0
+		return self.keyDict[key]
+		
