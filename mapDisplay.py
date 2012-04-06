@@ -124,7 +124,9 @@ class Map(GameMap):
 		if name not in self.players:
 			self.players[name]=Player(name, self, x, y)
 			self.players[name].setSprite(makePlayerSprite(name))
-			
+			self.players[name].setPos(x,y)
+			self.players[name].setMovement(0,0)
+			self.players[name].update()
 		else:
 			print("Error, asked to add player %s, but that one is already here." % (name))
 			
@@ -136,7 +138,10 @@ class Map(GameMap):
 		if name not in self.mobs:
 			self.mobs[name]=Mob(name, mobId, self, x, y)
 			self.mobs[name].setSprite(makeMobSprite(name))
-	
+			self.mobs[name].setPos(x,y)
+			self.mobs[name].setMovement(0,0)
+			self.mobs[name].update()
+			
 	def delMob(self, name):
 		del self.mobs[name]
 		

@@ -153,7 +153,9 @@ class GameClient(ConnectionListener):
 		id = data["id"]
 		self.displayMap.delMob(id)
 		print "Mob %s left the map" % (id)
-	
+		if self.displayMap.selected == id:
+			self.displayMap.unselectTarget()
+			
 	def Network_mob_took_damage(self, data):
 		mobId = data["id"]
 		if mobId not in self.displayMap.mobs:
@@ -183,6 +185,7 @@ class GameClient(ConnectionListener):
 			#print "known mob pos : %s, %s/%s, %s/%s" % (id, x, y, dx, dy)
 		else:
 			self.addMob(id, x, y)
+			self.displayMap.mobs[id].setPos(x, y)
 			self.displayMap.mobs[id].setMovement(dx, dy)
 			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
