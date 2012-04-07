@@ -150,9 +150,9 @@ class BaseSprite(object):
 def makePlayerSprite(name, tw=16, th=16):
 	sprite = BaseSprite(name, tw, th)
 	if name == "ptitnem":
-		imgPath = "graphics/sprites/female.png"
+		imgPath = "graphics/sprites/player/female.png"
 	else:
-		imgPath = "graphics/sprites/male.png"
+		imgPath = "graphics/sprites/player/male.png"
 		
 	sprite.addAnim("walk-up", imgPath, 0, 0, 24,32,4,150)
 	sprite.addAnim("walk-down", imgPath, 0, 64, 24,32,4,150)
@@ -176,7 +176,7 @@ def makePlayerSprite(name, tw=16, th=16):
 def makeMobSprite(name, tw=16, th=16):
 	#print "created mob sprite : %s" % (name)
 	sprite = BaseSprite(name, tw, th)
-	imgPath = "graphics/sprites/monsters01.png"
+	imgPath = "graphics/sprites/mobs/monsters01.png"
 	x = random.randint(0,3)*96
 	y = random.randint(0,1)*128
 	sprite.addAnim("walk-up", imgPath, x, y, 24,32,4,150)

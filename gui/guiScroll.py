@@ -36,7 +36,7 @@ class ScrollButton(Widget):
 	def updateSurface(self):
 		if self.hover:
 			self.surface.blit(self.imgHover, (0,0,20,20))
-			print "scrollbutton over"
+			#print "scrollbutton over"
 		else:
 			self.surface.blit(self.img, (0,0,20,20))
 	
@@ -229,15 +229,15 @@ class VScrollBar_buttons(Widget):
 					if self.buttonUp.hover:
 						#print("click on button up")
 						self.bar.setCarretPos(self.bar.currentPos-1)
-						print "button up!"
+						#print "button up!"
 					elif self.buttonDown.hover:
 						#print("click on button down")
 						self.bar.setCarretPos(self.bar.currentPos+1)
-						print "button down!"
+						#print "button down!"
 					else:
-						print "click missed buttons"
+						#print "click missed buttons"
 						x, y = pygame.mouse.get_pos()
-						print "target : %s %s, mouse : %s, %s" % (self.buttonUp.x - self.buttonUp.dx, self.buttonUp.y - self.buttonUp.dy, x, y)
+						#print "target : %s %s, mouse : %s, %s" % (self.buttonUp.x - self.buttonUp.dx, self.buttonUp.y - self.buttonUp.dy, x, y)
 			if event.type == pygame.MOUSEMOTION:
 				self.updateSurface()
 

@@ -89,8 +89,10 @@ class LoginGUI(Widget):
 						self.loginEntry.loseFocus()
 						self.passwordEntry.getFocus()
 					elif self.passwordEntry.has_focus:
-						self.loginEntry.getFocus()
-						self.passwordEntry.loseFocus()
+						if len(self.passwordEntry.baseText):
+							self.sendLoginRequest()
+						#self.loginEntry.getFocus()
+						#self.passwordEntry.loseFocus()
 						
 				
 						

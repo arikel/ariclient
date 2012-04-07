@@ -33,9 +33,9 @@ pathList.append("graphics/gui/emotes.png")
 pathList.append("graphics/gui/progressbars.png")
 
 #ingame sprites
-pathList.append("graphics/sprites/male.png")
-pathList.append("graphics/sprites/female.png")
-pathList.append("graphics/sprites/monsters01.png")
+pathList.append("graphics/sprites/player/male.png")
+pathList.append("graphics/sprites/player/female.png")
+pathList.append("graphics/sprites/mobs/monsters01.png")
 
 for imgPath in pathList:
 	try:
