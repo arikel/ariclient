@@ -4,6 +4,7 @@
 import pygame
 from guiFunctions import *
 from guiFrame import Frame
+from guiWindow import Window
 from guiLayout import BaseLayouter
 from guiButton import AbstractButton
 from guiLabel import Label
@@ -12,7 +13,7 @@ from guiWidget import Widget
 
 #class CloseButton(AbstractButton):
 
-class ConfigWindow(Frame):
+class ConfigWindow(Window):
 	def __init__(self,
 		x,y,
 		width = 400,
@@ -23,7 +24,7 @@ class ConfigWindow(Frame):
 		borderwidth = 1,
 		parent=None):
 		
-		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		Window.__init__(self, "Configuration", width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		print "created config window, self.surface = %s" % (self.surface)
 		
 		self.setPos(x,y)
