@@ -20,7 +20,7 @@ def colorizeSurface(baseImg, color):
 	for x in range(w):
 		for y in range(h):
 			c = img.get_at((x, y))
-			if c[0] == c[1] and c[1]== c[2]:
+			if c[0] == c[1] and c[1]== c[2] and c[3]==255:
 				img.set_at((x, y), (c[0]*R, c[1]*G, c[2]*B))
 	return img
 	
@@ -57,10 +57,10 @@ class Animation(object):
 			
 			self.frames.append(frame)
 	
-	def addImage(self, imgPath):
+	def addImage(self, imgPath, color = None):
 		img = ImgDB[imgPath]
-		if "hair" in imgPath:
-			img = colorizeSurface(img, randomColor())
+		if color:
+			img = colorizeSurface(img, color)
 			
 		for i in range(self.nbFrames):
 			rect = pygame.Rect(self.x+self.w*i, self.y, self.w, self.h)
@@ -122,10 +122,10 @@ class BaseSprite(object):
 				self.currentFrame = 0
 			self.frameUpdateTime = 0
 	
-	def addImgAnim(self, imgPath):
+	def addImgAnim(self, imgPath, color = None):
 		for animName in self.anim:
 			anim = self.anim[animName]
-			anim.addImage(imgPath)
+			anim.addImage(imgPath, color)
 	
 	def setMapPos(self, x, y):
 		self.mapRect.x = x
@@ -213,7 +213,7 @@ def makePlayerSprite(name, tw=16, th=16):
 	sprite.anim["idle-up-right"]=sprite.anim["idle-right"]
 	sprite.anim["idle-down-left"]=sprite.anim["idle-left"]
 	sprite.anim["idle-down-right"]=sprite.anim["idle-right"]
-	sprite.addImgAnim("graphics/sprites/hair/male_hair1.png")
+	sprite.addImgAnim("graphics/sprites/hair/male_hair1.png", randomColor())
 	
 	return sprite
 	
