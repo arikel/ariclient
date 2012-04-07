@@ -5,8 +5,31 @@ import pygame
 import random
 from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR, ImgDB, EmoteDic
 
-
-
+def colorizeSurface(baseImg, color):
+	w = baseImg.get_width()
+	h = baseImg.get_height()
+	R = color[0]/255.0
+	G = color[1]/255.0
+	B = color[2]/255.0
+	img = pygame.surface.Surface((w, h))
+	img.fill((0,0,0))
+	img.set_colorkey((0,0,0))
+	
+	img.blit(baseImg, (0,0))
+	
+	for x in range(w):
+		for y in range(h):
+			c = img.get_at((x, y))
+			if c[0] == c[1] and c[1]== c[2]:
+				img.set_at((x, y), (c[0]*R, c[1]*G, c[2]*B))
+	return img
+	
+def randomColor():
+	r = random.randint(1,255)+0
+	g = random.randint(1,255)+0
+	b = random.randint(1,255)+0
+	return (r,g,b)
+	
 class Animation(object):
 	def __init__(self, name, imgPath, x, y, w, h, nbFrames, frameTime, mirrored = False):
 		self.name = name
@@ -36,6 +59,9 @@ class Animation(object):
 	
 	def addImage(self, imgPath):
 		img = ImgDB[imgPath]
+		if "hair" in imgPath:
+			img = colorizeSurface(img, randomColor())
+			
 		for i in range(self.nbFrames):
 			rect = pygame.Rect(self.x+self.w*i, self.y, self.w, self.h)
 			if self.mirror:
