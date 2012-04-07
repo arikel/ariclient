@@ -11,10 +11,10 @@ SERVER_ADDRESS = "88.173.217.230"
 SERVER_PORT = 18647
 
 # controls
-KEY_UP = pygame.K_z
-KEY_DOWN = pygame.K_s
-KEY_LEFT = pygame.K_q
-KEY_RIGHT = pygame.K_d
+KEY_UP = pygame.K_UP
+KEY_DOWN = pygame.K_DOWN
+KEY_LEFT = pygame.K_LEFT
+KEY_RIGHT = pygame.K_RIGHT
 KEY_SELECT_TARGET = pygame.K_a
 KEY_ATTACK = pygame.K_e
 
