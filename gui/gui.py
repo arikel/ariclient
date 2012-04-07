@@ -89,6 +89,7 @@ class ClientGUI(object):
 			
 		self.menubutton.handleEvents(events)
 		self.chatbutton.handleEvents(events)
+		self.configwindow.handleEvents(events)
 		
 	def blit(self):
 		self.chatWindow.blit(self.screen)
