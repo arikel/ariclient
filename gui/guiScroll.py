@@ -152,21 +152,12 @@ class VScrollBar(Widget):
 	def scrollToTop(self):
 		self.setCarretPos(0)
 		
-	def handleEvents(self, events = None):
-		self.updateSurface()
-		x, y = pygame.mouse.get_pos()
+	def handleEvents(self, events = []):
+		if events:
+			self.updateSurface()
+			x, y = pygame.mouse.get_pos()
 		
 		for event in events:
-			if event.type == pygame.KEYDOWN:
-				key = event.key
-				if key == pygame.K_DOWN:
-					self.setCarretPos(self.currentPos + 1)
-					#self.info()
-				if key == pygame.K_UP:
-					self.setCarretPos(self.currentPos - 1)
-					#self.info()
-					
-				
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				#if pygame.mouse.get_pressed() == (1, 0, 0):
 				if event.button == 1:
