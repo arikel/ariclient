@@ -74,9 +74,15 @@ class Game(GameClient):
 		if not self.displayMap:
 			self.update = self.updateGame
 			self.id = self.loginGui.name
-		self.displayMap = Map(mapFileName)
-		self.addPlayer(self.id, x, y)
-		
+			self.displayMap = Map(mapFileName)
+			self.addPlayer(self.id, x, y)
+		else:
+			if self.displayMap.mapFileName == mapFileName:
+				self.displayMap.players[self.id].setPos(x, y)
+			else:
+				self.displayMap = Map(mapFileName)
+				self.addPlayer(self.id, x, y)
+	
 	def getClosestMobName(self):
 		myRect = self.displayMap.players[self.id].mapRect
 		minDist = 2000.0
