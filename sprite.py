@@ -17,10 +17,11 @@ class Animation(object):
 		self.nbFrames = nbFrames
 		self.frameTime = frameTime
 		
-		if imgPath in ImgDB:
-			img = ImgDB[imgPath].convert_alpha()
-		else:
-			img = pygame.image.load(imgPath).convert_alpha()
+		#if imgPath in ImgDB:
+		#	img = ImgDB[imgPath].convert_alpha()
+		#else:
+		#	img = pygame.image.load(imgPath).convert_alpha()
+		img = ImgDB[imgPath].convert_alpha()
 		#print "image loaded, rect = %s" % (img.get_rect())
 		self.frames = []
 		for i in range(self.nbFrames):

@@ -158,8 +158,13 @@ class Game(GameClient):
 				if key == KEY_ATTACK:
 					if self.displayMap.selected:
 						self.SendAttackMob(self.displayMap.selected)
-					
-			if event.type == pygame.QUIT:
+			
+			
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					self.displayMap.handleClick()
+				
+			elif event.type == pygame.QUIT:
 				#pygame.quit()
 				self.running = False
 		

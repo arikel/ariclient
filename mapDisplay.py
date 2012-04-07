@@ -154,7 +154,21 @@ class Map(GameMap):
 			
 		for mobName in self.mobs:
 			self.mobs[mobName].update(dt)
-			
+	
+	def handleClick(self):
+		print "--- Map handle click ---"
+		x, y = pygame.mouse.get_pos()
+		for playerName in self.players:
+			player = self.players[playerName]
+			if player._sprite.rect.collidepoint(x, y):
+				print "Player %s was clicked on" % (playerName)
+				return
+		for mobName in self.mobs:
+			mob = self.mobs[mobName]
+			if mob._sprite.rect.collidepoint(x, y):
+				print "Monster %s was clicked on" % (mobName)
+	
+	
 	def setOffset(self, x, y):
 		self.offsetX = x
 		self.offsetY = y
