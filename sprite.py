@@ -16,7 +16,7 @@ class Animation(object):
 		self.h = h
 		self.nbFrames = nbFrames
 		self.frameTime = frameTime
-		
+		self.mirror = mirrored
 		#if imgPath in ImgDB:
 		#	img = ImgDB[imgPath].convert_alpha()
 		#else:
@@ -33,7 +33,17 @@ class Animation(object):
 				frame = img.subsurface(rect)
 			
 			self.frames.append(frame)
-
+	
+	def addImage(self, imgPath):
+		img = ImgDB[imgPath]
+		for i in range(self.nbFrames):
+			rect = pygame.Rect(self.x+self.w*i, self.y, self.w, self.h)
+			if self.mirror:
+				frame = pygame.transform.flip(img.subsurface(rect), 1, 0)
+			else:
+				frame = img.subsurface(rect)
+			self.frames[i].blit(frame, (0,0))
+			
 class BaseSprite(object):
 	def __init__(self, name, tileWidth = 16, tileHeight = 16):
 		#pygame.sprite.Sprite.__init__(self)
@@ -85,7 +95,12 @@ class BaseSprite(object):
 			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
 				self.currentFrame = 0
 			self.frameUpdateTime = 0
-				
+	
+	def addImgAnim(self, imgPath):
+		for animName in self.anim:
+			anim = self.anim[animName]
+			anim.addImage(imgPath)
+	
 	def setMapPos(self, x, y):
 		self.mapRect.x = x
 		self.mapRect.y = y
@@ -172,6 +187,8 @@ def makePlayerSprite(name, tw=16, th=16):
 	sprite.anim["idle-up-right"]=sprite.anim["idle-right"]
 	sprite.anim["idle-down-left"]=sprite.anim["idle-left"]
 	sprite.anim["idle-down-right"]=sprite.anim["idle-right"]
+	sprite.addImgAnim("graphics/sprites/hair/male_hair1.png")
+	
 	return sprite
 	
 def makeMobSprite(name, tw=16, th=16):
