@@ -79,6 +79,10 @@ class Map(GameMap):
 		self.layers = {} # name : MapLayer
 		self.layerImages = {} # name : (big) surface
 		
+		self.dirtyRects = []
+		self.dirtySprites = []
+		self.needFullBlit = True
+		
 		self.mobs = {} # name : Mob
 		self.players = {} # name : Player
 		self.sprites = {} # name : Sprite (for players and mobs)
@@ -105,6 +109,8 @@ class Map(GameMap):
 		self.warps = []
 		
 		self.particleManager = MapParticleManager(self)
+		
+		
 		
 	def addWarp(self, name, x, y, w, h):
 		for warp in self.warps:
@@ -172,8 +178,12 @@ class Map(GameMap):
 	
 	
 	def setOffset(self, x, y):
-		self.offsetX = x
-		self.offsetY = y
+		if x != self.offsetX or y != self.offsetY:
+			self.offsetX = x
+			self.offsetY = y
+			self.needFullBlit = True
+			
+		
 		
 	def isValidPos(self, x, y):
 		if (0<=x<self.w) and (0<=y<self.h):
@@ -253,6 +263,35 @@ class Map(GameMap):
 		self.warpImg.set_alpha(120)
 		
 	def blit(self, screen):
+		if self.needFullBlit:
+			self.fullBlit(screen)
+		else:
+			self.dirtyBlit(screen)
+		
+	def dirtyBlit(self, screen):
+		for rect in self.dirtyRects:
+			#print "rect : %s, offx = %s, offy = %s" % (rect, self.offsetX, self.offsetY)
+			try:
+				img = self.layerImages["ground"].subsurface(rect.x+self.offsetX,rect.y+self.offsetY, rect.w, rect.h)
+				
+			except:
+				continue
+			
+			screen.blit(img, (rect.x,rect.y))
+			
+		for sprite in self.dirtySprites:
+			if self.selected:
+				if sprite.name == self.selected:
+					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))
+			sprite.blit(screen)
+		
+		self.particleManager.blit(screen)
+		
+		self.dirtyRects = []
+		self.dirtySprites = []
+		
+	def fullBlit(self, screen):
+		screen.fill((0,0,0))
 		# ground
 		screen.blit(self.layerImages["ground"], (-self.offsetX,-self.offsetY))
 		#print "Map offset : %s %s " % (self.offsetX, self.offsetY)
@@ -278,6 +317,11 @@ class Map(GameMap):
 		
 		# particles
 		self.particleManager.blit(screen)
+		
+		# reset dirty lists
+		self.dirtyRects = []
+		self.dirtySprites = []
+		self.needFullBlit = False
 		
 	def clearTile(self, layerName, x, y):
 		self.layers[layerName].clearTile(x, y)

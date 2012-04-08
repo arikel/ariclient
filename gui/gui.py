@@ -21,7 +21,7 @@ from guiLogin import LoginGUI
 from guiLayout import *
 from guiConfig import *
 
-class ClientGUI(object):
+class GameGUI(object):
 	def __init__(self, game):
 		self.game = game
 		self.screen = self.game.screen

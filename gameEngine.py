@@ -82,8 +82,12 @@ class MapCreature:
 		self.y = y
 		self.mapRect.topleft = (x,y)
 		if self._sprite:
-			self._sprite.setPos(x, y)
-		
+			if self._map.screenRect.colliderect(self._sprite.rect):
+				self._map.dirtyRects.append(self._sprite.getDirtyRect())
+				self._sprite.setPos(x, y)
+				self._map.dirtySprites.append(self._sprite)
+				self._map.dirtyRects.append(self._sprite.getDirtyRect())
+				
 	def getPos(self):
 		return (self.x, self.y)
 	

@@ -40,7 +40,9 @@ class ConfigWindow(Window):
 		#TextEntry('', parent=self)
 		Label('Right', parent=self).setPadding(5)
 		#TextEntry('', parent=self)
-
+		Label('Select', parent=self).setPadding(5)
+		Label('Attack', parent=self).setPadding(5)
+		
 		self.autolayout()
 		self.setPos(x,y)
 		self.OnResize(1,1)

@@ -18,7 +18,7 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
 from mapDisplay import Map
-from gui import *
+from gui import LoginGUI, GameGUI
 from utils import KeyHandler
 from gameEngine import *
 from gameClient import GameClient
@@ -48,7 +48,7 @@ class Game(GameClient):
 		self.displayMap = None
 		
 		# GUI
-		self.gameGui = ClientGUI(self)
+		self.gameGui = GameGUI(self)
 		self.loginGui = LoginGUI(self)
 		self.mode = "login"
 		self.update = self.updateLogin
@@ -143,8 +143,9 @@ class Game(GameClient):
 			self.dx = 0
 			self.dy = 0
 				
-		self.displayMap.offsetX = self.displayMap.players[self.id].mapRect.x-SCREEN_WIDTH/2
-		self.displayMap.offsetY = self.displayMap.players[self.id].mapRect.y-SCREEN_HEIGHT/2
+		offx = self.displayMap.players[self.id].mapRect.x-SCREEN_WIDTH/2
+		offy = self.displayMap.players[self.id].mapRect.y-SCREEN_HEIGHT/2
+		self.displayMap.setOffset(offx, offy)
 		self.displayMap.update(dt)
 		
 		for event in events:
@@ -187,7 +188,7 @@ class Game(GameClient):
 		
 		# graphics 
 		
-		self.screen.fill((0,0,0))
+		
 		self.displayMap.blit(self.screen)
 		
 		# gui display

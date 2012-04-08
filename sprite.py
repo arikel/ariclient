@@ -105,6 +105,8 @@ class BaseSprite(object):
 		
 		self.nameImg = FONT.render(self.name, False, (20,20,20), (200,200,200,255))#.convert_alpha()
 		self.nameImg.set_alpha(120)
+		self.nameImg_w = self.nameImg.get_width()
+		self.nameImg_h = self.nameImg.get_height()
 		
 		self.emoteCooldown = 0
 		self.emote = None
@@ -161,6 +163,11 @@ class BaseSprite(object):
 		self.rect.x = self.mapRect.x - x - self.rect.w/2
 		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
 		self.rect.y = self.mapRect.y - y - self.rect.h
+		
+	def getDirtyRect(self):
+		nameRect = pygame.Rect(self.rect.x-5, self.rect.y-5, self.nameImg_w+5, self.nameImg_h+self.rect.h+5)
+		rect = self.rect.union(nameRect)
+		return rect
 		
 	def update(self, t=None):
 		if t == None:
