@@ -27,7 +27,8 @@ class ConfigWindow(Window):
 		Window.__init__(self, "Configuration", width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		print "created config window, self.surface = %s" % (self.surface)
 		
-		self.setPos(x,y)
+		
+		
 		
 		Label('Keys', parent=self).setPadding(5)
 		Frame(0,50, parent=self)
@@ -41,6 +42,8 @@ class ConfigWindow(Window):
 		#TextEntry('', parent=self)
 
 		self.autolayout()
-		self.close_button.setPos(self.w - 20, 0)
+		self.setPos(x,y)
+		self.close_button.setPos(self.w - 21, 0)
+		self.drag_button.setPos(self.w-21, self.h-21)
 		self.OnDrag(1,1)
 		self.hide()

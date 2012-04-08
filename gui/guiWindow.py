@@ -10,7 +10,7 @@ import string
 from guiFunctions import *
 from guiFrame import Frame
 from guiLabel import Label
-from guiButton import TextButton
+from guiButton import TextButton, ImgButton
 
 
 class Window(Frame):
@@ -29,8 +29,16 @@ class Window(Frame):
 		#self.frame = Frame(width, 24, COLOR_BG, bordercolor, hoverbordercolor, borderwidth, self)
 		self.name = Label(name, width = width-21, bgcolor = COLOR_BG, borderwidth = 1, parent = self)
 		self.name.setPos(self.borderWidth+2, self.borderWidth+2)
-		self.close_button = TextButton("x", parent=self)
+		#self.close_button = TextButton("x", parent=self)
+		self.close_button = ImgButton(self.w-20, 0, 20, 20,
+			"graphics/gui/guibase.png", 1,49,1,70,
+			parent=self)
 		self.close_button.setPos(self.w-20, 0)
+		
+		self.drag_button = ImgButton(self.w-20, 0, 20, 20,
+			"graphics/gui/guibase.png", 22,49,22,70,
+			parent=self)
+		self.drag_button.setPos(self.w-20, self.h-20)
 		
 		#is it better hide a frame or close it (deletion of the object)?
 		# hiding works fine
@@ -48,7 +56,8 @@ class Window(Frame):
 		self.width = int(w)
 		self.height = int(h)
 		self.makeSurface()
-		self.close_button.setPos(self.width - 20, 0)
+		self.close_button.setPos(self.width - 21, 1)
+		self.drag_button.setPos(self.w-21, self.h-21)
 		self.name.setWidth(self.width-21)
 		self.name.makeSurface()
 		
@@ -90,6 +99,7 @@ class Window(Frame):
 				self.name.updateSurface()
 				self.name.blit(self.surface)
 				self.close_button.blit(self.surface)
+				self.drag_button.blit(self.surface)
 				
 		for child in self._children:
 			if hasattr(child, 'handleEvents'):

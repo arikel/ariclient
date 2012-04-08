@@ -80,8 +80,42 @@ class ShowFrameButton(AbstractButton):
 		#self.widget.show(fshow)
 		#self.setText("  " +  self._auxtext[fshow] + "  ")
 		self.setText("  " +  self._auxtext[self.visible] + "  ")
+
+
+class ButtonBase(Widget):
+	def blit(self, screen):
+		if self.hover:
+			screen.blit(self.surfaceHover, self)
+		else:
+			screen.blit(self.surface, self)
 		
-class TextButton(Widget):
+	def bind(self, func, params=None):
+		self.func = func
+		self.params = params
+		
+	def OnClick(self):
+		if self.func:
+			if self.params:
+				self.func(self.params)
+			else:
+				self.func()
+		else:
+			print "Error : no function bound for TextButton"
+			
+	def handleEvents(self, events):
+		
+		for event in events:
+				
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1 and self.hover:
+					self.click = True
+					
+			if event.type == pygame.MOUSEBUTTONUP:
+				if self.click and self.hover:
+					self.click = False
+					self.OnClick()
+
+class TextButton(ButtonBase):
 	
 	def __init__(self,
 		text= "OK",
@@ -175,58 +209,31 @@ class TextButton(Widget):
 		
 		return self.surface
 		
-	'''	
-	def updateSurface(self):
-		# surface
-		self.surface.fill(self.color)
-		pygame.draw.rect(self.surface,
-			self.color_bg,
-			(self.borderWidth, self.borderWidth,
-			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
-		
-		self.surface.blit(self.msg, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))
-		
-		# surface hover
-		self.surfaceHover.fill(self.color_hover)
-		pygame.draw.rect(self.surfaceHover,
-			self.color_bg_hover,
-			(self.borderWidth, self.borderWidth,
-			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
-		
-		self.surfaceHover.blit(self.msgHover, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))
-		
-		# children
-		Widget.updateSurface(self)
-	'''
-	def blit(self, screen):
-		if self.hover:
-			screen.blit(self.surfaceHover, self)
-		else:
-			screen.blit(self.surface, self)
-		
-	def bind(self, func, params=None):
-		self.func = func
-		self.params = params
-		
-	def OnClick(self):
-		if self.func:
-			if self.params:
-				self.func(self.params)
-			else:
-				self.func()
-		else:
-			print "Error : no function bound for TextButton"
-			
-	def handleEvents(self, events):
-		
-		for event in events:
-				
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				if event.button == 1 and self.hover:
-					self.click = True
+	
 					
-			if event.type == pygame.MOUSEBUTTONUP:
-				if self.click and self.hover:
-					self.click = False
-					self.OnClick()
-					
+class ImgButton(ButtonBase):
+	
+	def __init__(self,
+		x=0,
+		y=0,
+		width=0,
+		height=0,
+		imgPath= "OK",
+		imgx=0,
+		imgy=0,
+		imghoverx=0,
+		imghovery=0,
+		parent = None):
+		
+		Widget.__init__(self, x, y, width, height, parent)
+		
+		self.has_focus = False
+		self.click = False
+		
+		self.surface = ImgDB[imgPath].subsurface((imgx, imgy, self.w, self.h))
+		self.surfaceHover = ImgDB[imgPath].subsurface((imghoverx, imghovery, self.w, self.h))
+		
+	def makeSurface(self):
+		"""Creates the widget surface"""
+		pass
+		

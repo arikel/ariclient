@@ -60,8 +60,7 @@ class Game(GameClient):
 		if name == "anonymous":
 			return
 		print "adding player to map : %s, at %s, %s" % (name, x, y)
-		self.displayMap.addPlayer(name, x, y)
-		
+		self.displayMap.addPlayer(name, x, y)	
 		
 	def delPlayer(self, name):
 		self.displayMap.delPlayer(name)

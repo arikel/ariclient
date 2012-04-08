@@ -96,7 +96,7 @@ class LoginGUI(Widget):
 						
 				
 						
-			if event.type == pygame.MOUSEBUTTONDOWN:
+			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
 					if self.loginEntry.hover and not self.loginEntry.has_focus:
 						self.loginEntry.getFocus()
@@ -104,7 +104,10 @@ class LoginGUI(Widget):
 					elif self.passwordEntry.hover and not self.passwordEntry.has_focus:
 						self.loginEntry.loseFocus()
 						self.passwordEntry.getFocus()
-						
+			
+			elif event.type == pygame.QUIT:
+				pygame.quit()
+			
 		return False
 		
 	def sendLoginRequest(self):
