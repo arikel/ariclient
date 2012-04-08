@@ -35,6 +35,7 @@ class Window(Frame):
 		self.setWidth(width)
 		
 		self.click = False
+		self._resize = False
 		
 		
 	def setWidth(self, x):
@@ -45,6 +46,14 @@ class Window(Frame):
 		
 	def OnDrag(self, x, y):
 		self.setPos(self.x + x, self.y + y)	
+		
+	def OnResize(self, x, y):
+		self.setWidth(self.getWidth() + x)
+		self.setHeight(self.getHeight() + y)
+		self.frame.setWidth(self.getWidth() + x)
+		self.makeSurface()
+		self.frame.makeSurface()
+		self.updateSurface()
 		
 		
 	def handleEvents(self, events=[]):
@@ -58,12 +67,20 @@ class Window(Frame):
 						
 			if event.type == pygame.MOUSEBUTTONUP:
 				if self.click and self.hover:
+					self._resize = False
 					self.click = False
 					#self.OnClick()
 					
 			if event.type == pygame.MOUSEMOTION:
 				if self.click:
-					self.OnDrag(*event.rel)
+					resize_rect = pygame.Rect(self.x + self.getWidth()-20, self.y + self.getHeight()-20, 20, 20)
+					if self._resize:
+						self.OnResize(*event.rel)
+					elif resize_rect.collidepoint(*event.pos):
+						self._resize = True
+						self.OnResize(*event.rel)
+					else:
+						self.OnDrag(*event.rel)
 				
 			
 		#for child in self._children:
