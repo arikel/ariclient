@@ -317,7 +317,7 @@ class ChatWindow(Widget):
 		self.entry = TextEntry("", width = w, parent=self)
 		self.scrollTextWindow = ScrollTextWindow(0, 0, w, h-20, parent=self)
 		
-		#print "created chatwindow, after init, w = %s, h = %s, x = %s, y = %s" % (self.w, self.h, self.x, self.y)
+		print "created chatwindow, after init, w = %s, h = %s, x = %s, y = %s" % (self.w, self.h, self.x, self.y)
 		self.entry.setPos(0, self.h-20)
 		
 	def addText(self, text):

@@ -2,21 +2,89 @@
 # -*- coding: utf-8 -*-
 import pygame
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+class ConfigManager(object):
+	def __init__(self, filename="playersettings.txt"):
+		self.filename = filename
+		self.keys = {}
+		
+	def load(self):
+		try:
+			fp = open(self.filename, "r")
+		except:
+			self.initConfigFile(self.filename)
+			return
+		for line in fp:
+			key, value = map(lambda x: x.strip(), line.split("="))
+			try:
+				#may need to check for values < 0 and > 255
+				value = int(value)
+			except:
+				#skipping every param that is not the server address
+				if key != 'server-address':
+					continue
+				
+			if key == 'screen-width':
+				print "Setting GLOBAL Screen Width : %s" % (value)
+				self.keys["SCREEN_WIDTH"] = value
+			elif key == 'screen-height':
+				print "Setting GLOBAL Screen Height : %s" % (value)
+				self.keys["SCREEN_HEIGHT"] = value
+			elif key == 'server-address':
+				self.keys["SERVER_ADDRESS"] = value
+			elif key == 'server-port':
+				self.keys["SERVER_PORT"] = value
+			elif key == 'key-up':
+				self.keys["KEY_UP"] = value
+			elif key == 'key-down':
+				self.keys["KEY_DOWN"] = value
+			elif key == 'key-left':
+				self.keys["KEY_LEFT"] = value
+			elif key == 'key-right':
+				self.keys["KEY_RIGHT"] = value
+			elif key == 'key-select':
+				self.keys["KEY_SELECT_TARGET"] = value
+			elif key == 'key-attack':
+				self.keys["KEY_ATTACK"] = value
+		fp.close()
+		
+	def initConfigFile(self, filename):
+		print "Invalid configuration... resetting..."
+		configdata = [ ('screen-width', 800),\
+			('screen-height', 600),\
+			('server-address', "88.173.217.230"),\
+			('server-port', 18647),\
+			('key-up', pygame.K_UP),\
+			('key-down', pygame.K_DOWN),\
+			('key-left', pygame.K_LEFT),\
+			('key-right', pygame.K_RIGHT),\
+			('key-select', pygame.K_a),\
+			('key-attack', pygame.K_e) 
+		]
+		
+		lines = []
+		fp = open(filename, "w")
+		for key, value in configdata:
+			lines.append("%s = %s\n" % (key, str(value)))
+		fp.writelines(lines)
+		fp.close()
+		self.load()
 
-SERVER_ADDRESS = "88.173.217.230"
-#SERVER_ADDRESS = "127.0.0.1"
-#SERVER_ADDRESS = "mmorg.dyndns-at-home.com"
-SERVER_PORT = 18647
+cm = ConfigManager()
+cm.load()
+
+SCREEN_WIDTH = cm.keys["SCREEN_WIDTH"]
+SCREEN_HEIGHT = cm.keys["SCREEN_HEIGHT"]
+
+SERVER_ADDRESS = cm.keys["SERVER_ADDRESS"]
+SERVER_PORT = cm.keys["SERVER_PORT"]
 
 # controls
-KEY_UP = pygame.K_UP
-KEY_DOWN = pygame.K_DOWN
-KEY_LEFT = pygame.K_LEFT
-KEY_RIGHT = pygame.K_RIGHT
-KEY_SELECT_TARGET = pygame.K_a
-KEY_ATTACK = pygame.K_e
+KEY_UP = cm.keys["KEY_UP"]
+KEY_DOWN = cm.keys["KEY_DOWN"]
+KEY_LEFT = cm.keys["KEY_LEFT"]
+KEY_RIGHT = cm.keys["KEY_RIGHT"]
+KEY_SELECT_TARGET = cm.keys["KEY_SELECT_TARGET"]
+KEY_ATTACK = cm.keys["KEY_ATTACK"]
 
 CONTROL_KEY_LIST = [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SELECT_TARGET, KEY_ATTACK]
 
@@ -38,8 +106,10 @@ def read_configuration():
 					continue
 				
 			if key == 'screen-width':
+				print "Setting GLOBAL Screen Width : %s" % (value)
 				SCREEN_WIDTH = value
 			elif key == 'screen-height':
+				print "Setting GLOBAL Screen Height : %s" % (value)
 				SCREEN_HEIGHT = value
 			elif key == 'server-address':
 				SERVER_ADDRESS = value

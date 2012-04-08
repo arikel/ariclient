@@ -30,7 +30,8 @@ class ClientGUI(object):
 		toplayout = BaseLayouter()
 		
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
-		
+		print "Screen : %s %s" % (SCREEN_WIDTH, SCREEN_HEIGHT)
+		print "creating chatwindow from clientGui : %s, %s, %s, %s" % (0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
 		self.chatWindow = ChatWindow(0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
 		
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
