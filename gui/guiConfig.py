@@ -43,7 +43,5 @@ class ConfigWindow(Window):
 
 		self.autolayout()
 		self.setPos(x,y)
-		self.close_button.setPos(self.w - 21, 0)
-		self.drag_button.setPos(self.w-21, self.h-21)
-		self.OnDrag(1,1)
+		self.OnResize(1,1)
 		self.hide()

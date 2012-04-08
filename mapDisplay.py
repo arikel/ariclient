@@ -158,7 +158,7 @@ class Map(GameMap):
 			self.mobs[mobName].update(dt)
 	
 	def handleClick(self):
-		print "--- Map handle click ---"
+		#print "--- Map handle click ---"
 		x, y = pygame.mouse.get_pos()
 		for playerName in self.players:
 			player = self.players[playerName]

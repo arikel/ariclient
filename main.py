@@ -149,24 +149,27 @@ class Game(GameClient):
 		
 		for event in events:
 			if event.type == pygame.KEYDOWN:
+				if self.gameGui.chatWindow.entry.has_focus:
+					continue
+				
 				key = event.key
 
-				if key == pygame.K_ESCAPE and not self.gameGui.chatWindow.entry.has_focus:
+				if key == pygame.K_ESCAPE:
 					#print "Escape and no typing : quit"
 					#pygame.quit()
 					self.running = False
 				
-				if key == pygame.K_SPACE and not self.gameGui.chatWindow.entry.has_focus:
+				if key == pygame.K_SPACE:
 					#print "Starting to type text..."
 					self.SendWarpInfoRequest()
 					self.displayMap.warpVisible = not self.displayMap.warpVisible
 				
-				if key == KEY_SELECT_TARGET and not self.gameGui.chatWindow.entry.has_focus:
+				if key == KEY_SELECT_TARGET:
 					mobName = self.getClosestMobName()
 					if mobName:
 						self.displayMap.selectTarget(mobName)
 				
-				if key == KEY_ATTACK and not self.gameGui.chatWindow.entry.has_focus:
+				if key == KEY_ATTACK:
 					if self.displayMap.selected:
 						self.SendAttackMob(self.displayMap.selected)
 			

@@ -25,11 +25,12 @@ class Frame(Widget):
 		parent = None):
 		
 		Widget.__init__(self, 0, 0, width, height, parent)
-		self.makeSurface()
 		
 		self.setBGColor(bgcolor)
 		self.setBorderColor(bordercolor)
 		self.borderWidth = borderwidth
+		
+		self.makeSurface()
 		
 	def autolayout(self, direction='vertical', autoexpand = False):
 		x, y = 0, 0
@@ -46,16 +47,14 @@ class Frame(Widget):
 			self.setWidth(x + widget.getWidth())
 			self.setHeight(y + widget.getWidth())
 			self.updateSurface()
-			
-	def updateSurface(self):
+		
+	def makeSurface(self):
+		Widget.makeSurface(self)
 		self.surface.fill(self.borderColor)
 		pygame.draw.rect(self.surface,
 			self.bgColor,
 			(self.borderWidth, self.borderWidth,
 			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
-		Widget.updateSurface(self)
-		
-		
 		
 	def setBGColor(self, color):
 		self.bgColor = color

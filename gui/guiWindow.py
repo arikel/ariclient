@@ -47,11 +47,13 @@ class Window(Frame):
 		self.click = False
 		self._resize = False
 		
+		
+		
 	def setSize(self, w, h):
 		if w == self.width and h == self.height:
 			return
-		if w<1:w=1
-		if h<1:h=1
+		if w<40:w=40
+		if h<40:h=40
 		
 		self.width = int(w)
 		self.height = int(h)
@@ -73,7 +75,8 @@ class Window(Frame):
 	def handleEvents(self, events=[]):
 		if not events:
 			return False
-		
+		if not self.visible:
+			return
 		for event in events:
 			if event.type == pygame.MOUSEBUTTONDOWN:
 					if event.button == 1 and self.hover:
@@ -96,10 +99,11 @@ class Window(Frame):
 					else:
 						self.OnDrag(*event.rel)
 				
-				self.name.updateSurface()
-				self.name.blit(self.surface)
-				self.close_button.blit(self.surface)
-				self.drag_button.blit(self.surface)
+				#self.name.updateSurface()
+				#self.name.blit(self.surface)
+				#self.close_button.blit(self.surface)
+				#self.drag_button.blit(self.surface)
+				self.updateSurface()
 				
 		for child in self._children:
 			if hasattr(child, 'handleEvents'):

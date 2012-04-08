@@ -100,7 +100,7 @@ class ButtonBase(Widget):
 			else:
 				self.func()
 		else:
-			print "Error : no function bound for TextButton"
+			print "Error : no function bound for Button"
 			
 	def handleEvents(self, events):
 		
@@ -233,7 +233,5 @@ class ImgButton(ButtonBase):
 		self.surface = ImgDB[imgPath].subsurface((imgx, imgy, self.w, self.h))
 		self.surfaceHover = ImgDB[imgPath].subsurface((imghoverx, imghovery, self.w, self.h))
 		
-	def makeSurface(self):
-		"""Creates the widget surface"""
-		pass
+	
 		
