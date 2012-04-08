@@ -41,5 +41,6 @@ class ConfigWindow(Window):
 		#TextEntry('', parent=self)
 
 		self.autolayout()
+		self.close_button.setPos(self.w - 20, 0)
 		self.OnDrag(1,1)
 		self.hide()

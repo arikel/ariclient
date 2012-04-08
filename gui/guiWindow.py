@@ -54,7 +54,6 @@ class Window(Frame):
 		
 	def OnDrag(self, x, y):
 		self.setPos(self.x + x, self.y + y)
-		self.close_button.setPos(self.w - 20, 0)
 		self.updateSurface()
 		
 	def OnResize(self, x, y):
