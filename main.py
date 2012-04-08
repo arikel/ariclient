@@ -72,14 +72,17 @@ class Game(GameClient):
 		
 	def setMap(self, mapFileName, x, y):
 		if not self.displayMap:
+			print "Entering map %s" % (mapFileName)
 			self.update = self.updateGame
 			self.id = self.loginGui.name
 			self.displayMap = Map(mapFileName)
 			self.addPlayer(self.id, x, y)
 		else:
 			if self.displayMap.filename == mapFileName:
+				print "Warp in current map (%s)" % (mapFileName)
 				self.displayMap.players[self.id].setPos(x, y)
 			else:
+				print "Changing map for %s" % (mapFileName)
 				self.displayMap = Map(mapFileName)
 				self.addPlayer(self.id, x, y)
 	

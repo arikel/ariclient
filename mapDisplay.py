@@ -128,7 +128,8 @@ class Map(GameMap):
 			self.players[name].setMovement(0,0)
 			self.players[name].update()
 		else:
-			print("Error, asked to add player %s, but that one is already here." % (name))
+			pass
+			#print("Error, asked to add player %s, but that one is already here." % (name))
 			
 	def delPlayer(self, playerName):
 		if playerName in self.players:
@@ -214,7 +215,7 @@ class Map(GameMap):
 					if len(codes) == self.w * self.h:
 						layerName = key.strip()
 						value = value.strip()
-						print "Loading layer %s" % (layerName)
+						#print "Loading layer %s" % (layerName)
 						self.addLayer(layerName)
 						self.layers[layerName].setData(value)
 						self.updateLayerImage(layerName)
@@ -226,7 +227,7 @@ class Map(GameMap):
 		
 	def makeLayerImage(self, name):
 		if name not in self.layers:return
-		print "map makes layer image for %s" % (name)
+		#print "map makes layer image for %s" % (name)
 		self.layerImages[name] = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
 		self.layerImages[name].convert_alpha()
 		

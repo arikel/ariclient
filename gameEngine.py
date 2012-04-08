@@ -221,7 +221,7 @@ class MapLayer(object):
 		self.tileHeight = tileHeight
 		
 		self.tiles = [] # [x][y] : code
-		print "init MapLayer %s : w = %s, h = %s" % (name, w, h)
+		#print "init MapLayer %s : w = %s, h = %s" % (name, w, h)
 		for x in range(self.w):
 			line = []
 			for y in range(self.h):
@@ -251,7 +251,7 @@ class MapLayer(object):
 				self.setTile(x,y,code)
 	
 	def setSize(self, w, h):
-		print "Layer %s setting size : %s %s" % (self.name, w, h)
+		#print "Layer %s setting size : %s %s" % (self.name, w, h)
 		self.oldTiles = self.tiles
 		self.tiles = [] # [x][y] : code
 		self.w = w
@@ -272,7 +272,7 @@ class MapLayer(object):
 	def setData(self, data):
 		tilecodes = data.split(",")
 		if len(tilecodes) != self.w * self.h:
-			print "data not matching width and height"
+			#print "data not matching width and height"
 			return False
 		n = 0
 		for x in range(self.w):
@@ -318,7 +318,7 @@ class GameMap:
 		
 		
 	def addLayer(self, name):
-		print "adding layer with self w = %s, h = %s" % (self.w, self.h)
+		#print "adding layer with self w = %s, h = %s" % (self.w, self.h)
 		self.layers[name] = MapLayer(name, self.w, self.h, self.tileWidth, self.tileHeight)
 		
 	
