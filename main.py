@@ -12,6 +12,8 @@ import pygame
 from config import *
 from optparse import OptionParser
 
+read_configuration()
+
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
