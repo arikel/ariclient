@@ -95,6 +95,9 @@ class Map(GameMap):
 		#self.layers["ground"].fill("gggg")
 		self.updateLayerImage("ground")
 		
+		self.imgW = self.layerImages["ground"].get_width()
+		self.imgH = self.layerImages["ground"].get_height()
+		
 		self.offsetX = 0
 		self.offsetY = 0
 		
@@ -110,7 +113,7 @@ class Map(GameMap):
 		
 		self.particleManager = MapParticleManager(self)
 		
-		
+		self.arrayblit = [self.dirtyBlit, self.fullBlit]
 		
 	def addWarp(self, name, x, y, w, h):
 		for warp in self.warps:
@@ -263,22 +266,20 @@ class Map(GameMap):
 		self.warpImg.set_alpha(120)
 		
 	def blit(self, screen):
-		if self.needFullBlit:
-			self.fullBlit(screen)
-		else:
-			self.dirtyBlit(screen)
+		self.arrayblit[self.needFullBlit](screen)
 		
 	def dirtyBlit(self, screen):
 		for rect in self.dirtyRects:
 			#print "rect : %s, offx = %s, offy = %s" % (rect, self.offsetX, self.offsetY)
+			endx = rect.x + self.offsetX + rect.w
+			endy = rect.y + self.offsetY + rect.h
+			#if self.imgW>endx and self.imgH>endy:
 			try:
 				img = self.layerImages["ground"].subsurface(rect.x+self.offsetX,rect.y+self.offsetY, rect.w, rect.h)
-				
+				screen.blit(img, (rect.x,rect.y))
 			except:
-				continue
-			
-			screen.blit(img, (rect.x,rect.y))
-			
+				pass
+				
 		for sprite in self.dirtySprites:
 			if self.selected:
 				if sprite.name == self.selected:

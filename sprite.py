@@ -165,7 +165,7 @@ class BaseSprite(object):
 		self.rect.y = self.mapRect.y - y - self.rect.h
 		
 	def getDirtyRect(self):
-		nameRect = pygame.Rect(self.rect.x-5, self.rect.y-5, self.nameImg_w+5, self.nameImg_h+self.rect.h+5)
+		nameRect = pygame.Rect(self.rect.x-5, self.rect.y-5, self.nameImg_w+15, self.nameImg_h+self.rect.h+15)
 		rect = self.rect.union(nameRect)
 		return rect
 		
