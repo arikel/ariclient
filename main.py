@@ -161,12 +161,12 @@ class Game(GameClient):
 					self.SendWarpInfoRequest()
 					self.displayMap.warpVisible = not self.displayMap.warpVisible
 				
-				if key == KEY_SELECT_TARGET:
+				if key == KEY_SELECT_TARGET and not self.gameGui.chatWindow.entry.has_focus:
 					mobName = self.getClosestMobName()
 					if mobName:
 						self.displayMap.selectTarget(mobName)
 				
-				if key == KEY_ATTACK:
+				if key == KEY_ATTACK and not self.gameGui.chatWindow.entry.has_focus:
 					if self.displayMap.selected:
 						self.SendAttackMob(self.displayMap.selected)
 			
