@@ -48,7 +48,7 @@ class Game(GameClient):
 		# GUI
 		self.gameGui = ClientGUI(self)
 		self.loginGui = LoginGUI(self)
-		
+		self.mode = "login"
 		self.update = self.updateLogin
 	
 	def connectToServer(self):
@@ -73,6 +73,7 @@ class Game(GameClient):
 	def setMap(self, mapFileName, x, y):
 		if not self.displayMap:
 			print "Entering map %s" % (mapFileName)
+			self.mode = "game"
 			self.update = self.updateGame
 			self.id = self.loginGui.name
 			self.displayMap = Map(mapFileName)
@@ -215,7 +216,8 @@ if __name__=="__main__":
 	
 	while g.running:
 		g.update()
-		nbFrames += 1
+		if g.mode == "game":
+			nbFrames += 1
 	d1 = pygame.time.get_ticks()
 	print "%s frames in %s seconds : %s FPS" % (nbFrames, (d1-d0)/1000.0, nbFrames/((d1-d0)/1000.0))
 	pygame.quit()

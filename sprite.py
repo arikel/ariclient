@@ -8,20 +8,38 @@ from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR, ImgDB, EmoteDic
 def colorizeSurface(baseImg, color):
 	w = baseImg.get_width()
 	h = baseImg.get_height()
-	R = color[0]/255.0
-	G = color[1]/255.0
-	B = color[2]/255.0
+	R = color[0]#/255.0
+	G = color[1]#/255.0
+	B = color[2]#/255.0
 	img = pygame.surface.Surface((w, h))
-	img.fill((0,0,0))
-	img.set_colorkey((0,0,0))
+	img.fill((255,0,255))
+	img.set_colorkey((255,0,255))
 	
 	img.blit(baseImg, (0,0))
+	
+	#colorDic = {}
+	alpha = 0.5
 	
 	for x in range(w):
 		for y in range(h):
 			c = img.get_at((x, y))
 			if c[0] == c[1] and c[1]== c[2] and c[3]==255:
-				img.set_at((x, y), (c[0]*R, c[1]*G, c[2]*B))
+				#color = (c[0], c[1], c[2], c[3])
+				newColor = (alpha*(R-c[0])+c[0], alpha*(G-c[1])+c[1], alpha*(B-c[2])+c[2])
+				for i in range(3):
+					if newColor[i]>255:
+						newColor[i] = 255
+				
+				#if color not in colorDic:
+				#	colorDic[color] = newColor
+				
+				img.set_at((x, y), newColor)
+	
+	#pix = pygame.PixelArray(img)
+	#for c in colorDic:
+	#	pix.replace(c, colorDic[c])
+	#img = pix.make_surface()
+	
 	return img
 	
 def randomColor():

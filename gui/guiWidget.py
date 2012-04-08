@@ -144,7 +144,7 @@ class Widget(pygame.Rect):
 			return
 		#if not hasattr(self, "surface"):
 		#	return
-		self.updateSurface()
+		#self.updateSurface()
 		screen.blit(self.surface, self)
 
 	def __repr__(self):

@@ -65,7 +65,7 @@ class LoginGUI(Widget):
 		self.loginButton.blit(self.screen)
 		self.registerButton.blit(self.screen)
 		
-	def handleEvents(self, x, y, events=[]):
+	def handleEvents(self, events=[]):
 		if not events:
 			return False
 			
@@ -126,13 +126,11 @@ class LoginGUI(Widget):
 		
 	def update(self):
 		self.screen.fill((100,140,160))
-		x, y = pygame.mouse.get_pos()
-		#print "mouse at %s, %s" % (x, y)
 		events = pygame.event.get()
-		self.handleEvents(x, y, events)
+		self.handleEvents(events)
 		self.blit()
 		pygame.display.flip()
-			
+		
 if __name__=="__main__":
 	pygame.init()
 	screen = pygame.display.set_mode((640,480))
