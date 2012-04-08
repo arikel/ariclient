@@ -40,9 +40,6 @@ class Label(Frame):
 	def setText(self, msg):
 		self.baseText = msg
 		self.text = ustr(msg) #unicode(msg, "utf-8")
-		#if self.has_focus:
-		#	self.msg = self.font.render(self.text + "_", False, self.borderColor)
-		#else:
 		self.msg = self.font.render(self.text, False, self.borderColor)
 		
 		self.msgRect = self.msg.get_rect()
@@ -54,11 +51,15 @@ class Label(Frame):
 		self.makeSurface()
 		self.updateSurface()
 	
-		
+	def setWidth(self, w):
+		if w<1:w=1
+		self.w = w
+		self.updateSurface()
+	
 	def updateSurface(self):
 		Frame.updateSurface(self)
 		self.surface.blit(self.msg, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))
-		#self.surface.blit(self.msg, (0,0,self.msgRect.width,self.msgRect.height))
+		
 		
 #-----------------------------------------------------------------------
 # FixedLabel

@@ -53,8 +53,8 @@ class Frame(Widget):
 			self.bgColor,
 			(self.borderWidth, self.borderWidth,
 			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
-		
 		Widget.updateSurface(self)
+		
 		
 		
 	def setBGColor(self, color):

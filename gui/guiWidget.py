@@ -26,17 +26,20 @@ class Widget(pygame.Rect):
 	# width
 	def getWidth(self):
 		"""Returns the width of the widget"""
-		return self.width		
+		return self.width
+		
 	def setWidth(self, x):
 		"""Sets the width of the widget"""
+		if x<1: x=1
 		self.width = int(x)
-	
+		
 	# height
 	def getHeight(self):
 		"""Returns the height of the widget"""
 		return self.height
 	def setHeight(self, x):
 		"""Sets the height of the widget"""
+		if x<1: x=1
 		self.height = int(x)
 	
 	def setPadding(self, padding):

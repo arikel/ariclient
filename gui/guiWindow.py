@@ -26,33 +26,39 @@ class Window(Frame):
 		
 		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		
-		self.frame = Frame(width, 24, COLOR_BG, bordercolor, hoverbordercolor, borderwidth, self)
-		self.name = Label(name, bgcolor = COLOR_BG, borderwidth = 0, parent = self.frame)
-		self.close_button = TextButton("x", parent=self.frame)
-		self.name. setPos(self.frame.borderWidth+1, self.frame.borderWidth+1)
-		#is it better hide a frame or close it (deletion of the object)? 
-		self.close_button.bind(lambda x: x.hide, self)
-		self.setWidth(width)
+		#self.frame = Frame(width, 24, COLOR_BG, bordercolor, hoverbordercolor, borderwidth, self)
+		self.name = Label(name, width = width-21, bgcolor = COLOR_BG, borderwidth = 1, parent = self)
+		self.name.setPos(self.borderWidth+2, self.borderWidth+2)
+		self.close_button = TextButton("x", parent=self)
+		self.close_button.setPos(self.w-20, 0)
+		
+		#is it better hide a frame or close it (deletion of the object)?
+		# hiding works fine
+		self.close_button.bind(self.hide)
 		
 		self.click = False
 		self._resize = False
 		
+	def setSize(self, w, h):
+		if w == self.width and h == self.height:
+			return
+		if w<1:w=1
+		if h<1:h=1
 		
-	def setWidth(self, x):
-		"""Sets the width of the window"""
-		self.frame.setWidth(x)
-		self.close_button.setPos(x - self.close_button.getWidth()-2, self.frame.borderWidth +1)
-		self.width = int(x)
+		self.width = int(w)
+		self.height = int(h)
+		self.makeSurface()
+		self.close_button.setPos(self.width - 20, 0)
+		self.name.setWidth(self.width-21)
+		self.name.makeSurface()
 		
 	def OnDrag(self, x, y):
-		self.setPos(self.x + x, self.y + y)	
+		self.setPos(self.x + x, self.y + y)
+		self.close_button.setPos(self.w - 20, 0)
+		self.updateSurface()
 		
 	def OnResize(self, x, y):
-		self.setWidth(self.getWidth() + x)
-		self.setHeight(self.getHeight() + y)
-		self.frame.setWidth(self.getWidth() + x)
-		self.makeSurface()
-		self.frame.makeSurface()
+		self.setSize(self.w+x, self.h+y)
 		self.updateSurface()
 		
 		
@@ -82,7 +88,10 @@ class Window(Frame):
 					else:
 						self.OnDrag(*event.rel)
 				
-			
-		#for child in self._children:
-		#	if hasattr(child, 'handleEvents'):
-		#		child.handleEvents(events)
+				self.name.updateSurface()
+				self.name.blit(self.surface)
+				self.close_button.blit(self.surface)
+				
+		for child in self._children:
+			if hasattr(child, 'handleEvents'):
+				child.handleEvents(events)

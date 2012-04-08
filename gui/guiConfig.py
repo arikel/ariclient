@@ -28,7 +28,7 @@ class ConfigWindow(Window):
 		print "created config window, self.surface = %s" % (self.surface)
 		
 		self.setPos(x,y)
-			
+		
 		Label('Keys', parent=self).setPadding(5)
 		Frame(0,50, parent=self)
 		Label('Up', parent=self).setPadding(5)
@@ -41,6 +41,5 @@ class ConfigWindow(Window):
 		#TextEntry('', parent=self)
 
 		self.autolayout()
-		self.updateSurface()
+		self.OnDrag(1,1)
 		self.hide()
-

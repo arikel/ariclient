@@ -96,7 +96,6 @@ class TextButton(Widget):
 		parent = None):
 		
 		Widget.__init__(self, 0, 0, width, height, parent)
-		self.makeSurface()
 		
 		self.color = color
 		self.color_bg = color_bg
@@ -111,6 +110,7 @@ class TextButton(Widget):
 		self.click = False
 		
 		self.setText("  " + self.baseText + "  ")
+		self.makeSurface()
 		
 	def autolayout(self, direction='vertical', autoexpand = False):
 		x, y = 0, 0
@@ -154,9 +154,28 @@ class TextButton(Widget):
 		"""Creates the widget surface"""
 		self.surface = pygame.Surface((self.width, self.height))
 		self.surfaceHover = pygame.Surface((self.width, self.height))
+		
+		# surface
+		self.surface.fill(self.color)
+		pygame.draw.rect(self.surface,
+			self.color_bg,
+			(self.borderWidth, self.borderWidth,
+			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
+		
+		self.surface.blit(self.msg, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))
+		
+		# surface hover
+		self.surfaceHover.fill(self.color_hover)
+		pygame.draw.rect(self.surfaceHover,
+			self.color_bg_hover,
+			(self.borderWidth, self.borderWidth,
+			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
+		
+		self.surfaceHover.blit(self.msgHover, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))
+		
 		return self.surface
 		
-		
+	'''	
 	def updateSurface(self):
 		# surface
 		self.surface.fill(self.color)
@@ -178,7 +197,7 @@ class TextButton(Widget):
 		
 		# children
 		Widget.updateSurface(self)
-		
+	'''
 	def blit(self, screen):
 		if self.hover:
 			screen.blit(self.surfaceHover, self)
