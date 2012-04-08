@@ -77,7 +77,7 @@ class Game(GameClient):
 			self.displayMap = Map(mapFileName)
 			self.addPlayer(self.id, x, y)
 		else:
-			if self.displayMap.mapFileName == mapFileName:
+			if self.displayMap.filename == mapFileName:
 				self.displayMap.players[self.id].setPos(x, y)
 			else:
 				self.displayMap = Map(mapFileName)
