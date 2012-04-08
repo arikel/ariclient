@@ -17,29 +17,26 @@ def colorizeSurface(baseImg, color):
 	
 	img.blit(baseImg, (0,0))
 	
-	#colorDic = {}
+	colorDic = {}
 	alpha = 0.5
 	
 	for x in range(w):
 		for y in range(h):
 			c = img.get_at((x, y))
 			if c[0] == c[1] and c[1]== c[2] and c[3]==255:
-				#color = (c[0], c[1], c[2], c[3])
+				color = (c.r, c.g, c.b, 255)
+				
 				newColor = (alpha*(R-c[0])+c[0], alpha*(G-c[1])+c[1], alpha*(B-c[2])+c[2])
-				for i in range(3):
-					if newColor[i]>255:
-						newColor[i] = 255
 				
-				#if color not in colorDic:
-				#	colorDic[color] = newColor
+				if color not in colorDic:
+					colorDic[color] = newColor
 				
-				img.set_at((x, y), newColor)
+				#img.set_at((x, y), newColor)
 	
-	#pix = pygame.PixelArray(img)
-	#for c in colorDic:
-	#	pix.replace(c, colorDic[c])
-	#img = pix.make_surface()
 	
+	pix = pygame.PixelArray(img)
+	for c in colorDic:
+		pix.replace(c, colorDic[c])
 	return img
 	
 def randomColor():
