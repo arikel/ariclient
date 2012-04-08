@@ -131,7 +131,8 @@ class Map(GameMap):
 			print("Error, asked to add player %s, but that one is already here." % (name))
 			
 	def delPlayer(self, playerName):
-		del self.players[playerName]
+		if playerName in self.players:
+			del self.players[playerName]
 		
 		
 	def addMob(self, name, mobId, x=50.0, y=50.0):
