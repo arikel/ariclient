@@ -30,10 +30,6 @@ def colorizeSurface(baseImg, color):
 				
 				if color not in colorDic:
 					colorDic[color] = newColor
-				
-				#img.set_at((x, y), newColor)
-	
-	
 	pix = pygame.PixelArray(img)
 	for c in colorDic:
 		pix.replace(c, colorDic[c])
@@ -165,7 +161,7 @@ class BaseSprite(object):
 		self.rect.y = self.mapRect.y - y - self.rect.h
 		
 	def getDirtyRect(self):
-		nameRect = pygame.Rect(self.rect.x-5, self.rect.y-5, self.nameImg_w+15, self.nameImg_h+self.rect.h+15)
+		nameRect = pygame.Rect(self.rect.x-2, self.rect.y+self.rect.h-2, self.nameImg_w+4, self.nameImg_h+6)
 		rect = self.rect.union(nameRect)
 		return rect
 		

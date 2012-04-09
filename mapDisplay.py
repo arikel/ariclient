@@ -270,17 +270,39 @@ class Map(GameMap):
 		
 	def dirtyBlit(self, screen):
 		for rect in self.dirtyRects:
-			#print "rect : %s, offx = %s, offy = %s" % (rect, self.offsetX, self.offsetY)
-			endx = rect.x + self.offsetX + rect.w
-			endy = rect.y + self.offsetY + rect.h
-			#if self.imgW>endx and self.imgH>endy:
-			try:
-				img = self.layerImages["ground"].subsurface(rect.x+self.offsetX,rect.y+self.offsetY, rect.w, rect.h)
-				screen.blit(img, (rect.x,rect.y))
-			except:
-				pass
+			x = rect.x+self.offsetX
+			y = rect.y+self.offsetY
+			needFill = False
+			baseRect = rect.copy()
 				
-		for sprite in self.dirtySprites:
+			if x<0:
+				rect.w = rect.w-abs(x)
+				rect.x -= x
+				x=0
+				needFill = True
+				
+			if y<0:
+				rect.h = rect.h-abs(y)
+				rect.y -= y
+				y = 0
+				needFill = True
+				
+			if x+rect.w>self.imgW:
+				rect.w = self.imgW - x
+				needFill = True
+				
+			if y+rect.h>self.imgH:
+				rect.h = self.imgH - y
+				needFill = True
+			
+			if needFill:
+				pygame.draw.rect(screen, (0,0,0), (baseRect.x,baseRect.y, baseRect.w, baseRect.h))
+				
+			img = self.layerImages["ground"].subsurface(x,y, rect.w, rect.h)
+			screen.blit(img, (rect.x,rect.y))
+			
+				
+		for sprite in sorted(self.dirtySprites, key = lambda k:k.mapRect.y):
 			if self.selected:
 				if sprite.name == self.selected:
 					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))

@@ -83,10 +83,10 @@ class MapCreature:
 		
 		if self._sprite:
 			if self._map.screenRect.colliderect(self._sprite.rect):
-				self._map.dirtyRects.append(self._sprite.getDirtyRect())
+				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
 				self._sprite.setPos(x, y)
-				self._map.dirtySprites.append(self._sprite)
-				self._map.dirtyRects.append(self._sprite.getDirtyRect())
+				#self._map.dirtySprites.append(self._sprite)
+				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
 		self.mapRect.topleft = (x,y)
 				
 	def getPos(self):
@@ -136,12 +136,15 @@ class MapCreature:
 			return
 		if self._sprite:
 			self._sprite.update() # Sprite takes a t (pygame.time.get_ticks), not a dt
-			self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
+			#self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
 			
 			if self._map.screenRect.colliderect(self._sprite.rect):
 				self._map.dirtyRects.append(self._sprite.getDirtyRect())
+				self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
+				self._map.dirtyRects.append(self._sprite.getDirtyRect())
 				self._map.dirtySprites.append(self._sprite)
-				
+			else:
+				self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
 		
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
