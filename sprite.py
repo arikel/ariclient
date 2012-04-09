@@ -157,11 +157,10 @@ class BaseSprite(object):
 		self.mapOffsetX = x
 		self.mapOffsetY = y
 		self.rect.x = self.mapRect.x - x - self.rect.w/2
-		#self.rect.y = self.mapRect.y - y + self.tileHeight - self.rect.h
 		self.rect.y = self.mapRect.y - y - self.rect.h
 		
 	def getDirtyRect(self):
-		nameRect = pygame.Rect(self.rect.x-2, self.rect.y+self.rect.h-2, self.nameImg_w+4, self.nameImg_h+6)
+		nameRect = pygame.Rect(self.rect.x-4, self.rect.y+self.rect.h-2, self.nameImg_w+4, self.nameImg_h+6)
 		rect = self.rect.union(nameRect)
 		return rect
 		

@@ -35,9 +35,10 @@ class MapParticle(object):
 		
 		self.screen_x = self.x - self._map.offsetX
 		self.screen_y = self.y - self._map.offsetY
-		
-		if pygame.time.get_ticks()>self.deathTime:
-			return
+		rect = pygame.Rect(self.screen_x-2, self.screen_y-2, 54,24)
+		self._map.dirtyRects.append(rect)
+		#if pygame.time.get_ticks()>self.deathTime:
+		#	return
 		self.y -= 0.05*dt
 		
 	def blit(self, screen):
@@ -58,6 +59,8 @@ class MapParticleManager(object):
 		t = pygame.time.get_ticks()
 		dt = t - self.prevTime
 		self.prevTime = t
+		if not dt:
+			return
 		for particle in self.particles:
 			particle.update(dt)
 		for particle in self.particles:
