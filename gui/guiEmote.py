@@ -20,8 +20,9 @@ class EmoteButton(Widget):
 		self.surface = EmoteDic[self.nb]
 
 class EmoteEngine(Widget):
-	def __init__(self, x=0, y=0, parent=None):
+	def __init__(self, x=0, y=0, parent=None, gui=None):
 		Widget.__init__(self, x,y,19,19*6,parent)
+		self.gui = gui
 		self.open = False
 		
 		self.topButton = EmoteButton(0,x,y)
@@ -50,6 +51,7 @@ class EmoteEngine(Widget):
 		
 	def closeMenu(self):
 		self.open = False
+		self.gui.game.addDirtyRect(pygame.Rect(self.x, self.y, 20, 20*(len(EmoteDic)+1)))
 		
 	def openMenu(self):
 		self.open = True

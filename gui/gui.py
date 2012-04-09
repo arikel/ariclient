@@ -34,7 +34,7 @@ class GameGUI(object):
 		print "creating chatwindow from clientGui : %s, %s, %s, %s" % (0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
 		self.chatWindow = ChatWindow(0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0, gui=self)
 		
-		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
+		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2, gui=self)
 		
 		self.configwindow = ConfigWindow(100,100, gui=self)
 		

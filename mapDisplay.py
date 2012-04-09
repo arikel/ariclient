@@ -132,7 +132,7 @@ class Map(GameMap):
 	def addPlayer(self, name, x=50.0, y=50.0):
 		if name not in self.players:
 			self.players[name]=Player(name, self, x, y)
-			self.players[name].setSprite(makePlayerSprite(name))
+			self.players[name].setSprite(makePlayerSprite(name, self))
 			self.players[name].setPos(x,y)
 			self.players[name].setMovement(0,0)
 			self.players[name].update()
@@ -148,12 +148,13 @@ class Map(GameMap):
 	def addMob(self, name, mobId, x=50.0, y=50.0):
 		if name not in self.mobs:
 			self.mobs[name]=Mob(name, mobId, self, x, y)
-			self.mobs[name].setSprite(makeMobSprite(name))
+			self.mobs[name].setSprite(makeMobSprite(name, self))
 			self.mobs[name].setPos(x,y)
 			self.mobs[name].setMovement(0,0)
 			self.mobs[name].update()
 			
 	def delMob(self, name):
+		self.addDirtyRect(self.mobs[name]._sprite.getDirtyRect())
 		del self.mobs[name]
 		
 		

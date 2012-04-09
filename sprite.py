@@ -8,9 +8,9 @@ from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR, ImgDB, EmoteDic
 def colorizeSurface(baseImg, color):
 	w = baseImg.get_width()
 	h = baseImg.get_height()
-	R = color[0]#/255.0
-	G = color[1]#/255.0
-	B = color[2]#/255.0
+	R = color[0]
+	G = color[1]
+	B = color[2]
 	img = pygame.surface.Surface((w, h))
 	img.fill((255,0,255))
 	img.set_colorkey((255,0,255))
@@ -51,21 +51,14 @@ class Animation(object):
 		self.nbFrames = nbFrames
 		self.frameTime = frameTime
 		self.mirror = mirrored
-		#if imgPath in ImgDB:
-		#	img = ImgDB[imgPath].convert_alpha()
-		#else:
-		#	img = pygame.image.load(imgPath).convert_alpha()
 		img = ImgDB[imgPath].convert_alpha()
-		#print "image loaded, rect = %s" % (img.get_rect())
 		self.frames = []
 		for i in range(self.nbFrames):
-			#print "making frame %s %s %s %s" % (x+w*i, y, w, h)
 			rect = pygame.Rect(x+w*i, y, w, h)
 			if mirrored:
 				frame = pygame.transform.flip(img.subsurface(rect), 1, 0)
 			else:
 				frame = img.subsurface(rect)
-			
 			self.frames.append(frame)
 	
 	def addImage(self, imgPath, color = None):
@@ -82,20 +75,22 @@ class Animation(object):
 			self.frames[i].blit(frame, (0,0))
 			
 class BaseSprite(object):
-	def __init__(self, name, tileWidth = 16, tileHeight = 16):
+	def __init__(self, name, _map):
 		#pygame.sprite.Sprite.__init__(self)
 		self.name = name
+		self._map = _map
+		self.tileWidth = self._map.tileWidth
+		self.tileHeight = self._map.tileHeight
 		
 		self.rect = pygame.Rect(0,0,1,1) # screen position
-		self.mapRect = pygame.Rect(0,0,tileWidth,tileHeight) # map position
+		self.mapRect = pygame.Rect(0,0,self.tileWidth,self.tileHeight) # map position
 		
 		self.anim = {}
 		self.currentAnim = "idle-down"
 		self.currentFrame = 0
 		self.frameUpdateTime = 0
 		
-		self.tileWidth = tileWidth
-		self.tileHeight = tileHeight
+		
 		self.mapOffsetX = 0
 		self.mapOffsetY = 0
 		
@@ -180,10 +175,12 @@ class BaseSprite(object):
 		
 		if self.emote:
 			if t>self.emoteCooldown:
+				self._map.addDirtyRect(pygame.Rect(self.rect.x+3, self.rect.y-16, self.emote.get_width(), self.emote.get_height()))
 				self.emote = None
 				
 		if self.talk:
 			if t>self.talkCooldown:
+				self._map.addDirtyRect(pygame.Rect(self.rect.x+3, self.rect.y-16, self.talkImg.get_width(), self.talkImg.get_height()))
 				self.talk = None
 			
 		
@@ -206,8 +203,8 @@ class BaseSprite(object):
 	def destroy(self):
 		pass
 
-def makePlayerSprite(name, tw=16, th=16):
-	sprite = BaseSprite(name, tw, th)
+def makePlayerSprite(name, _map=None):
+	sprite = BaseSprite(name, _map)
 	if "ptitnem" in name.lower():
 		imgPath = "graphics/sprites/player/female.png"
 	else:
@@ -235,9 +232,9 @@ def makePlayerSprite(name, tw=16, th=16):
 	
 	return sprite
 	
-def makeMobSprite(name, tw=16, th=16):
+def makeMobSprite(name, _map=None):
 	#print "created mob sprite : %s" % (name)
-	sprite = BaseSprite(name, tw, th)
+	sprite = BaseSprite(name, _map)
 	imgPath = "graphics/sprites/mobs/monsters01.png"
 	x = random.randint(0,3)*96
 	y = random.randint(0,1)*128
@@ -268,7 +265,6 @@ if __name__ == "__main__":
 	screen = pygame.display.set_mode((640,480))
 	
 	pygame.init()
-	
 	
 	s = BaseSprite("coco")
 	s.addAnim("walk", "male0.png", 0, 0, 32,64,8,75)
