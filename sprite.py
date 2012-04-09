@@ -174,13 +174,13 @@ class BaseSprite(object):
 			self.frameUpdateTime = t + self.anim[self.currentAnim].frameTime
 		
 		if self.emote:
+			self._map.addDirtyRect(pygame.Rect(self.rect.x+3, self.rect.y-16, self.emote.get_width(), self.emote.get_height()))
 			if t>self.emoteCooldown:
-				self._map.addDirtyRect(pygame.Rect(self.rect.x+3, self.rect.y-16, self.emote.get_width(), self.emote.get_height()))
 				self.emote = None
 				
 		if self.talk:
+			self._map.addDirtyRect(pygame.Rect(self.rect.x-5, self.rect.y-18, self.talkImg.get_width()+8, self.talkImg.get_height()+2))
 			if t>self.talkCooldown:
-				self._map.addDirtyRect(pygame.Rect(self.rect.x+3, self.rect.y-16, self.talkImg.get_width(), self.talkImg.get_height()))
 				self.talk = None
 			
 		

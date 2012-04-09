@@ -157,7 +157,6 @@ class Map(GameMap):
 		self.addDirtyRect(self.mobs[name]._sprite.getDirtyRect())
 		del self.mobs[name]
 		
-		
 	def update(self, dt):
 		self.particleManager.update()
 		
@@ -178,8 +177,8 @@ class Map(GameMap):
 		for mobName in self.mobs:
 			mob = self.mobs[mobName]
 			if mob._sprite.rect.collidepoint(x, y):
+				self.selectTarget(mobName)
 				print "Monster %s was clicked on" % (mobName)
-	
 	
 	def setOffset(self, x, y):
 		if x != self.offsetX or y != self.offsetY:
