@@ -231,6 +231,7 @@ def makePlayerSprite(name, tw=16, th=16):
 	sprite.anim["idle-down-left"]=sprite.anim["idle-left"]
 	sprite.anim["idle-down-right"]=sprite.anim["idle-right"]
 	sprite.addImgAnim("graphics/sprites/hair/male_hair1.png", randomColor())
+	sprite.addImgAnim("graphics/sprites/clothes/armor1.png", randomColor())
 	
 	return sprite
 	

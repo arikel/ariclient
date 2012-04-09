@@ -105,7 +105,7 @@ class MapEditor(object):
 				elif event.key == pygame.K_r:
 					self.setSize(40,20)
 					
-		self.screen.fill((0,0,0))
+		#self.screen.fill((0,0,0))
 		self.map.blit(self.screen)
 		pygame.display.update()
 		
@@ -115,10 +115,12 @@ class MapEditor(object):
 	def drawTile(self, layerName, x, y):
 		if not self.map:return
 		self.map.setTile(layerName, x, y, self.currentTileCode)
-	
+		self.map.needFullBlit = True
+		
 	def drawGrass(self, layerName, x, y):
 		if not self.map:return
 		self.map.setTile(layerName, x, y, "gggg")
+		self.map.needFullBlit = True
 		
 	def setTileCode(self, code):
 		self.currentTileCode = code

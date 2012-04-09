@@ -42,7 +42,7 @@ class GameGUI(object):
 		self.chatbutton = ShowFrameButton(text='ChatWindow:ChatWindow', widget = self.chatWindow)
 		
 		
-		self.BarFrame = Frame()
+		self.BarFrame = Frame(SCREEN_WIDTH/2, 40)
 		self.BarFrame.setPos(220, 2)
 		
 		
