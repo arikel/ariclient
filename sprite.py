@@ -208,7 +208,7 @@ class BaseSprite(object):
 
 def makePlayerSprite(name, tw=16, th=16):
 	sprite = BaseSprite(name, tw, th)
-	if name == "ptitnem":
+	if "ptitnem" in name:
 		imgPath = "graphics/sprites/player/female.png"
 	else:
 		imgPath = "graphics/sprites/player/male.png"
