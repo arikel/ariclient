@@ -22,13 +22,11 @@ class ConfigWindow(Window):
 		bordercolor = (200,200,200),
 		hoverbordercolor = (255,255,255),
 		borderwidth = 1,
-		parent=None):
+		parent=None,
+		gui = None):
 		
-		Window.__init__(self, "Configuration", width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		Window.__init__(self, "Configuration", width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent, gui)
 		print "created config window, self.surface = %s" % (self.surface)
-		
-		
-		
 		
 		Label('Keys', parent=self).setPadding(5)
 		Frame(0,50, parent=self)

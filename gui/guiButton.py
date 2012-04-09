@@ -79,7 +79,7 @@ class ShowFrameButton(AbstractButton):
 			self.widget.show()
 		#self.widget.show(fshow)
 		#self.setText("  " +  self._auxtext[fshow] + "  ")
-		self.setText("  " +  self._auxtext[self.visible] + "  ")
+		#self.setText("  " +  self._auxtext[self.visible] + "  ")
 
 
 class ButtonBase(Widget):

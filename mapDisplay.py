@@ -265,6 +265,9 @@ class Map(GameMap):
 			pygame.draw.rect(self.warpImg, (255,120,120), (warp.x, warp.y, warp.w, warp.h))
 		self.warpImg.set_alpha(120)
 		
+	def addDirtyRect(self, rect):
+		self.dirtyRects.append(rect)
+		
 	def blit(self, screen):
 		self.arrayblit[self.needFullBlit](screen)
 		

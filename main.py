@@ -99,6 +99,11 @@ class Game(GameClient):
 				closestMob = mobName
 		return closestMob
 		
+	def addDirtyRect(self, rect):
+		if not self.displayMap:
+			return
+		self.displayMap.addDirtyRect(rect)
+		
 	def updateNetwork(self):
 		self.Loop()
 		

@@ -311,8 +311,9 @@ class ScrollTextWindow(Widget):
 		self.updateSurface()
 	
 class ChatWindow(Widget):
-	def __init__(self, x, y, w, h, parent=None):
+	def __init__(self, x, y, w, h, parent=None, gui=None):
 		Widget.__init__(self, x, y, w, h, parent)
+		self.gui = gui
 		self.makeSurface()
 		self.entry = TextEntry("", width = w, parent=self)
 		self.scrollTextWindow = ScrollTextWindow(0, 0, w, h-20, parent=self)
@@ -334,4 +335,25 @@ class ChatWindow(Widget):
 		self.entry.handleEvents(events)
 		if events:
 			self.updateSurface()
+		
+		
+	def hide(self):
+		if not self.visible:
+			return
+		# do not send the widget itself to the map, it would get modified
+		self.gui.game.addDirtyRect(self.copy())
+		
+		self.visible = False
+		for child in self._children:
+			child.hide()
+	
+	def setPos(self, x, y):
+		"""Sets the widget position
+		if the widget is a child of another widget the position
+		is relative to the parent widget"""
+		self.topleft = (x, y)
+		for child in self._children:
+			child.dx = x
+			child.dy = y
+		
 		

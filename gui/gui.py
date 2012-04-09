@@ -32,15 +32,14 @@ class GameGUI(object):
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
 		print "Screen : %s %s" % (SCREEN_WIDTH, SCREEN_HEIGHT)
 		print "creating chatwindow from clientGui : %s, %s, %s, %s" % (0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
-		self.chatWindow = ChatWindow(0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
+		self.chatWindow = ChatWindow(0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0, gui=self)
 		
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2)
 		
-		self.configwindow = ConfigWindow(100,100)
+		self.configwindow = ConfigWindow(100,100, gui=self)
 		
 		self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.configwindow)
 		self.chatbutton = ShowFrameButton(text='ChatWindow:ChatWindow', widget = self.chatWindow)
-		
 		
 		self.BarFrame = Frame(SCREEN_WIDTH/2, 40)
 		self.BarFrame.setPos(220, 2)
@@ -58,15 +57,13 @@ class GameGUI(object):
 		
 		guilayout.add(toplayout)
 		guilayout.add(separator)
-		#guilayout.add(self.chatWindow)
-		
+			
 		toplayout.add(self.menubutton, 2)
 		toplayout.add(self.chatbutton, 2)
 		guilayout.fit()
 		
 
 	def handleEvents(self, events=[]):
-		
 		self.chatWindow.handleEvents(events)
 		
 		for event in events:

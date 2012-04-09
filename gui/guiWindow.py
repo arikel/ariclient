@@ -22,9 +22,11 @@ class Window(Frame):
 		bordercolor = COLOR,
 		hoverbordercolor = COLOR_HOVER,
 		borderwidth = 1,
-		parent = None):
+		parent = None,
+		gui = None):
 		
 		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		self.gui = gui
 		
 		#self.frame = Frame(width, 24, COLOR_BG, bordercolor, hoverbordercolor, borderwidth, self)
 		self.name = Label(name, width = width-21, bgcolor = COLOR_BG, borderwidth = 1, parent = self)
@@ -64,13 +66,24 @@ class Window(Frame):
 		self.name.makeSurface()
 		
 	def OnDrag(self, x, y):
+		self.gui.game.addDirtyRect(self.copy())
 		self.setPos(self.x + x, self.y + y)
 		self.updateSurface()
 		
 	def OnResize(self, x, y):
+		self.gui.game.addDirtyRect(self.copy())
 		self.setSize(self.w+x, self.h+y)
 		self.updateSurface()
 		
+	def hide(self):
+		if not self.visible:
+			return
+		# do not send the widget itself to the map, it would get modified
+		self.gui.game.addDirtyRect(self.copy())
+		
+		self.visible = False
+		for child in self._children:
+			child.hide()
 		
 	def handleEvents(self, events=[]):
 		if not events:

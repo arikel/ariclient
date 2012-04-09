@@ -128,10 +128,12 @@ class Widget(pygame.Rect):
 	def updateSurface(self):
 		#if not hasattr(self, "surface"):
 		#	return
+		if not self.visible:
+			return
 		for child in self._children:
 			child.updateSurface()
 			child.blit(self.surface)
-			
+		
 	def show(self):
 		self.visible = True
 		for child in self._children:
