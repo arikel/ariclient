@@ -141,7 +141,7 @@ class MapCreature:
 			if self._map.screenRect.colliderect(self._sprite.rect):
 				self._map.dirtyRects.append(self._sprite.getDirtyRect())
 				self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
-				self._map.dirtyRects.append(self._sprite.getDirtyRect())
+				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
 				self._map.dirtySprites.append(self._sprite)
 			else:
 				self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)

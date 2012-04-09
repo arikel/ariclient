@@ -214,6 +214,7 @@ class GameClient(ConnectionListener):
 			self.displayMap.players[data['id']]._sprite.setTalk(data['message'].decode('utf-8'))
 		else:
 			print "received message from %s but not in map" % (data['id'])
+			self.addPlayer(data['id'], 80, 80)
 		#self.chatWindow.addText(data['message'].decode('utf-8'))
 		
 	def Network_private_message(self, data):

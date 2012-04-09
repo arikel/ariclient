@@ -262,7 +262,13 @@ class ScrollTextWindow(Widget):
 		if self.currentPos != self.bar.bar.currentPos:
 			self.currentPos = self.bar.bar.currentPos
 			self.makeTextSurface()
-		
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button==4 and self.hover and not self.bar.bar.hover:# wheel up
+					self.bar.bar.setCarretPos(self.currentPos - 1)
+				elif event.button==5 and self.hover and not self.bar.bar.hover: # wheel down
+					self.bar.bar.setCarretPos(self.currentPos + 1)
+					
 	def setNbPos(self, nb):
 		self.bar.bar.setNbPos(nb)
 		self.currentPos = self.bar.bar.currentPos

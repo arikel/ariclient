@@ -142,6 +142,7 @@ class Map(GameMap):
 			
 	def delPlayer(self, playerName):
 		if playerName in self.players:
+			self.addDirtyRect(self.players[playerName]._sprite.getDirtyRect())
 			del self.players[playerName]
 		
 		
