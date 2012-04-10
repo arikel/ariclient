@@ -250,6 +250,9 @@ class MapLayer(object):
 		return self.tiles[x][y]
 		
 	def setTile(self, x, y, code):
+		if self.name == "collision":
+			self.tiles[x][y] = int(code)
+			return
 		self.tiles[x][y] = code
 		
 	def clearTile(self, x, y):
@@ -340,6 +343,8 @@ class GameMap:
 		data = data + "name = " + str(self.name) + "\n"
 		data = data + "w = " + str(self.w) + "\n"
 		data = data + "h = " + str(self.h) + "\n"
+		data = data + "tw = " + str(self.tileWidth) + "\n"
+		data = data + "th = " + str(self.tileHeight) + "\n"
 		
 		for layerName in self.layers:
 			data = data + layerName + " = " + str(self.layers[layerName].getSaveData()) + "\n\n"
@@ -369,6 +374,10 @@ class GameMap:
 					self.w = int(value.strip())
 				elif key.strip() == "h":
 					self.h = int(value.strip())
+				elif key.strip() == "tw":
+					self.tileWidth = int(value.strip())
+				elif key.strip() == "th":
+					self.tileHeight = int(value.strip())
 				else:
 					codes = value.split(',')
 					if len(codes) == self.w * self.h:
@@ -377,7 +386,8 @@ class GameMap:
 						print "Loading layer %s" % (layerName)
 						self.addLayer(layerName)
 						self.layers[layerName].setData(value)
-		self.makeCollisionGrid()
+		if "collision" not in self.layers:
+			self.makeCollisionGrid()
 		
 	def makeCollisionGrid(self):
 		if not self.filename:return False

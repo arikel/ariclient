@@ -169,7 +169,9 @@ class Game(GameClient):
 					#print "Starting to type text..."
 					self.SendWarpInfoRequest()
 					self.displayMap.warpVisible = not self.displayMap.warpVisible
-				
+					self.displayMap.collisionVisible = not self.displayMap.collisionVisible
+					self.displayMap.needFullBlit = True
+					
 				if key == KEY_SELECT_TARGET:
 					mobName = self.getClosestMobName()
 					if mobName:

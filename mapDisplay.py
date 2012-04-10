@@ -40,10 +40,11 @@ class MapTileset(object):
 		
 		self.notFoundImg = pygame.surface.Surface((self.w, self.h)).convert_alpha()
 		self.notFoundImg.fill((180,40,40))
+		self.notFoundImg.set_alpha(120)
 		
 		self.emptyTile = pygame.surface.Surface((self.w, self.h)).convert_alpha()
-		#self.emptyTile.fill((255,0,255))
-		#self.emptyTile.set_colorkey((255,0,255))
+		self.emptyTile.fill((255,0,255))
+		self.emptyTile.set_colorkey((255,0,255))
 		#self.emptyTile.set_alpha(100)
 		
 	def setImgPath(self, imgPath):
@@ -186,8 +187,6 @@ class Map(GameMap):
 			self.offsetX = x
 			self.offsetY = y
 			self.needFullBlit = True
-			
-		
 		
 	def isValidPos(self, x, y):
 		if (0<=x<self.w) and (0<=y<self.h):
@@ -233,7 +232,8 @@ class Map(GameMap):
 						self.addLayer(layerName)
 						self.layers[layerName].setData(value)
 						self.updateLayerImage(layerName)
-		self.makeCollisionGrid()
+		if "collision" not in self.layers:
+			self.makeCollisionGrid()
 						
 	def addLayer(self, name):
 		self.layers[name] = MapLayer(name, self.w, self.h, self.tileWidth, self.tileHeight)
@@ -256,7 +256,20 @@ class Map(GameMap):
 				code = self.layers[name].getTile(x, y)
 				if code:
 					self.layerImages[name].blit(self.tileset.getTile(code), (x*self.tileWidth, y*self.tileHeight))
-	
+		if name == "collision":
+			self.layerImages[name].set_alpha(120)
+		
+	def makeCollisionGrid(self):
+		if not self.filename:return False
+		self.addLayer("collision")
+		for x in range(self.w):
+			for y in range(self.h):
+				if self.layers["ground"].getTile(x, y) == "wwww":
+					self.layers["collision"].tiles[x][y] = 1
+				else:
+					self.layers["collision"].tiles[x][y] = 0
+		self.updateLayerImage("collision")
+		
 	def makeWarpImage(self):
 		self.warpImg = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
 		self.warpImg.fill((255,0,255))
@@ -305,7 +318,12 @@ class Map(GameMap):
 			img = self.layerImages["ground"].subsurface(x,y, rect.w, rect.h)
 			screen.blit(img, (rect.x,rect.y))
 			
-				
+			if self.warpVisible and self.warpImg:
+				screen.blit(self.warpImg.subsurface(x,y, rect.w, rect.h), (rect.x,rect.y))
+			
+			if self.collisionVisible:
+				screen.blit(self.layerImages["collision"].subsurface(x,y, rect.w, rect.h), (rect.x,rect.y))
+			
 		for sprite in sorted(self.dirtySprites, key = lambda k:k.mapRect.y):
 			if self.selected:
 				if sprite.name == self.selected:
@@ -325,7 +343,8 @@ class Map(GameMap):
 		
 		
 		# collision
-		#screen.blit(self.layerImages["collision"], (-self.offsetX,-self.offsetY))
+		if self.collisionVisible:
+			screen.blit(self.layerImages["collision"], (-self.offsetX,-self.offsetY))
 		
 		
 		# warps
@@ -358,6 +377,9 @@ class Map(GameMap):
 	def setTile(self, layerName, x, y, code):
 		if not layerName in self.layers:return
 		if not self.isValidPos(x, y):return
+		if self.name == "collision":
+			code = int(code)
+			
 		if code == self.layers[layerName].getTile(x, y):return
 		
 		

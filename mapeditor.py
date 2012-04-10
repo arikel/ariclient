@@ -101,7 +101,7 @@ class MapEditor(object):
 				elif event.key == pygame.K_s:
 					self.save("maps/testmap2.txt")
 				elif event.key == pygame.K_o:
-					self.open("maps/testmap.txt")
+					self.open("maps/testmap2.txt")
 				elif event.key == pygame.K_r:
 					self.setSize(40,20)
 					
@@ -138,7 +138,7 @@ if __name__ == "__main__":
 	from utils import KeyHandler
 	kh = KeyHandler()
 	m = MapEditor()
-	m.open("maps/testmap.txt")
+	m.open("maps/testmap2.txt")
 	
 	while kh.keyDict[pygame.K_ESCAPE]==0:
 		events = kh.getEvents()
