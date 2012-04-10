@@ -9,6 +9,7 @@ except:
 	print("module psyco NOT found.")
 
 import pygame
+import time
 
 from config import *
 from optparse import OptionParser
@@ -117,6 +118,9 @@ class Game(GameClient):
 		t = pygame.time.get_ticks()
 		x, y = pygame.mouse.get_pos()
 		dt = t - self.prevTime
+		if not dt:
+			time.sleep(0.02)
+			return
 		#print "update time : dt = %s" % (dt)
 		self.prevTime = t
 		self.prevMove = (self.dx, self.dy)
