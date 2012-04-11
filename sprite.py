@@ -195,10 +195,10 @@ class BaseSprite(object):
 				screen.blit(self.talkImg, (self.rect.x+3, self.rect.y-16))
 			
 			
-			#pygame.draw.rect(screen,
-			#	(255,120,120,120),
-			#	(self.mapRect.x-self.mapOffsetX, self.mapRect.y-self.mapOffsetY, self.mapRect.w, self.mapRect.h),
-			#	1)
+			pygame.draw.rect(screen,
+				(255,120,120,120),
+				(self.mapRect.x-self.mapOffsetX, self.mapRect.y-self.mapOffsetY, self.mapRect.w, self.mapRect.h),
+				1)
 	
 	def destroy(self):
 		pass

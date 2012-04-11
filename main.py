@@ -77,20 +77,20 @@ class Game(GameClient):
 			print "Entering map %s" % (mapFileName)
 			self.mode = "game"
 			self.update = self.updateGame
-			self.id = self.loginGui.name
+			self.name = self.loginGui.name
 			self.displayMap = Map(mapFileName)
-			self.addPlayer(self.id, x, y)
+			self.addPlayer(self.name, x, y)
 		else:
 			if self.displayMap.filename == mapFileName:
-				print "Warp in current map (%s)" % (mapFileName)
-				self.displayMap.players[self.id].setPos(x, y)
+				print "Warping in current map (%s)" % (mapFileName)
+				self.displayMap.players[self.name].setPos(x, y)
 			else:
 				print "Changing map for %s" % (mapFileName)
 				self.displayMap = Map(mapFileName)
-				self.addPlayer(self.id, x, y)
+				self.addPlayer(self.name, x, y)
 	
 	def getClosestMobName(self):
-		myRect = self.displayMap.players[self.id].mapRect
+		myRect = self.displayMap.players[self.name].mapRect
 		minDist = 2000.0
 		closestMob = None
 		for mobName, mob in self.displayMap.mobs.items():
@@ -126,7 +126,7 @@ class Game(GameClient):
 		self.prevTime = t
 		self.prevMove = (self.dx, self.dy)
 		
-		if self.id not in self.displayMap.players:
+		if self.name not in self.displayMap.players:
 			#print "not connected to map"
 			return
 		
@@ -143,17 +143,17 @@ class Game(GameClient):
 		if not self.gameGui.chatWindow.entry.has_focus:
 			
 			if (self.prevMove != (self.dx, self.dy)):# or (t>self.sendPosCooldown):
-				self.displayMap.players[self.id].setMovement(self.dx, self.dy)
+				self.displayMap.players[self.name].setMovement(self.dx, self.dy)
 				#self.sendPosCooldown = t+25
 				#print "Player direction changed from %s to %s/%s" % (self.prevMove, self.dx, self.dy)
-				self.SendUpdateMove(self.displayMap.players[self.id].x, self.displayMap.players[self.id].y, self.dx, self.dy)
+				self.SendUpdateMove(self.displayMap.players[self.name].x, self.displayMap.players[self.name].y, self.dx, self.dy)
 		
 		else:
 			self.dx = 0
 			self.dy = 0
 				
-		offx = self.displayMap.players[self.id].mapRect.x-SCREEN_WIDTH/2
-		offy = self.displayMap.players[self.id].mapRect.y-SCREEN_HEIGHT/2
+		offx = self.displayMap.players[self.name].mapRect.x-SCREEN_WIDTH/2
+		offy = self.displayMap.players[self.name].mapRect.y-SCREEN_HEIGHT/2
 		self.displayMap.setOffset(offx, offy)
 		self.displayMap.update(dt)
 		

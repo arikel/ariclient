@@ -114,17 +114,17 @@ class GameClient(ConnectionListener):
 		print "Player %s entered the map" % (name)
 		
 	def Network_player_leave_map(self, data):
-		id = data["id"]
-		self.displayMap.delPlayer(id)
-		print "Player %s left the map" % (id)
+		name = data["id"]
+		self.displayMap.delPlayer(name)
+		print "Player %s left the map" % (name)
 		
 	
 	def Network_player_update_move(self, data):
-		id = data['id']
-		if id == self.id:
+		name = data['id']
+		if name == self.name:
 			# if we're not connected yet
-			if self.id not in self.displayMap.players:
-				self.addPlayer(self.id, data['x'], data['y'])
+			if self.name not in self.displayMap.players:
+				self.addPlayer(self.name, data['x'], data['y'])
 				print("Looks like we're on the map now...")
 			#else:
 				#d= getDist(self.displayMap.players[self.id].mapRect, pygame.Rect((data['x'], data['y'],0,0)))
@@ -139,54 +139,54 @@ class GameClient(ConnectionListener):
 		y = data['y']
 		dx = data['dx']
 		dy = data['dy']
-		if id in self.displayMap.players:
-			self.displayMap.players[id].setPos(x, y)
-			self.displayMap.players[id].setMovement(dx, dy)
+		if name in self.displayMap.players:
+			self.displayMap.players[name].setPos(x, y)
+			self.displayMap.players[name].setMovement(dx, dy)
 			#print "updated other player pos : %s, %s/%s" % (name, x, y)
 		else:
-			self.addPlayer(id, x, y)
-			self.displayMap.players[id].setMovement(dx, dy)
+			self.addPlayer(name, x, y)
+			self.displayMap.players[name].setMovement(dx, dy)
 			
 		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 	
 	def Network_mob_leave_map(self, data):
-		id = data["id"]
-		self.displayMap.delMob(id)
-		print "Mob %s left the map" % (id)
-		if self.displayMap.selected == id:
+		name = data["id"]
+		self.displayMap.delMob(name)
+		print "Mob %s left the map" % (name)
+		if self.displayMap.selected == name:
 			self.displayMap.unselectTarget()
 			
 	def Network_mob_took_damage(self, data):
-		mobId = data["id"]
-		if mobId not in self.displayMap.mobs:
+		mobName = data["id"]
+		if mobName not in self.displayMap.mobs:
 			return
 		dmg = data["dmg"]
 		
-		print "Mob %s took %s damage points" % (mobId, dmg)
-		x, y = self.displayMap.mobs[mobId].mapRect.topleft
-		y -= self.displayMap.mobs[mobId]._sprite.rect.h
-		x -= self.displayMap.mobs[mobId]._sprite.rect.w
+		print "Mob %s took %s damage points" % (mobName, dmg)
+		x, y = self.displayMap.mobs[mobName].mapRect.topleft
+		y -= self.displayMap.mobs[mobName]._sprite.rect.h
+		x -= self.displayMap.mobs[mobName]._sprite.rect.w
 		
 		self.displayMap.particleManager.addParticle("damage", x, y, str(dmg))
 		
 	def Network_mob_update_move(self, data):
-		id = data['id']
-		if id == self.id:# why don't i feel confident this would never happen?
+		name = data['id']
+		if name == self.name:# why don't i feel confident this would never happen?
 			print("Something totally weird just happened, i think you're a mob.")
 			return
-			
+		
 		x = data['x']
 		y = data['y']
 		dx = data['dx']
 		dy = data['dy']
-		if id in self.displayMap.mobs:
-			self.displayMap.mobs[id].setPos(x, y)
-			self.displayMap.mobs[id].setMovement(dx, dy)
+		if name in self.displayMap.mobs:
+			self.displayMap.mobs[name].setPos(x, y)
+			self.displayMap.mobs[name].setMovement(dx, dy)
 			#print "known mob pos : %s, %s/%s, %s/%s" % (id, x, y, dx, dy)
 		else:
-			self.addMob(id, x, y)
-			self.displayMap.mobs[id].setPos(x, y)
-			self.displayMap.mobs[id].setMovement(dx, dy)
+			self.addMob(name, x, y)
+			self.displayMap.mobs[name].setPos(x, y)
+			self.displayMap.mobs[name].setMovement(dx, dy)
 			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
 		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 		
@@ -195,7 +195,7 @@ class GameClient(ConnectionListener):
 		mapFileName = data['mapFileName']
 		x = data['x']
 		y = data['y']
-		player = self.displayMap.players[self.id]
+		player = self.displayMap.players[self.name]
 		w = self.displayMap.tileWidth
 		h = self.displayMap.tileHeight
 		

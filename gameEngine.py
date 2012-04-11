@@ -206,9 +206,9 @@ class Being(object):
 		
 	
 class Mob(Being, MapCreature):
-	def __init__(self, id, mobId, _map, x, y):
-		Being.__init__(self, id)
-		MapCreature.__init__(self, id, _map)
+	def __init__(self, name, mobId, _map, x, y):
+		Being.__init__(self, name)
+		MapCreature.__init__(self, name, _map)
 		self.mobile = True
 		self.category = "mob"
 		self.mobId = mobId
@@ -218,9 +218,9 @@ class Mob(Being, MapCreature):
 		self.speed = 0.05
 	
 class Player(Being, MapCreature):
-	def __init__(self, id, _map, x, y):
-		Being.__init__(self, id)
-		MapCreature.__init__(self, id, _map)
+	def __init__(self, name, _map, x, y):
+		Being.__init__(self, name)
+		MapCreature.__init__(self, name, _map)
 		self.mobile = True
 		self.category = "player"
 		self.setPos(x, y)
@@ -492,13 +492,11 @@ class GameMap:
 	def delPlayer(self, playerName):
 		del self.players[playerName]
 	
-	def addMob(self, id, mobId, x, y):
-		newId = id
-		self.mobs[newId]=Mob(newId, mobId, self, x, y)
-		#self.mobs[mob.id].setPos(x, y)
-	
-	def delMob(self, id):
-		del self.mobs[id]
+	def addMob(self, name, mobId, x, y):
+		self.mobs[name]=Mob(name, mobId, self, x, y)
+		
+	def delMob(self, name):
+		del self.mobs[name]
 		
 	def update(self, dt):
 		for player in self.players.values():
