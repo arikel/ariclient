@@ -30,7 +30,7 @@ class Window(Frame):
 		
 		#self.frame = Frame(width, 24, COLOR_BG, bordercolor, hoverbordercolor, borderwidth, self)
 		self.name = Label(name, width = width-21, bgcolor = COLOR_BG, borderwidth = 1, parent = self)
-		self.name.setPos(self.borderWidth+2, self.borderWidth+2)
+		self.name.setPos(0, 0)
 		#self.close_button = TextButton("x", parent=self)
 		self.close_button = ImgButton(self.w-20, 0, 20, 20,
 			"graphics/gui/guibase.png", 1,49,1,70,
@@ -41,9 +41,6 @@ class Window(Frame):
 			"graphics/gui/guibase.png", 22,49,22,70,
 			parent=self)
 		self.drag_button.setPos(self.w-20, self.h-20)
-		
-		#temporary workaround....
-		Frame(0, 0, parent = self)
 		
 		#is it better hide a frame or close it (deletion of the object)?
 		# hiding works fine
