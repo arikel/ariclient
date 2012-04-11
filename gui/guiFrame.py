@@ -32,18 +32,33 @@ class Frame(Widget):
 		
 		self.makeSurface()
 		
-	def autolayout(self, direction='vertical', autoexpand = False):
+	def autolayout(self, direction = 'vertical', autoexpand = False, griditems = 1):
+		
+		assert griditems > 0
+		
 		x, y = 0, 0
+		itemsCounter = 1
 		for widget in self._children:
 			padding = widget.getPadding()
 			widget.setPos(x+padding, y+padding)
 			
-			if direction == 'horizontal':
-				x += widget.getWidth() + 2 * padding
-			elif direction == 'vertical':
-				y += widget.getHeight() + 2 * padding
-				
+			if itemsCounter < griditems and griditems > 1:
+				if direction == 'vertical':
+					x += widget.getWidth() + 2 * padding
+				elif direction == 'horizontal':
+					y += widget.getHeight() + 2 * padding
+				itemsCounter +=1
+			else:
+				itemsCounter = 1
+				if direction == 'horizontal':
+					y = 0
+					x += widget.getWidth() + 2 * padding
+				elif direction == 'vertical':
+					x = 0
+					y += widget.getHeight() + 2 * padding
+			
 		if autoexpand:
+			#yet buggy
 			self.setWidth(x + widget.getWidth())
 			self.setHeight(y + widget.getWidth())
 			self.updateSurface()

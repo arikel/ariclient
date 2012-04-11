@@ -42,6 +42,9 @@ class Window(Frame):
 			parent=self)
 		self.drag_button.setPos(self.w-20, self.h-20)
 		
+		#temporary workaround....
+		Frame(0, 0, parent = self)
+		
 		#is it better hide a frame or close it (deletion of the object)?
 		# hiding works fine
 		self.close_button.bind(self.hide)

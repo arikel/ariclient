@@ -14,7 +14,15 @@ class ConfigManager(object):
 			self.initConfigFile(self.filename)
 			return
 		for line in fp:
-			key, value = map(lambda x: x.strip(), line.split("="))
+			#skipping comments
+			pos = line.find('#')
+			if pos > -1:
+				line = line[:pos]
+			try:
+				key, value = map(lambda x: x.strip(), line.split("="))
+			except:
+				#skip empty lines
+				continue
 			try:
 				#may need to check for values < 0 and > 255
 				value = int(value)

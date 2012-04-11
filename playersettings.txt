@@ -1,6 +1,7 @@
 screen-width = 800
 screen-height = 600
 server-address = 88.173.217.230
+#server-address = localhost
 server-port = 18647
 key-up = 273
 key-down = 274
