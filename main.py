@@ -114,20 +114,20 @@ class Game(GameClient):
 		
 	def updateGame(self):
 		self.updateNetwork()
+		#time.sleep(0.015)
 		
 		t = pygame.time.get_ticks()
 		x, y = pygame.mouse.get_pos()
 		dt = t - self.prevTime
-		if not dt:
-			time.sleep(0.02)
-			return
+		#if dt<10:
+		#	return
+		
 		#print "update time : dt = %s" % (dt)
 		self.prevTime = t
 		self.prevMove = (self.dx, self.dy)
 		
 		if self.id not in self.displayMap.players:
 			#print "not connected to map"
-			# network
 			return
 		
 		events = pygame.event.get()
