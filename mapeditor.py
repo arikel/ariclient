@@ -128,6 +128,8 @@ class MapEditor(object):
 	def toggleTileCode(self):
 		if self.currentTileCode == "wwww":
 			self.setTileCode("dddd")
+		elif self.currentTileCode == "dddd":
+			self.setTileCode("rrrr")
 		else:
 			self.setTileCode("wwww")
 			

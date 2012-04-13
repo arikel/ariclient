@@ -46,6 +46,36 @@ class Inventory:
 			if len(item)==2:
 				self.addItem(item[0].strip(), item[1].strip())
 
+
+
+class Being(object):
+	def __init__(self, name):
+		self.name = name
+		
+		self.hp = 1
+		self.hpMax = 1
+		
+		self.carac = {}
+		for carac in ["str", "dex", "cons", "wil"]:
+			self.carac[carac] = 1
+		self.xp = {}
+		self.skills = {}
+		
+	def heal(self, n):
+		self.hp += n
+		# keep hp between 0 and hpMax
+		self.hp = min(max(self.hp, 0), self.maxHp)
+		
+	def getCarac(self, caracName):
+		if caracName in self.carac:
+			return self.carac[caracName]
+		return 0
+		
+	def getSkill(self, skillName):
+		if skillName in self.skills:
+			return self.skills[skillName]
+		return 0
+		
 class MapCreature:
 	def __init__(self, name, _map = None):
 		self.name = name
@@ -175,36 +205,7 @@ class MapCreature:
 		if self._map.posCollide(self.x + self.dx*self.speed*dt, self.y + self.dy*self.speed*dt):
 			return False
 		return True
-
-class Being(object):
-	def __init__(self, name):
-		self.name = name
 		
-		self.hp = 1
-		self.hpMax = 1
-		
-		self.carac = {}
-		for carac in ["str", "dex", "cons", "wil"]:
-			self.carac[carac] = 1
-		
-		self.skills = {}
-		
-	def heal(self, n):
-		self.hp += n
-		# keep hp between 0 and hpMax
-		self.hp = min(max(self.hp, 0), self.maxHp)
-		
-	def getCarac(self, caracName):
-		if caracName in self.carac:
-			return self.carac[caracName]
-		return 0
-		
-	def getSkill(self, skillName):
-		if skillName in self.skills:
-			return self.skills[skillName]
-		return 0
-		
-	
 class Mob(Being, MapCreature):
 	def __init__(self, name, mobId, _map, x, y):
 		Being.__init__(self, name)
@@ -421,6 +422,11 @@ class GameMap:
 		
 		
 		self.layers[layerName].setTile(x, y, code)
+		if layerName == "ground" and code == "wwww":
+			self.layers["collision"].setTile(x, y, 1)
+		elif layerName == "ground":
+			self.layers["collision"].setTile(x, y, 0)
+			
 		if layerName == "collision":
 			return
 		

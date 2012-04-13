@@ -12,7 +12,6 @@ from guiFrame import Frame
 from guiLabel import Label
 from guiButton import TextButton, ImgButton
 
-
 class Window(Frame):
 	def __init__(self,
 		name = "Window",
