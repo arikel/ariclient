@@ -49,7 +49,8 @@ class GameClient(ConnectionListener):
 	def SendAttackMob(self, mobId):
 		connection.Send({"action": "attack_mob", "target":mobId})
 		
-
+	def SendSitRequest(self):
+		connection.Send({"action": "sit_request"})
 		
 	def SendEmote(self, emote):
 		connection.Send({"action": "emote", "emote" : emote})
@@ -155,13 +156,13 @@ class GameClient(ConnectionListener):
 		y = data["y"]
 		dx = data["dx"]
 		dy = data["dy"]
-		self.displayMap.players[name].setPos(x, y)
-		currentAnim = self.displayMap.players[name]._sprite.currentAnim
+		self.displayMap.players[playerName].setPos(x, y)
+		currentAnim = self.displayMap.players[playerName]._sprite.currentAnim
 		if "walk" in currentAnim:
 			currentAnim = currentAnim.replace("walk", "sit")
 		elif "idle" in currentAnim:
 			currentAnim = currentAnim.replace("idle", "sit")
-		self.displayMap.players[name]._sprite.setAnim(currentAnim)
+		self.displayMap.players[playerName]._sprite.setAnim(currentAnim)
 		
 	def Network_mob_leave_map(self, data):
 		name = data["id"]

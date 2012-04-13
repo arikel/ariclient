@@ -38,6 +38,12 @@ class MapCreature:
 		self.timer = 0.0
 		self.path = [] # [(x, y), (x2, y2)...]
 		self._sprite = None
+		self.sitting = False
+		
+	def toggleSit(self):
+		self.sitting = not self.sitting
+		if self._sprite:
+			self._sprite.sitting = self.sitting
 		
 	def setMap(self, _map):
 		self._map = _map

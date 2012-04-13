@@ -100,6 +100,11 @@ class Game(GameClient):
 				closestMob = mobName
 		return closestMob
 		
+	def sitPlayer(self):
+		sprite = self.displayMap.players[self.name]._sprite
+		if not sprite.sitting:
+			self.SendSitRequest()
+		
 	def addDirtyRect(self, rect):
 		if not self.displayMap:
 			return
@@ -184,7 +189,9 @@ class Game(GameClient):
 				if key == KEY_ATTACK:
 					if self.displayMap.selected:
 						self.SendAttackMob(self.displayMap.selected)
-			
+				
+				if key == KEY_SIT:
+					self.sitPlayer()
 			
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
