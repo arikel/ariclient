@@ -53,6 +53,8 @@ class ConfigManager(object):
 				self.keys["KEY_SELECT_TARGET"] = value
 			elif key == 'key-attack':
 				self.keys["KEY_ATTACK"] = value
+			elif key == 'key-sit':
+				self.keys["KEY_SIT"] = value
 		fp.close()
 		
 	def initConfigFile(self, filename):
@@ -66,7 +68,8 @@ class ConfigManager(object):
 			('key-left', pygame.K_LEFT),\
 			('key-right', pygame.K_RIGHT),\
 			('key-select', pygame.K_a),\
-			('key-attack', pygame.K_e) 
+			('key-attack', pygame.K_e),\
+			('key-sit', pygame.K_c)
 		]
 		
 		lines = []
@@ -93,7 +96,7 @@ KEY_LEFT = cm.keys["KEY_LEFT"]
 KEY_RIGHT = cm.keys["KEY_RIGHT"]
 KEY_SELECT_TARGET = cm.keys["KEY_SELECT_TARGET"]
 KEY_ATTACK = cm.keys["KEY_ATTACK"]
+KEY_SIT = cm.keys["KEY_SIT"]
+CONTROL_KEY_LIST = [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SELECT_TARGET, KEY_ATTACK, KEY_SIT]
 
-CONTROL_KEY_LIST = [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SELECT_TARGET, KEY_ATTACK]
 
-	

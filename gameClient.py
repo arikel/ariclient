@@ -149,6 +149,20 @@ class GameClient(ConnectionListener):
 			
 		#print "received move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
 	
+	def Network_player_sit(self, data):
+		playerName = data["name"]
+		x = data["x"]
+		y = data["y"]
+		dx = data["dx"]
+		dy = data["dy"]
+		self.displayMap.players[name].setPos(x, y)
+		currentAnim = self.displayMap.players[name]._sprite.currentAnim
+		if "walk" in currentAnim:
+			currentAnim = currentAnim.replace("walk", "sit")
+		elif "idle" in currentAnim:
+			currentAnim = currentAnim.replace("idle", "sit")
+		self.displayMap.players[name]._sprite.setAnim(currentAnim)
+		
 	def Network_mob_leave_map(self, data):
 		name = data["id"]
 		self.displayMap.delMob(name)
@@ -179,16 +193,11 @@ class GameClient(ConnectionListener):
 		y = data['y']
 		dx = data['dx']
 		dy = data['dy']
-		if name in self.displayMap.mobs:
-			self.displayMap.mobs[name].setPos(x, y)
-			self.displayMap.mobs[name].setMovement(dx, dy)
-			#print "known mob pos : %s, %s/%s, %s/%s" % (id, x, y, dx, dy)
-		else:
+		if name not in self.displayMap.mobs:
 			self.addMob(name, x, y)
-			self.displayMap.mobs[name].setPos(x, y)
-			self.displayMap.mobs[name].setMovement(dx, dy)
-			#print "mob spotted at %s %s , moving : %s %s" % (x, y, dx, dy)
-		#print "received MOB_move_update from server : %s is now at %s / %s, and going in %s / %s" % (id, x, y, dx, dy)
+		self.displayMap.mobs[name].setPos(x, y)
+		self.displayMap.mobs[name].setMovement(dx, dy)
+		self.displayMap.mobs[name].update(1)
 		
 	def Network_warp(self, data):
 		#print "received warp message"

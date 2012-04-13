@@ -1,88 +1,26 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
-from tmxHandler import *
+
 import random
 import math
+import pygame
+from gameData import Item, Inventory, Being
+from pathFind import astar
 
 def getDist(a, b):# a, b == Rect or derivative : Player, Mob...
 	return math.sqrt((a.x-b.x)**2+(a.y-b.y)**2)
 	
-class Item:
-	weight = 0.1
-	baseCost = 2
-	baseSold = 1
-	itemId = 0
-	def __init__(self, itemId):
-		self.itemId = itemId
-		
-		
-class Inventory:
-	
-	def __init__(self):
-		self.clear()
-		
-	def clear(self):
-		self.items = {}
-		
-	def addItem(self, itemId, number):
-		if itemId in self.items:
-			self.items[itemId] += int(number)
-		else:
-			self.items[itemId] = int(number)
-	
-	def get(self):
-		keys = self.items.keys()
-		keys.sort()
-		res = ""
-		for key in keys:
-			res = res + str(key) + "," + str(self.items[key]) + ";"
-		return res
-		
-	def set(self, itemString):
-		self.items = {}
-		itemString = itemString.strip()
-		for elem in split(itemString, ';'):
-			item = elem.split(',')
-			if len(item)==2:
-				self.addItem(item[0].strip(), item[1].strip())
-
-
-
-class Being(object):
-	def __init__(self, name):
-		self.name = name
-		
-		self.hp = 1
-		self.hpMax = 1
-		
-		self.carac = {}
-		for carac in ["str", "dex", "cons", "wil"]:
-			self.carac[carac] = 1
-		self.xp = {}
-		self.skills = {}
-		
-	def heal(self, n):
-		self.hp += n
-		# keep hp between 0 and hpMax
-		self.hp = min(max(self.hp, 0), self.maxHp)
-		
-	def getCarac(self, caracName):
-		if caracName in self.carac:
-			return self.carac[caracName]
-		return 0
-		
-	def getSkill(self, skillName):
-		if skillName in self.skills:
-			return self.skills[skillName]
-		return 0
-		
 class MapCreature:
 	def __init__(self, name, _map = None):
+		if not _map:
+			return False
 		self.name = name
 		self._map = _map
-		# float pixel position on map
+		self.mapName = self._map.name
+		
 		self.category = None
-		self.currentMapName = None
+		
+		# float pixel position on map
 		self.x = 0.0
 		self.y = 0.0
 		self.mapRect = pygame.Rect(0,0,10,4)
@@ -101,8 +39,8 @@ class MapCreature:
 		self.path = [] # [(x, y), (x2, y2)...]
 		self._sprite = None
 		
-	def setMap(self, map):
-		self._map = map
+	def setMap(self, _map):
+		self._map = _map
 		
 	def setSprite(self, sprite):
 		self._sprite = sprite
@@ -112,9 +50,9 @@ class MapCreature:
 		self.y = y
 		
 		if self._sprite:
-			if self._map.screenRect.colliderect(self._sprite.rect):
+			#if self._map.screenRect.colliderect(self._sprite.rect):
 				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
-				self._sprite.setPos(x, y)
+			self._sprite.setPos(x, y)
 				#self._map.dirtySprites.append(self._sprite)
 				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
 		self.mapRect.topleft = (x,y)
@@ -131,54 +69,24 @@ class MapCreature:
 		if self.dx != 0 or self.dy != 0:
 			self.facing = (self.dx, self.dy)
 		
-	def updateDirection(self):
-		
+	def updateAnim(self):
 		if not self._sprite:return
-		
-		if self.dy == 1:
-			if self.dx == 1:
-				self._sprite.setAnim("walk-down-right")
-			elif self.dx == -1:
-				self._sprite.setAnim("walk-down-left")
-			else:
-				self._sprite.setAnim("walk-down")
-				
-		elif self.dy == -1:
-			if self.dx == 1:
-				self._sprite.setAnim("walk-up-right")
-			elif self.dx == -1:
-				self._sprite.setAnim("walk-up-left")
-			else:
-				self._sprite.setAnim("walk-up")
-		else:
-			if self.dx == -1:
-				self._sprite.setAnim("walk-left")
-			elif self.dx == 1:
-				self._sprite.setAnim("walk-right")
-			else:
-				if self._sprite.currentAnim:
-					if "walk" in self._sprite.currentAnim:
-						self._sprite.setAnim(self._sprite.currentAnim.replace("walk", "idle"))
-						
-							
+		self._sprite.updateAnim(self.dx, self.dy)
+	
 	def update(self, dt=0.0):
 		if not self.mobile:
 			return
 		if self._sprite:
 			self._sprite.update() # Sprite takes a t (pygame.time.get_ticks), not a dt
-			#self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
-			
+				
 			if self._map.screenRect.colliderect(self._sprite.rect):
 				self._map.dirtyRects.append(self._sprite.getDirtyRect())
-				self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
-				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
 				self._map.dirtySprites.append(self._sprite)
-			else:
-				self._sprite.setMapOffset(self._map.offsetX, self._map.offsetY)
+			
 		
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
-			self.updateDirection()
+			self.updateAnim()
 			return
 			
 		# in case of collision, handle possible sliding
@@ -189,14 +97,14 @@ class MapCreature:
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 			self.setMovement(oldDx, oldDy)
-			self.updateDirection()
+			self.updateAnim()
 			return
 		else:
 			self.setMovement(oldDx, 0)
 			if self.nextMovePossible(dt):
 				self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
 				self.setMovement(oldDx, oldDy)
-				self.updateDirection()
+				self.updateAnim()
 	
 	def nextMovePossible(self, dt=0.0):
 		if not self._map:

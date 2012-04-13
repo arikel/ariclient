@@ -45,7 +45,7 @@ class MapTileset(object):
 		self.emptyTile = pygame.surface.Surface((self.w, self.h)).convert_alpha()
 		self.emptyTile.fill((255,0,255))
 		self.emptyTile.set_colorkey((255,0,255))
-		#self.emptyTile.set_alpha(100)
+		self.emptyTile.set_alpha(100)
 		
 	def setImgPath(self, imgPath):
 		self.imgPath = imgPath
@@ -151,7 +151,7 @@ class Map(GameMap):
 		if name not in self.mobs:
 			self.mobs[name]=Mob(name, mobId, self, x, y)
 			self.mobs[name].setSprite(makeMobSprite(name, self))
-			self.mobs[name].setPos(x,y)
+			#self.mobs[name].setPos(x,y)
 			self.mobs[name].setMovement(0,0)
 			self.mobs[name].update()
 			
@@ -243,7 +243,11 @@ class Map(GameMap):
 		if name not in self.layers:return
 		#print "map makes layer image for %s" % (name)
 		self.layerImages[name] = pygame.surface.Surface((self.w*self.tileWidth, self.h * self.tileHeight))
-		self.layerImages[name].convert_alpha()
+		
+		if name=="collision":
+			self.layerImages[name].fill((255,0,255))
+			self.layerImages[name].set_colorkey((255,0,255))
+			self.layerImages[name].set_alpha(120)
 		
 		self.updateLayerImage(name)
 		
