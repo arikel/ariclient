@@ -232,7 +232,9 @@ if __name__=="__main__":
 		SERVER_ADDRESS = options.SERVER_ADDRESS
 	if(options.SERVER_PORT):
 		SERVER_PORT = int(options.SERVER_PORT)
-
+	
+	pygame.key.set_repeat(0.2, 0.1)
+	
 	g = Game(SERVER_ADDRESS, SERVER_PORT)
 	nbFrames = 0
 	d0 = pygame.time.get_ticks()
