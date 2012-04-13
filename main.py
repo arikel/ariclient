@@ -233,7 +233,11 @@ if __name__=="__main__":
 	if(options.SERVER_PORT):
 		SERVER_PORT = int(options.SERVER_PORT)
 	
-	pygame.key.set_repeat(0.2, 0.1)
+	#temporary fix for the versions 1.9 and above of pygame
+	if pygame.version.vernum >= (1, 9, 0):
+		pygame.key.set_repeat(200, 100)
+	else:
+		pygame.key.set_repeat(0.2, 0.1)
 	
 	g = Game(SERVER_ADDRESS, SERVER_PORT)
 	nbFrames = 0
