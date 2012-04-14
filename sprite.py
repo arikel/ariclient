@@ -86,7 +86,7 @@ class BaseSprite(object):
 		self.mapRect = pygame.Rect(0,0,self.tileWidth,self.tileHeight) # map position
 		
 		self.anim = {}
-		self.currentAnim = "idle-down"
+		self.currentAnim = ""
 		self.currentFrame = 0
 		self.frameUpdateTime = 0
 		
@@ -270,6 +270,8 @@ def makePlayerSprite(name, _map=None):
 	sprite.addImgAnim("graphics/sprites/hair/male_hair1.png", randomColor())
 	sprite.addImgAnim("graphics/sprites/clothes/armor1.png", randomColor())
 	
+	sprite.setAnim("idle-down")
+	
 	return sprite
 	
 def makeMobSprite(name, _map=None):
@@ -295,6 +297,8 @@ def makeMobSprite(name, _map=None):
 	sprite.anim["idle-up-right"]=sprite.anim["idle-right"]
 	sprite.anim["idle-down-left"]=sprite.anim["idle-left"]
 	sprite.anim["idle-down-right"]=sprite.anim["idle-right"]
+	
+	sprite.setAnim("idle-down")
 	
 	return sprite
 	
