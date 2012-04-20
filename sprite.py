@@ -83,7 +83,7 @@ class BaseSprite(object):
 		self.tileHeight = self._map.tileHeight
 		
 		self.rect = pygame.Rect(0,0,1,1) # screen position
-		self.mapRect = pygame.Rect(0,0,self.tileWidth,self.tileHeight) # map position
+		self.mapRect = pygame.Rect(0,0,4,4) # map position
 		
 		self.anim = {}
 		self.currentAnim = ""
@@ -122,7 +122,7 @@ class BaseSprite(object):
 	def addAnim(self, name, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[name] = Animation(name, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
 		
-	def setAnim(self, animName="idle-south"):
+	def setAnim(self, animName="idle-down"):
 		if animName in self.anim and animName != self.currentAnim:
 			self.currentAnim = animName
 			self.rect.w = self.anim[self.currentAnim].w
