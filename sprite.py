@@ -270,6 +270,11 @@ def makePlayerSprite(name, _map=None):
 	sprite.addImgAnim("graphics/sprites/hair/male_hair1.png", randomColor())
 	sprite.addImgAnim("graphics/sprites/clothes/armor1.png", randomColor())
 	
+	#TEMPORARY
+	#remove the comment below and comment the "hair" line to avoid hat-with-hair issue
+	
+	#sprite.addImgAnim("graphics/sprites/clothes/head/knight-helm.png", randomColor())
+	
 	sprite.setAnim("idle-down")
 	
 	return sprite
