@@ -38,6 +38,7 @@ pathList.append("graphics/sprites/player/female.png")
 pathList.append("graphics/sprites/mobs/monsters01.png")
 pathList.append("graphics/sprites/hair/male_hair1.png")
 pathList.append("graphics/sprites/clothes/armor1.png")
+pathList.append("graphics/sprites/clothes/head/knight-helm.png")
 
 for imgPath in pathList:
 	try:
