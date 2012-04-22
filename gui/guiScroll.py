@@ -8,38 +8,31 @@ import re
 import string
 
 from guiFunctions import *
+from guiButton import ButtonBase
 from guiWidget import Widget
 from guiEntry import TextEntry
 
 #-----------------------------------------------------------------------
 # ScrollButton
 #-----------------------------------------------------------------------	
-class ScrollButton(Widget):
+class ScrollButton(ButtonBase):
 	def __init__(self, x=0, y=0, direction = "up", parent=None):
 		Widget.__init__(self, x, y, 20,20, parent)
-		self.makeSurface()
+		self.func = None
+		#self.makeSurface()
 		print("making button, direction = %s, parent = %s" % (direction, parent))
-		self.img = ImgDB["graphics/gui/guibase.png"].subsurface((1,1,20,20)).convert_alpha()
-		self.imgHover = ImgDB["graphics/gui/guibase.png"].subsurface((22,1,20,20)).convert_alpha()
+		self.surface = ImgDB["graphics/gui/guibase.png"].subsurface((1,1,20,20)).convert_alpha()
+		self.surfaceHover = ImgDB["graphics/gui/guibase.png"].subsurface((22,1,20,20)).convert_alpha()
 		if direction == "down":
-			self.img = pygame.transform.rotate(self.img, 180)
-			self.imgHover = pygame.transform.rotate(self.imgHover, 180)
+			self.surface = pygame.transform.rotate(self.surface, 180)
+			self.surfaceHover = pygame.transform.rotate(self.surfaceHover, 180)
 		elif direction == "left":
-			self.img = pygame.transform.rotate(self.img, 90)
-			self.imgHover = pygame.transform.rotate(self.imgHover, 90)
+			self.surface = pygame.transform.rotate(self.surface, 90)
+			self.surfaceHover = pygame.transform.rotate(self.surfaceHover, 90)
 		elif direction == "right":
-			self.img = pygame.transform.rotate(self.img, 270)
-			self.imgHover = pygame.transform.rotate(self.imgHover, 270)
-			
-		self.surface.blit(self.img, (0,0,20,20))
-		
-	def updateSurface(self):
-		if self.hover:
-			self.surface.blit(self.imgHover, (0,0,20,20))
-			#print "scrollbutton over"
-		else:
-			self.surface.blit(self.img, (0,0,20,20))
-	
+			self.surface = pygame.transform.rotate(self.surface, 270)
+			self.surfaceHover = pygame.transform.rotate(self.surfaceHover, 270)
+
 #-----------------------------------------------------------------------
 # VScrollBar
 #-----------------------------------------------------------------------
@@ -159,31 +152,23 @@ class VScrollBar(Widget):
 		
 		for event in events:
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				#if pygame.mouse.get_pressed() == (1, 0, 0):
 				if event.button == 1:
-					#print "Vertical scroll bar received click"
-					
 					if self.carretHover(x, y):
-						#print "Vertical scroll starting drag!"
 						self.startDrag(x, y)
-						
 					elif self.hover:
 						if y-self._parent.y > self.carretRect.bottom:
 							self.setCarretPos(self.currentPos + 1)
-							
 						elif y -self._parent.y < self.carretRect.y:
 							self.setCarretPos(self.currentPos - 1)
-							
-							
+				
 				if event.button==4 and self.hover:# wheel up
 					self.setCarretPos(self.currentPos - 1)
+				
 				elif event.button==5 and self.hover: # wheel down
 					self.setCarretPos(self.currentPos + 1)
 					
 			if event.type == pygame.MOUSEBUTTONUP:
-				#print "Stopping carret drag"
 				self.stopDrag()
-
 
 class VScrollBar_buttons(Widget):
 	def __init__(self, x, y, h, nbPos=2, parent= None):

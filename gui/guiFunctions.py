@@ -25,7 +25,15 @@ COLOR_BG_HOVER = (80,80,80)
 MIN_CARRET_SIZE = 5
 CARRET_WIDTH = 20
 
-ImgDB = {}
+class ImgLoader(dict):
+	def add(self, imgPath):
+		try:
+			img = pygame.image.load(imgPath).convert_alpha()
+		except:
+			img = pygame.image.load(imgPath)
+		self[imgPath] = img
+
+ImgDB = ImgLoader()
 pathList = []
 #gui elements
 pathList.append("graphics/gui/guibase.png")
@@ -41,10 +49,8 @@ pathList.append("graphics/sprites/clothes/armor1.png")
 pathList.append("graphics/sprites/clothes/head/knight-helm.png")
 
 for imgPath in pathList:
-	try:
-		ImgDB[imgPath] = pygame.image.load(imgPath).convert_alpha()
-	except:
-		ImgDB[imgPath] = pygame.image.load(imgPath)
+	ImgDB.add(imgPath)
+
 
 def coupeMsg(msg, longueur, font=FONT):
 	msg = msg.replace("\n", " ")

@@ -30,8 +30,8 @@ class GameGUI(object):
 		toplayout = BaseLayouter()
 		
 		separator = Widget(0,0,0,SCREEN_HEIGHT-140)
-		print "Screen : %s %s" % (SCREEN_WIDTH, SCREEN_HEIGHT)
-		print "creating chatwindow from clientGui : %s, %s, %s, %s" % (0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
+		#print "Screen : %s %s" % (SCREEN_WIDTH, SCREEN_HEIGHT)
+		#print "creating chatwindow from clientGui : %s, %s, %s, %s" % (0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0)
 		self.chatWindow = ChatWindow(0,SCREEN_HEIGHT*4/5.0,SCREEN_WIDTH,SCREEN_HEIGHT/5.0, gui=self)
 		
 		self.emoteEngine = EmoteEngine(SCREEN_WIDTH-21,2, gui=self)
@@ -41,19 +41,19 @@ class GameGUI(object):
 		self.menubutton = ShowFrameButton(text='Configuration:Configuration', widget = self.configwindow)
 		self.chatbutton = ShowFrameButton(text='ChatWindow:ChatWindow', widget = self.chatWindow)
 		
-		self.BarFrame = Frame(SCREEN_WIDTH/2, 40)
-		self.BarFrame.setPos(220, 2)
+		self.barFrame = Frame(SCREEN_WIDTH/2, 40)
+		self.barFrame.setPos(220, 2)
 		
 		
-		self.hpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6), parent=self.BarFrame)
+		self.hpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,0,96,6), parent=self.barFrame)
 		self.hpbar.setValue(1)
 		
 		#somehow seems that this is not shown without the width set to framesize -1... weird thing to be checked ...
-		self.mpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6), parent=self.BarFrame)
+		self.mpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6), parent=self.barFrame)
 		self.mpbar.setValue(1)
 		
 		
-		self.BarFrame.autolayout()
+		self.barFrame.autolayout()
 		
 		guilayout.add(toplayout)
 		guilayout.add(separator)
@@ -97,8 +97,8 @@ class GameGUI(object):
 		#hpbar test
 		self.hpbar.add(1)
 		self.mpbar.add(1)
-		self.BarFrame.updateSurface()
-		self.BarFrame.blit(self.screen)
+		self.barFrame.updateSurface()
+		self.barFrame.blit(self.screen)
 		#self.hpbar.blit(self.screen)
 
 		#self.mpbar.blit(self.screen)

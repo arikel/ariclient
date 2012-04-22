@@ -3,6 +3,8 @@
 
 import pygame
 import random
+import Image
+
 from gui import FONT, FONT2, TEXTCOLOR, BGCOLOR, ImgDB, EmoteDic
 
 def colorizeSurface(baseImg, color):
@@ -20,16 +22,17 @@ def colorizeSurface(baseImg, color):
 	colorDic = {}
 	alpha = 0.5
 	
-	for x in range(w):
-		for y in range(h):
-			c = img.get_at((x, y))
-			if c[0] == c[1] and c[1]== c[2] and c[3]==255:
-				color = (c.r, c.g, c.b, 255)
-				
-				newColor = (alpha*(R-c[0])+c[0], alpha*(G-c[1])+c[1], alpha*(B-c[2])+c[2])
-				
-				if color not in colorDic:
-					colorDic[color] = newColor
+	pilImg = Image.fromstring("RGBA", img.get_size(), pygame.image.tostring(img, "RGBA"))
+	colors = pilImg.getcolors()
+	#print "colors found : %s" % (colors)
+	
+	for nb, c in colors:
+		if c in colorDic:
+			continue
+		if c[0] == c[1] and c[1]== c[2] and c[3]==255:
+			newColor = (alpha*(R-c[0])+c[0], alpha*(G-c[1])+c[1], alpha*(B-c[2])+c[2])
+			colorDic[c] = newColor
+	
 	pix = pygame.PixelArray(img)
 	for c in colorDic:
 		pix.replace(c, colorDic[c])
@@ -63,20 +66,43 @@ class Animation(object):
 	
 	def addImage(self, imgPath, color = None):
 		img = ImgDB[imgPath]
-		if color:
-			img = colorizeSurface(img, color)
-			
+
 		for i in range(self.nbFrames):
 			rect = pygame.Rect(self.x+self.w*i, self.y, self.w, self.h)
 			if self.mirror:
 				frame = pygame.transform.flip(img.subsurface(rect), 1, 0)
 			else:
 				frame = img.subsurface(rect)
+			if color:
+				frame = colorizeSurface(frame, color)
 			self.frames[i].blit(frame, (0,0))
-			
+
+class BaseSpriteSheet(dict):
+	def __init__(self, imgPath, w=48, h=48):
+		self.img = ImgDB[imgPath]
+		self.w = w
+		self.h = h
+		
+	def addAnimFrame(self, animName, animX, animY, animTime):
+		if animName not in self:
+			self[animName] = []
+		frameImg = self.img.subsurface(animX*self.w, animY*self.h, self.w, self.h)
+		self[animName].append((frameImg, animTime))
+	
+	def getFrame(self, animName, frameNb):
+		if animName not in self:
+			return None
+		if frameNb>=len(self[animName]):
+			frameNb = 0
+		return self[animName][frameNb]
+	
+	def setAnim(animName, frameList):
+		self[animName] = []
+		for x, y, delay in frameList:
+			self.addAnimFrame(animName, x, y, delay)
+	
 class BaseSprite(object):
 	def __init__(self, name, _map):
-		#pygame.sprite.Sprite.__init__(self)
 		self.name = name
 		self._map = _map
 		self.tileWidth = self._map.tileWidth
@@ -89,10 +115,6 @@ class BaseSprite(object):
 		self.currentAnim = ""
 		self.currentFrame = 0
 		self.frameUpdateTime = 0
-		
-		
-		#self.mapOffsetX = 0
-		#self.mapOffsetY = 0
 		
 		self.nameImg = FONT.render(self.name, False, (20,20,20), (200,200,200,255))#.convert_alpha()
 		self.nameImg.set_alpha(120)
@@ -113,11 +135,24 @@ class BaseSprite(object):
 			self.emote = EmoteDic[emote]
 			self.emoteCooldown = pygame.time.get_ticks() + 2000
 		
+	def getEmoteRect(self):
+		return pygame.Rect(self.rect.x+self.rect.w/2, self.rect.y - 20, 20,20)
+		
 	def setTalk(self, msg):
 		self.talk = msg
 		self.talkImg = FONT.render(msg, False, (20,20,20), (200,200,200,255))#.convert_alpha()
 		self.talkImg.set_alpha(120)
 		self.talkCooldown = pygame.time.get_ticks() + 2000
+		
+	def getTalkRect(self):
+		w = self.talkImg.get_width()
+		h = self.talkImg.get_height()
+		return pygame.Rect(self.rect.x+self.rect.w/2-w/2, self.rect.y-h-2, w, h)
+		
+	def getNameRect(self):
+		w = self.nameImg_w
+		h = self.nameImg_h
+		return pygame.Rect(self.rect.x+self.rect.w/2-w/2, self.rect.y+self.rect.h, w, h)
 		
 	def addAnim(self, name, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[name] = Animation(name, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
@@ -152,8 +187,10 @@ class BaseSprite(object):
 		return(self.mapRect.x/self.tileWidth, self.mapRect.y/self.tileHeight+1)
 
 	def getDirtyRect(self):
-		nameRect = pygame.Rect(self.rect.x-4, self.rect.y+self.rect.h-2, self.nameImg_w+4, self.nameImg_h+6)
-		rect = self.rect.union(nameRect)
+		rect = self.rect.union(self.getNameRect())
+		rect = rect.union(self.getEmoteRect())
+		if self.talk:
+			rect = rect.union(self.getTalkRect())
 		return rect
 		
 	def updateAnim(self, dx, dy):
@@ -189,9 +226,6 @@ class BaseSprite(object):
 		if t == None:
 			t = pygame.time.get_ticks()
 		
-		self.rect.x = self.mapRect.x - self._map.offsetX - self.rect.w/2.0
-		self.rect.y = self.mapRect.y - self._map.offsetY - self.rect.h
-		
 		if t>= self.frameUpdateTime:
 			self.currentFrame += 1
 			if self.currentFrame >= self.anim[self.currentAnim].nbFrames:
@@ -199,40 +233,37 @@ class BaseSprite(object):
 			self.frameUpdateTime = t + self.anim[self.currentAnim].frameTime
 		
 		if self.emote:
-			self._map.addDirtyRect(pygame.Rect(self.rect.x+3, self.rect.y-16, self.emote.get_width(), self.emote.get_height()))
+			self._map.addDirtyRect(self.getEmoteRect())
 			if t>self.emoteCooldown:
 				self.emote = None
 				
 		if self.talk:
-			self._map.addDirtyRect(pygame.Rect(self.rect.x-5, self.rect.y-18, self.talkImg.get_width()+8, self.talkImg.get_height()+2))
+			self._map.addDirtyRect(self.getTalkRect())
 			if t>self.talkCooldown:
 				self.talk = None
-			
+		
+		self.rect.x = self.mapRect.x - self._map.offsetX - self.rect.w/2.0
+		self.rect.y = self.mapRect.y - self._map.offsetY - self.rect.h	
 		
 	def blit(self, screen):
 		if not self.currentAnim:
 			return
 		
-		self.rect.x = self.mapRect.x - self._map.offsetX - self.rect.w/2.0
-		self.rect.y = self.mapRect.y - self._map.offsetY - self.rect.h
-		
 		screen.blit(self.anim[self.currentAnim].frames[self.currentFrame], self.rect)
 			
-		screen.blit(self.nameImg, (self.rect.x, self.rect.y+self.rect.h+2))
+		screen.blit(self.nameImg, self.getNameRect())
+		
 		if self.emote:
-			screen.blit(self.emote, (self.rect.x+3, self.rect.y-16))
+			screen.blit(self.emote, self.getEmoteRect())
+			
 		if self.talk:
-			screen.blit(self.talkImg, (self.rect.x+3, self.rect.y-16))
-			
-			
+			screen.blit(self.talkImg, self.getTalkRect())
+		
 		pygame.draw.rect(screen,
 			(255,120,120,120),
 			(self.mapRect.x-self._map.offsetX, self.mapRect.y-self._map.offsetY, self.mapRect.w, self.mapRect.h),
 			1)
 	
-	def destroy(self):
-		pass
-
 def makePlayerSprite(name, _map=None):
 	sprite = BaseSprite(name, _map)
 	if "ptitnem" in name.lower() or "nat" in name.lower():
@@ -240,28 +271,28 @@ def makePlayerSprite(name, _map=None):
 	else:
 		imgPath = "graphics/sprites/player/male.png"
 		
-	sprite.addAnim("walk-up", imgPath, 0, 0, 24,32,4,150)
-	sprite.addAnim("walk-down", imgPath, 0, 64, 24,32,4,150)
-	sprite.addAnim("walk-left", imgPath, 0, 32, 24,32,4,150, True)
-	sprite.addAnim("walk-right", imgPath, 0, 32, 24,32,4,150)
+	sprite.addAnim("walk-up", imgPath, 0, 0, 48,48,4,150)
+	sprite.addAnim("walk-down", imgPath, 0, 96, 48,48,4,150)
+	sprite.addAnim("walk-left", imgPath, 0, 48, 48,48,4,150, True)
+	sprite.addAnim("walk-right", imgPath, 0, 48, 48,48,4,150)
 	sprite.anim["walk-up-left"]=sprite.anim["walk-left"]
 	sprite.anim["walk-up-right"]=sprite.anim["walk-right"]
 	sprite.anim["walk-down-left"]=sprite.anim["walk-left"]
 	sprite.anim["walk-down-right"]=sprite.anim["walk-right"]
 	
-	sprite.addAnim("idle-up", imgPath, 24, 0, 24,32,1,7500)
-	sprite.addAnim("idle-down", imgPath, 24, 64, 24,32,1,7500)
-	sprite.addAnim("idle-left", imgPath, 24, 32, 24,32,1,7500, True)
-	sprite.addAnim("idle-right", imgPath, 24, 32, 24,32,1,7500)
+	sprite.addAnim("idle-up", imgPath, 48, 0, 48,48,1,7500)
+	sprite.addAnim("idle-down", imgPath, 48, 96, 48,48,1,7500)
+	sprite.addAnim("idle-left", imgPath, 48, 48, 48,48,1,7500, True)
+	sprite.addAnim("idle-right", imgPath, 48, 48, 48,48,1,7500)
 	sprite.anim["idle-up-left"]=sprite.anim["idle-left"]
 	sprite.anim["idle-up-right"]=sprite.anim["idle-right"]
 	sprite.anim["idle-down-left"]=sprite.anim["idle-left"]
 	sprite.anim["idle-down-right"]=sprite.anim["idle-right"]
 	
-	sprite.addAnim("sit-up", imgPath, 96, 0, 24,32,1,7500)
-	sprite.addAnim("sit-down", imgPath, 96, 64, 24,32,1,7500)
-	sprite.addAnim("sit-left", imgPath, 96, 32, 24,32,1,7500, True)
-	sprite.addAnim("sit-right", imgPath, 96, 32, 24,32,1,7500)
+	sprite.addAnim("sit-up", imgPath, 192, 0, 48,48,1,7500)
+	sprite.addAnim("sit-down", imgPath, 192, 96, 48,48,1,7500)
+	sprite.addAnim("sit-left", imgPath, 192, 48, 48,48,1,7500, True)
+	sprite.addAnim("sit-right", imgPath, 192, 48, 48,48,1,7500)
 	sprite.anim["sit-up-left"]=sprite.anim["sit-left"]
 	sprite.anim["sit-up-right"]=sprite.anim["sit-right"]
 	sprite.anim["sit-down-left"]=sprite.anim["sit-down"]

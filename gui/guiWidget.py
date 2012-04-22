@@ -71,13 +71,21 @@ class Widget(pygame.Rect):
 		"""Changes the parent of the widget"""
 		self.set_parent(_parent)
 		
+	def __eq__(self, widget):
+		if id(self) == id(widget):
+			return True
+		return False
+		
 	def add_child(self, child):
 		if child not in self._children:
 			self._children.append(child)
+		'''
+		# pygame.Rect.__eq__ override above
 		else: #workaround to fix "the same kind of widget is in list" issue
 			pos = self._children.index(child)
 			if id(self._children[pos]) != id(child):
 				self._children.append(child)
+		'''
 		
 	def remove_child(self, child):
 		if child in self._children:
@@ -85,11 +93,9 @@ class Widget(pygame.Rect):
 		
 	# pos
 	def getPos(self):
-		"""Returns the widget position as a touple (x, y)
+		"""Returns the widget position as a tuple (x, y)
 		if the widget is a child of another widget the position
 		is relative to the parent widget"""
-		#if self._parent:
-		#	return (self.x-self._parent.x, self.y-self._parent.y)
 		return self.topleft
 		
 	def setPos(self, x, y):
@@ -97,9 +103,9 @@ class Widget(pygame.Rect):
 		if the widget is a child of another widget the position
 		is relative to the parent widget"""
 		self.topleft = (x, y)
-		for child in self._children:
-			child.dx = x
-			child.dy = y
+		#for child in self._children:
+		#	child.dx = x
+		#	child.dy = y
 			
 	def centerH(self, screen):
 		w = screen.get_width()
@@ -145,12 +151,8 @@ class Widget(pygame.Rect):
 			child.hide()
 			
 	def blit(self, screen):
-		if not self.visible:
-			return
-		#if not hasattr(self, "surface"):
-		#	return
-		#self.updateSurface()
-		screen.blit(self.surface, self)
+		if self.visible:
+			screen.blit(self.surface, self)
 
 	def __repr__(self):
 		return "<%s %x @(%d, %d)>" % (self.__class__.__name__, id(self), self.x, self.y)

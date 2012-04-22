@@ -27,23 +27,21 @@ class Window(Frame):
 		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
 		self.gui = gui
 		
-		#self.frame = Frame(width, 24, COLOR_BG, bordercolor, hoverbordercolor, borderwidth, self)
 		self.name = Label(name, width = width-21, bgcolor = COLOR_BG, borderwidth = 1, parent = self)
 		self.name.setPos(0, 0)
-		#self.close_button = TextButton("x", parent=self)
+		
 		self.close_button = ImgButton(self.w-20, 0, 20, 20,
 			"graphics/gui/guibase.png", 1,49,1,70,
 			parent=self)
 		self.close_button.setPos(self.w-20, 0)
+		self.close_button.bind(self.hide)
 		
 		self.drag_button = ImgButton(self.w-20, 0, 20, 20,
 			"graphics/gui/guibase.png", 22,49,22,70,
 			parent=self)
 		self.drag_button.setPos(self.w-20, self.h-20)
 		
-		#is it better hide a frame or close it (deletion of the object)?
-		# hiding works fine
-		self.close_button.bind(self.hide)
+		
 		
 		self.click = False
 		self._resize = False

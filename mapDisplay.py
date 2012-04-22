@@ -128,6 +128,8 @@ class Map(GameMap):
 		self.selectCursor = ImgDB["graphics/gui/guibase.png"].subsurface((16,32,32,16)).convert_alpha()
 		
 	def unselectTarget(self):
+		if self.selected:
+			self.selectCursor
 		self.selected = None
 		
 	def addPlayer(self, name, x=50.0, y=50.0):
