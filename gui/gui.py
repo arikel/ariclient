@@ -52,7 +52,6 @@ class GameGUI(object):
 		self.mpbar = ProgressBar(0,100, width = 100, image = ImgDB["graphics/gui/progressbars.png"].subsurface(0,5,96,6), parent=self.barFrame)
 		self.mpbar.setValue(1)
 		
-		
 		self.barFrame.autolayout()
 		
 		guilayout.add(toplayout)

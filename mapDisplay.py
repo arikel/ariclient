@@ -129,7 +129,10 @@ class Map(GameMap):
 		
 	def unselectTarget(self):
 		if self.selected:
-			self.selectCursor
+			if self.selected in self.mobs:
+				sprite = self.mobs[self.selected]
+				self.addDirtyRect(pygame.Rect(sprite.rect.x-4, sprite.rect.y+24, 50,30))
+				print "cleaning select rect on mob die : %s" % (sprite.name)
 		self.selected = None
 		
 	def addPlayer(self, name, x=50.0, y=50.0):
@@ -137,7 +140,7 @@ class Map(GameMap):
 			self.players[name]=Player(name, self, x, y)
 			self.players[name].setSprite(makePlayerSprite(name, self))
 			self.players[name].setPos(x,y)
-			self.players[name].setMovement(0,0)
+			#self.players[name].setMovement(0,0)
 			self.players[name].update()
 		else:
 			pass
@@ -156,9 +159,13 @@ class Map(GameMap):
 			#self.mobs[name].setPos(x,y)
 			self.mobs[name].setMovement(0,0)
 			self.mobs[name].update()
+			self.needFullBlit = True
 			
 	def delMob(self, name):
 		self.addDirtyRect(self.mobs[name]._sprite.getDirtyRect())
+		#print "del mob : dirty rect = %s" % (self.mobs[name]._sprite.getDirtyRect())
+		# ok this doesn't work, so for now, brutal full blit will do
+		#self.needFullBlit = True
 		del self.mobs[name]
 		
 	def update(self, dt):
@@ -177,13 +184,14 @@ class Map(GameMap):
 			player = self.players[playerName]
 			if player._sprite.rect.collidepoint(x, y):
 				print "Player %s was clicked on" % (playerName)
-				return
+				
 		for mobName in self.mobs:
 			mob = self.mobs[mobName]
 			if mob._sprite.rect.collidepoint(x, y):
 				self.selectTarget(mobName)
 				print "Monster %s was clicked on" % (mobName)
-	
+		print "click on %s, %s" % (x, y)
+		
 	def setOffset(self, x, y):
 		if x != self.offsetX or y != self.offsetY:
 			self.offsetX = x
@@ -334,8 +342,13 @@ class Map(GameMap):
 			if self.selected:
 				if sprite.name == self.selected:
 					screen.blit(self.selectCursor, (sprite.rect.x-4, sprite.rect.y+24))
+				
 			sprite.blit(screen)
-		
+			if sprite.talk:
+				w = sprite.talkImg.get_width()
+				h = sprite.talkImg.get_height()
+				pygame.draw.rect(screen, (255,0,0), (sprite.rect.x+sprite.rect.w/2-w/2, sprite.rect.y-h-2, w, h), 1)
+				
 		self.particleManager.blit(screen)
 		
 		self.dirtyRects = []

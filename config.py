@@ -32,10 +32,10 @@ class ConfigManager(object):
 					continue
 				
 			if key == 'screen-width':
-				print "Setting GLOBAL Screen Width : %s" % (value)
+				#print "Setting GLOBAL Screen Width : %s" % (value)
 				self.keys["SCREEN_WIDTH"] = value
 			elif key == 'screen-height':
-				print "Setting GLOBAL Screen Height : %s" % (value)
+				#print "Setting GLOBAL Screen Height : %s" % (value)
 				self.keys["SCREEN_HEIGHT"] = value
 			elif key == 'server-address':
 				self.keys["SERVER_ADDRESS"] = value

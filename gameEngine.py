@@ -56,13 +56,12 @@ class MapCreature:
 		self.y = y
 		
 		if self._sprite:
+			self._sprite.setPos(x, y)
 			#if self._map.screenRect.colliderect(self._sprite.rect):
 				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
-			self._sprite.setPos(x, y)
 				#self._map.dirtySprites.append(self._sprite)
-				#self._map.dirtyRects.append(self._sprite.getDirtyRect())
 		self.mapRect.topleft = (x,y)
-				
+		
 	def getPos(self):
 		return (self.x, self.y)
 	
@@ -83,11 +82,10 @@ class MapCreature:
 		if not self.mobile:
 			return
 		if self._sprite:
-			self._sprite.update() # Sprite takes a t (pygame.time.get_ticks), not a dt
-				
 			if self._map.screenRect.colliderect(self._sprite.rect):
 				self._map.dirtyRects.append(self._sprite.getDirtyRect())
 				self._map.dirtySprites.append(self._sprite)
+			self._sprite.update() # Sprite takes a t (pygame.time.get_ticks), not a dt
 			
 		
 		if self.nextMovePossible(dt):
@@ -102,16 +100,15 @@ class MapCreature:
 		self.setMovement(0, self.dy)
 		if self.nextMovePossible(dt):
 			self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
-			self.setMovement(oldDx, oldDy)
 			self.updateAnim()
-			return
+			
 		else:
 			self.setMovement(oldDx, 0)
 			if self.nextMovePossible(dt):
 				self.move(self.speed*self.dx*dt, self.speed*self.dy*dt)
-				self.setMovement(oldDx, oldDy)
 				self.updateAnim()
-	
+		self.setMovement(oldDx, oldDy)
+		
 	def nextMovePossible(self, dt=0.0):
 		if not self._map:
 			print "player has no map"

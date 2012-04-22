@@ -3,7 +3,6 @@
 
 import sys
 from time import sleep
-from sys import stdin, exit
 
 from PodSixNet.Connection import connection, ConnectionListener
 from gui import ustr
@@ -12,14 +11,7 @@ from gameEngine import *
 class GameClient(ConnectionListener):
 	def __init__(self, host, port):
 		self.Connect((host, port))
-		print "ariclient started"
-		
-		# get a nickname from the user before starting
-		#print "Enter your nickname: ",
-		#self.name = stdin.readline().rstrip("\n")
-		#self.id = self.name
-		#connection.Send({"action": "nickname", "id": self.id})
-		#print "asking connection with name = %s" % (self.id)
+		#print "ariclient started"
 		
 	def Loop(self):
 		connection.Pump()
@@ -177,7 +169,7 @@ class GameClient(ConnectionListener):
 			return
 		dmg = data["dmg"]
 		
-		print "Mob %s took %s damage points" % (mobName, dmg)
+		#print "Mob %s took %s damage points" % (mobName, dmg)
 		x, y = self.displayMap.mobs[mobName].mapRect.topleft
 		y -= self.displayMap.mobs[mobName]._sprite.rect.h
 		x -= self.displayMap.mobs[mobName]._sprite.rect.w
@@ -248,17 +240,4 @@ class GameClient(ConnectionListener):
 	
 	def Network_disconnected(self, data):
 		print 'Server disconnected'
-		exit()
-
-	
-'''
-if len(sys.argv) != 2:
-	print "Usage:", sys.argv[0], "host:port"
-	print "e.g.", sys.argv[0], "localhost:31425"
-else:
-	host, port = sys.argv[1].split(":")
-	c = Client(host, int(port))
-	while 1:
-		c.Loop()
-		sleep(0.001)
-'''
+		sys.exit()

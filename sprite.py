@@ -135,24 +135,34 @@ class BaseSprite(object):
 			self.emote = EmoteDic[emote]
 			self.emoteCooldown = pygame.time.get_ticks() + 2000
 		
-	def getEmoteRect(self):
-		return pygame.Rect(self.rect.x+self.rect.w/2, self.rect.y - 20, 20,20)
-		
 	def setTalk(self, msg):
 		self.talk = msg
 		self.talkImg = FONT.render(msg, False, (20,20,20), (200,200,200,255))#.convert_alpha()
 		self.talkImg.set_alpha(120)
 		self.talkCooldown = pygame.time.get_ticks() + 2000
-		
+	
+	def getEmoteRect(self):
+		return pygame.Rect(self.rect.x+self.rect.w/2, self.rect.y - 20, 20,20)
+			
 	def getTalkRect(self):
 		w = self.talkImg.get_width()
 		h = self.talkImg.get_height()
+		
 		return pygame.Rect(self.rect.x+self.rect.w/2-w/2, self.rect.y-h-2, w, h)
 		
 	def getNameRect(self):
 		w = self.nameImg_w
 		h = self.nameImg_h
-		return pygame.Rect(self.rect.x+self.rect.w/2-w/2, self.rect.y+self.rect.h, w, h)
+		rect = pygame.Rect(self.rect.x+self.rect.w/2-w/2, self.rect.y+self.rect.h, w, h)
+		return rect
+	
+	def getDirtyRect(self):
+		rect = self.rect.union(self.getNameRect())
+		if self.emote:
+			rect = rect.union(self.getEmoteRect())
+		if self.talk:
+			rect = rect.union(self.getTalkRect())
+		return rect
 		
 	def addAnim(self, name, imgPath, x, y, w, h, nbFrames, frameTime=20, mirrored= False):
 		self.anim[name] = Animation(name, imgPath, x, y, w, h, nbFrames, frameTime, mirrored)
@@ -186,12 +196,7 @@ class BaseSprite(object):
 	def getTilePos(self):
 		return(self.mapRect.x/self.tileWidth, self.mapRect.y/self.tileHeight+1)
 
-	def getDirtyRect(self):
-		rect = self.rect.union(self.getNameRect())
-		rect = rect.union(self.getEmoteRect())
-		if self.talk:
-			rect = rect.union(self.getTalkRect())
-		return rect
+	
 		
 	def updateAnim(self, dx, dy):
 		if dy == 1:
@@ -233,12 +238,12 @@ class BaseSprite(object):
 			self.frameUpdateTime = t + self.anim[self.currentAnim].frameTime
 		
 		if self.emote:
-			self._map.addDirtyRect(self.getEmoteRect())
+			#self._map.addDirtyRect(self.getEmoteRect())
 			if t>self.emoteCooldown:
 				self.emote = None
 				
 		if self.talk:
-			self._map.addDirtyRect(self.getTalkRect())
+			#self._map.addDirtyRect(self.getTalkRect())
 			if t>self.talkCooldown:
 				self.talk = None
 		

@@ -32,6 +32,7 @@ class Widget(pygame.Rect):
 		"""Sets the width of the widget"""
 		if x<1: x=1
 		self.width = int(x)
+		self.makeSurface()
 		
 	# height
 	def getHeight(self):
@@ -41,7 +42,8 @@ class Widget(pygame.Rect):
 		"""Sets the height of the widget"""
 		if x<1: x=1
 		self.height = int(x)
-	
+		self.makeSurface()
+		
 	def setPadding(self, padding):
 		self._padding = padding
 		
@@ -129,6 +131,7 @@ class Widget(pygame.Rect):
 	def makeSurface(self):
 		"""Creates the widget surface"""
 		self.surface = pygame.Surface((self.width, self.height))
+		#self.updateSurface()
 		return self.surface
 	
 	def updateSurface(self):
@@ -139,6 +142,12 @@ class Widget(pygame.Rect):
 		for child in self._children:
 			child.updateSurface()
 			child.blit(self.surface)
+		
+	def toggleVisible(self):
+		if self.visible:
+			self.hide()
+		else:
+			self.show()
 		
 	def show(self):
 		self.visible = True

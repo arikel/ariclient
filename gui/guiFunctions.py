@@ -90,4 +90,26 @@ def renderText(msg, font = FONT, aa=False, color = COLOR):
 	#return img
 	return font.render(msg, aa, color)
 	
+def renderFrameText(baseText, w=100, h=100):
+	lines = []
+	padding = 0
+	lineStep = FONT.render("AQp", False, TEXTCOLOR).get_height()
+	nbLines = 0
+	nbVisibleLines = h/lineStep
 	
+	for line in baseText.split("\n"):
+		toAdd = coupeMsg(line, w-2*padding-20, FONT)
+		lines.extend(toAdd)
+		nbLines += len(toAdd)
+	
+	textSurface = pygame.Surface((w-2*padding-20, (len(lines)+1)*lineStep))
+	textSurface.fill((110,100,100))
+	
+	n = 0
+	for line in lines:
+		(w, h) = FONT.size(line)
+		msg = FONT.render(line, False, TEXTCOLOR)
+		textSurface.blit(msg, (0,n*lineStep, w, h))
+		n += 1
+	nbPos = nbLines - nbVisibleLines
+	return textSurface

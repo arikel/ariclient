@@ -71,7 +71,7 @@ class Frame(Widget):
 			self.bgColor,
 			(self.borderWidth, self.borderWidth,
 			self.width-2*self.borderWidth, self.height-2*self.borderWidth))
-		
+	
 	def setBGColor(self, color):
 		self.bgColor = color
 		
@@ -80,3 +80,4 @@ class Frame(Widget):
 		
 	def setBorderWidth(self, width):
 		self.borderWidth = int(width)
+	

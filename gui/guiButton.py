@@ -100,7 +100,8 @@ class ButtonBase(Widget):
 			else:
 				self.func()
 		else:
-			print "Error : no function bound for Button"
+			pass
+			#print "Error : no function bound for Button"
 			
 	def handleEvents(self, events):
 		

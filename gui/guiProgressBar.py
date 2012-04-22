@@ -67,9 +67,9 @@ class ProgressBar(Frame):
 		
 	def updateSurface(self):
 		percentage = self._getPercentage()
-		lenght = max(int(percentage*self.width)-2*self.borderWidth-2, 0)
+		length = max(int(percentage*self.width)-2*self.borderWidth-2, 0)
 		Frame.updateSurface(self)
-		self.render(lenght)
+		self.render(length)
 
 
 class HpBar(ProgressBar):

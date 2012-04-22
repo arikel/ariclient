@@ -4,9 +4,10 @@ try:
 	import psyco
 	psyco.full()
 	#psyco.profile()
-	print("module psyco found.")
+	#print("module psyco found.")
 except:
-	print("module psyco NOT found.")
+	pass
+	#print("module psyco NOT found.")
 
 import pygame
 import time
@@ -14,7 +15,7 @@ import time
 from config import *
 from optparse import OptionParser
 
-print "Opening game screen : %s %s" % (SCREEN_WIDTH,SCREEN_HEIGHT)
+#print "Opening game screen : %s %s" % (SCREEN_WIDTH,SCREEN_HEIGHT)
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 
 from sprite import BaseSprite, makePlayerSprite, makeMobSprite
@@ -142,8 +143,10 @@ class Game(GameClient):
 		# keyboard handling
 		
 		# player direction
-		self.dx = self.kh.keyDict[KEY_RIGHT] - self.kh.keyDict[KEY_LEFT]
-		self.dy = self.kh.keyDict[KEY_DOWN] - self.kh.keyDict[KEY_UP]
+		#self.dx = self.kh.keyDict[KEY_RIGHT] - self.kh.keyDict[KEY_LEFT]
+		#self.dy = self.kh.keyDict[KEY_DOWN] - self.kh.keyDict[KEY_UP]
+		self.dx = pygame.key.get_pressed()[KEY_RIGHT] - pygame.key.get_pressed()[KEY_LEFT]
+		self.dy = pygame.key.get_pressed()[KEY_DOWN] - pygame.key.get_pressed()[KEY_UP]
 		
 		if not self.gameGui.chatWindow.entry.has_focus:
 			
@@ -185,7 +188,8 @@ class Game(GameClient):
 					mobName = self.getClosestMobName()
 					if mobName:
 						self.displayMap.selectTarget(mobName)
-				
+					else:
+						self.displayMap.unselectTarget()
 				if key == KEY_ATTACK:
 					if self.displayMap.selected:
 						self.SendAttackMob(self.displayMap.selected)
@@ -203,19 +207,13 @@ class Game(GameClient):
 		
 		self.gameGui.handleEvents(events)
 
-		
 		# graphics 
-		
-		
 		self.displayMap.blit(self.screen)
 		
 		# gui display
 		self.gameGui.blit()
 		
 		pygame.display.flip()
-		
-		
-		
 		
 if __name__=="__main__":
 

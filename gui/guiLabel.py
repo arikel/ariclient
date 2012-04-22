@@ -26,7 +26,14 @@ class Label(Frame):
 		hoverbordercolor=COLOR_HOVER, 
 		borderwidth = 1,
 		parent=None):
-		Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		
+		#Frame.__init__(self, width, height, bgcolor, bordercolor, hoverbordercolor, borderwidth, parent)
+		
+		Widget.__init__(self, 0, 0, width, height, parent)
+		
+		self.setBGColor(bgcolor)
+		self.setBorderColor(bordercolor)
+		self.borderWidth = borderwidth
 		
 		self.baseText = text
 		self.padding = 2
@@ -50,12 +57,12 @@ class Label(Frame):
 		
 		self.makeSurface()
 		self.updateSurface()
-	
+	'''
 	def setWidth(self, w):
 		if w<1:w=1
 		self.w = w
 		self.updateSurface()
-	
+	'''
 	def updateSurface(self):
 		Frame.updateSurface(self)
 		self.surface.blit(self.msg, (self.msgRect.left+self.padding,self.msgRect.top+self.padding,self.msgRect.width,self.msgRect.height))

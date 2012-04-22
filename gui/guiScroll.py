@@ -20,7 +20,7 @@ class ScrollButton(ButtonBase):
 		Widget.__init__(self, x, y, 20,20, parent)
 		self.func = None
 		#self.makeSurface()
-		print("making button, direction = %s, parent = %s" % (direction, parent))
+		#print("making button, direction = %s, parent = %s" % (direction, parent))
 		self.surface = ImgDB["graphics/gui/guibase.png"].subsurface((1,1,20,20)).convert_alpha()
 		self.surfaceHover = ImgDB["graphics/gui/guibase.png"].subsurface((22,1,20,20)).convert_alpha()
 		if direction == "down":
@@ -40,12 +40,11 @@ class ScrollButton(ButtonBase):
 class VScrollBar(Widget):
 	def __init__(self, nbPos=1, x=0, y=0, w=20, h=90, parent=None):
 		Widget.__init__(self, x, y, w, h, parent)
-		print "init scrollbar : %s, %s, %s, %s" % (self.x, self.y, self.w, self.h)
-		self.makeSurface()
-		
+		#print "init scrollbar : %s, %s, %s, %s" % (self.x, self.y, self.w, self.h)
 		self.currentPos = 0
 		self.dragging = False
 		self.setNbPos(nbPos)
+		self.makeSurface()
 		
 	def setNbPos(self, nb):
 		self.nbPos = int(nb)
@@ -174,7 +173,6 @@ class VScrollBar_buttons(Widget):
 	def __init__(self, x, y, h, nbPos=2, parent= None):
 		w = 20
 		Widget.__init__(self, x, y, w, h, parent)
-		self.makeSurface()
 		self.currentPos = 0
 		self.nbPos=int(nbPos)
 		self.posMax = self.nbPos-1
@@ -184,6 +182,7 @@ class VScrollBar_buttons(Widget):
 		
 		self.bar = VScrollBar(self.nbPos, self.x, self.y+20, self.w, self.h-40, parent)
 		#print(Vscrollbuttons init : %s %s %s %s" % (x,y,w,h))
+		self.makeSurface()
 		
 	def updateSurface(self):
 		x, y = pygame.mouse.get_pos()
@@ -220,8 +219,7 @@ class VScrollBar_buttons(Widget):
 class ScrollTextWindow(Widget):
 	def __init__(self, x, y, w, h, parent=None):
 		Widget.__init__(self,x,y,w,h,parent)
-		print "init scrolltextwindow : %s %s %s %s" % (self.x, self.y, self.w, self.h)
-		self.makeSurface()
+		#print "init scrolltextwindow : %s %s %s %s" % (self.x, self.y, self.w, self.h)
 		
 		self.bar = VScrollBar_buttons(x+w-20, y, h, 2, parent)
 		self.currentPos = 0
@@ -231,6 +229,8 @@ class ScrollTextWindow(Widget):
 		
 		self.nbVisibleLines = self.h /self.lineStep
 		#print("%s visible lines" % (self.nbVisibleLines))
+		
+		self.makeSurface()
 		
 		self.baseText = ""
 		self.setText("Welcome.\n")
@@ -267,7 +267,7 @@ class ScrollTextWindow(Widget):
 		self.baseText = ustr(text)
 		self.trimText()
 		self.makeTextSurface()
-		
+		self.updateSurface()
 		
 	def trimText(self):
 		#print "trimming, len = %s" % (len(self.baseText))
@@ -279,6 +279,7 @@ class ScrollTextWindow(Widget):
 		self.trimText()
 		self.makeTextSurface()
 		self.setCarretPos(self.maxPos)
+		self.updateSurface()
 		
 	def makeTextSurface(self):
 		lines = []
@@ -299,7 +300,7 @@ class ScrollTextWindow(Widget):
 			n += 1
 		
 		self.setNbPos(self.nbLines - self.nbVisibleLines)
-		self.updateSurface()
+		
 	
 class ChatWindow(Widget):
 	def __init__(self, x, y, w, h, parent=None, gui=None):
@@ -309,7 +310,7 @@ class ChatWindow(Widget):
 		self.entry = TextEntry("", width = w, parent=self)
 		self.scrollTextWindow = ScrollTextWindow(0, 0, w, h-20, parent=self)
 		
-		print "created chatwindow, after init, w = %s, h = %s, x = %s, y = %s" % (self.w, self.h, self.x, self.y)
+		#print "created chatwindow, after init, w = %s, h = %s, x = %s, y = %s" % (self.w, self.h, self.x, self.y)
 		self.entry.setPos(0, self.h-20)
 		
 	def addText(self, text):
