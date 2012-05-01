@@ -40,7 +40,6 @@ class MapEditor(object):
 		self.filename = filename
 		self.map = Map(filename)
 		
-		
 	def save(self, filename):
 		if not self.map:return
 		self.map.save(filename)
@@ -48,6 +47,37 @@ class MapEditor(object):
 	def new(self, x, y):
 		self.map = Map("new")
 		self.map.setSize(x, y)
+		
+	def random(self):
+		self.map.setSize(80, 60)
+		#making the ocean
+		for y in range(self.map.h):
+			for x in range(self.map.w):
+				self.drawTile(self.currentLayer, x, y)
+		#each vulcan generates a small island
+		vulcans = random.randint(10,30)
+		for n in range(vulcans):
+			x, y = random.randint(0, self.map.w-1), random.randint(0, self.map.h-1)
+			radious = random.randint(0,10)
+			self.randomIsland(x, y, radious)
+		
+	def randomIsland(self, x, y, radious):
+		try:
+			#tree pruning
+			if radious < 1 or self.map.layers["ground"].getTile(x, y) == "gggg":
+				return
+		except:
+			#skipping positions outside the map
+			return
+		self.drawGrass(self.currentLayer, x, y)
+		self.randomIsland(x-1, y, radious-1)
+		self.randomIsland(x-1, y-1, radious-1)
+		self.randomIsland(x-1, y+1, radious-1)
+		self.randomIsland(x+1, y, radious-1)
+		self.randomIsland(x+1, y-1, radious-1)
+		self.randomIsland(x+1, y+1, radious-1)
+		self.randomIsland(x, y-1, radious-1)
+		self.randomIsland(x, y+1, radious-1)
 		
 	def setSize(self, x, y):
 		if not self.map:return
@@ -104,6 +134,8 @@ class MapEditor(object):
 					self.open("maps/testmap2.txt")
 				elif event.key == pygame.K_r:
 					self.setSize(40,20)
+				elif event.key == pygame.K_g:
+					self.random()
 					
 		#self.screen.fill((0,0,0))
 		self.map.blit(self.screen)
