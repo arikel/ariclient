@@ -5,6 +5,7 @@
 
 import pygame
 import random
+from time import clock
 
 from config import *
 from gameEngine import *
@@ -50,34 +51,83 @@ class MapEditor(object):
 		
 	def random(self):
 		self.map.setSize(80, 60)
+		randint = random.randint
 		#making the ocean
 		for y in range(self.map.h):
 			for x in range(self.map.w):
 				self.drawTile(self.currentLayer, x, y)
 		#each vulcan generates a small island
-		vulcans = random.randint(10,30)
+		vulcans = randint(10,30)
+		ndirties = randint(1,3)
+		nroads = randint(1,3)
 		for n in range(vulcans):
-			x, y = random.randint(0, self.map.w-1), random.randint(0, self.map.h-1)
-			radious = random.randint(0,10)
-			self.randomIsland(x, y, radious)
+			#used to kill slow process
+			self.starttime = clock()
+			print "Generating islands %d" % (n+1,)
+			self.islandspoints = []
+			x, y = randint(1, self.map.w-1), randint(1, self.map.h-1)
+			radius = randint(1,30)
+			self.randomIsland(x, y, radius)
+			print "Islands %d generated" % (n+1,)
+			self.toggleTileCode()
+			#dirty areas generation to fix 
+			for n in range(ndirties):
+				if len(self.islandspoints) < 1:
+					break
+				print "Adding dirty area number",  n+1
+				source = list(self.islandspoints[randint(0, len(self.islandspoints)-1)])
+				dest = list(self.islandspoints[randint(0, len(self.islandspoints)-1)])
+				dx, dy = cmp(dest[0] - source[0], 0), cmp(dest[1] - source[1], 0)
+				while source != dest and 0 < source[0] < self.map.w and 0 < source [1] < self.map.h:
+					if source[0] != dest[0]:
+						source[0] = source[0] + dx
+					if source[1] != dest[1]:
+						source[1] = source[1] + dy
+					self.drawTile(self.currentLayer, source[0], source[1])
+			print "Dirty areas added"
+			self.toggleTileCode()
+			#roads generation to fix
+			#for n in range(nroads):
+			#	if len(self.islandspoints) < 1:
+			#		break
+			#	print "Adding road number", n
+			#	source = list(self.islandspoints[randint(0, len(self.islandspoints)-1)])
+			#	dest = list(self.islandspoints[randint(0, len(self.islandspoints)-1)])
+			#	dx, dy = cmp(dest[0] - source[0], 0), cmp(dest[1] - source[1], 0)
+			#	while source != dest and 0 < source[0] < self.map.w and 0 < source [1] < self.map.h:
+			#		if source[0] != dest[0]:
+			#			source[0] = source[0] + dx
+			#		if source[1] != dest[1]:
+			#			source[1] = source[1] + dy
+			#		self.drawTile(self.currentLayer, source[0], source[1])
+			#del self.islandspoints
+			#print "Roads added"
+			self.toggleTileCode()
+		#self.toggleTileCode()
+					
 		
-	def randomIsland(self, x, y, radious):
+	def randomIsland(self, x, y, radius):
+		#killing the process if it takes too much which also add some random shape
+		if clock() - self.starttime > 5.0:
+			return
 		try:
 			#tree pruning
-			if radious < 1 or self.map.layers["ground"].getTile(x, y) == "gggg":
+			if radius < 1 or self.map.layers["ground"].getTile(x, y) == "gggg":
 				return
 		except:
 			#skipping positions outside the map
 			return
 		self.drawGrass(self.currentLayer, x, y)
-		self.randomIsland(x-1, y, radious-1)
-		self.randomIsland(x-1, y-1, radious-1)
-		self.randomIsland(x-1, y+1, radious-1)
-		self.randomIsland(x+1, y, radious-1)
-		self.randomIsland(x+1, y-1, radious-1)
-		self.randomIsland(x+1, y+1, radious-1)
-		self.randomIsland(x, y-1, radious-1)
-		self.randomIsland(x, y+1, radious-1)
+		if radius > 2:
+			self.islandspoints.append((x,y))
+		self.randomIsland(x-1, y, radius-1)
+		self.randomIsland(x-1, y-1, radius-1)
+		self.randomIsland(x-1, y+1, radius-1)
+		self.randomIsland(x+1, y, radius-1)
+		self.randomIsland(x+1, y-1, radius-1)
+		self.randomIsland(x+1, y+1, radius-1)
+		self.randomIsland(x, y-1, radius-1)
+		self.randomIsland(x, y+1, radius-1)
 		
 	def setSize(self, x, y):
 		if not self.map:return
